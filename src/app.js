@@ -184,6 +184,7 @@ app.get("/bot/new", checkAuth, async (req, res) => {
 app.post("/bot/new", checkAuth, async (req, res) => { 
   let user = req.user;
   const logs = client.channels.cache.get(config.channels.weblogs)
+  const client = global.client;
  
    let data = req.body;
 
