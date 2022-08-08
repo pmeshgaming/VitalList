@@ -12,7 +12,8 @@
         <li><a href="/servers"><i class="fa-solid fa-server"></i> Servers</a></li>
         <li><a href="/partners"><i class="fa-solid fa-handshake"></i> Partners</a></li>
         <% if (user) { %>
-          <li> <%= user.username %></li>
+          <div style="margin: 7;"><%= user.username %></div>
+          <img class="navbar_avatar" class="right" draggable="false" src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png?"/>
         <% } else { %>
           <li><a href="/auth/login"><i class="fa-solid fa-sign-in-alt"></i> Login</a></li>
         <% } %>
