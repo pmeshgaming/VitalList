@@ -7,7 +7,7 @@ const { inspect } = require('util');
 
 client.on('ready', () => {
     logger.system(`${client.user.tag} is online and ready.`);
-    client.user.setActivity("VitalList.xyz")
+    client.user.setActivity("VitalList")
 })
 
 client.on("messageCreate", async (message) => {
