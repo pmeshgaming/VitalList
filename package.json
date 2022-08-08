@@ -12,17 +12,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@discordjs/builders": "^0.13.0",
-    "@discordjs/rest": "^0.4.1",
-    "cron": "^2.0.0",
-    "css": "^3.0.0",
-    "discord-api-types": "^0.32.1",
     "discord.js": "^14.1.2",
     "dotenv": "^16.0.1",
     "ejs": "^3.1.8",
     "express": "^4.18.1",
     "express-minify-html-terser": "^1.0.2",
     "express-session": "^1.17.2",
+    "flowbite": "^1.5.1",
     "marked": "^4.0.16",
     "moment": "^2.29.3",
     "mongoose": "^6.3.2",
@@ -35,8 +31,5 @@
     "request": "^2.88.2",
     "sanitize-html": "^2.7.0",
     "util": "^0.12.4"
-  },
-  "devDependencies": {
-    "javascript-obfuscator": "^4.0.0"
   }
 }

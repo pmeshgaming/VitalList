@@ -4,7 +4,7 @@
 
 </head>
 <nav class="navbar">
-    <div class="logo"><a href="/"><img style="margin-left: -95;" src="/img/icon.png" alt="VitalList Logo" width="50" height="50"><p class="title" style="margin-top: -50px;margin-left: 75px;">VitalList </p></a></div>
+    <div class="logo"><a href="/"><img style="margin-left: -95; " src="/img/icon.png" alt="VitalList Logo" width="50" height="50"><p class="title" style="margin-top: -50">VitalList </p></a></div>
     <ul class="nav-links">
         <input type="checkbox" id="checkbox_toggle" />
         <label for="checkbox_toggle" class="hamburger">&#9776;</label>
@@ -13,6 +13,7 @@
         <!-- <li style="margin-top: 20px;margin-left: 900px;"><a href="/partners"><i class="fa-solid fa-handshake"></i> Partners</a></li>-->
         <% if (user) { %>
             <img class="navbar_avatar" class="right" draggable="false" src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png?"/>
+            
             <div class="username"><%= user.username %></div>
             </div>
         <% } else { %>
@@ -20,4 +21,3 @@
         <% } %>
         </div>
     </ul>
-</nav>
