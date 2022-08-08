@@ -183,9 +183,9 @@ app.get("/bot/new", checkAuth, async (req, res) => {
 
 app.post("/bot/new", checkAuth, async (req, res) => { 
   let user = req.user;
-  const logs = client.channels.cache.get(config.channels.weblogs)
   const client = global.client;
- 
+  const logs = client.channels.cache.get(config.channels.weblogs)
+  let model = require("./models/bot.js");
    let data = req.body;
 
  if(!data) {
@@ -195,8 +195,7 @@ app.post("/bot/new", checkAuth, async (req, res) => {
 if(await model.findOne({ id: data.clientid }))  return res.status(409).json({ message: "This application has already been added to our site." });
 
  
-const bot = client.users.fetch(data.clientid);
-
+const bot = await client.users.fetch(data.clientid);
 await model
        .create({
        id: data.clientid,
@@ -213,9 +212,12 @@ await model
        website: data.website || null
        });
 
-       logs.send("<@"+req.user.id+"> has added "+bot.tag+" to Vital lLst.")
+       logs.send("<@"+req.user.id+"> has added **"+bot.tag+"** to Vital List.")
+
+       res.redirect("/?=success")
    
       })
+
 
 
 //-ServerList-//
