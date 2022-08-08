@@ -16,19 +16,19 @@ module.exports = {
       token: process.env.stoken
     },
     guilds: {
-      main: '937131743205543947',
+      main: '1006065494257848433',
       testing: '937131743205543947'
     },
     roles: {
       mod: '',
       admin: '',
-      developer: '1004265446125617203',
+      developer: '1006065897456283730',
       bots: '1004265398226657292',
       bottester: '953029305305280512'
     },
     channels: {
-     weblogs: '1004261651035455538',
-     modlogs: '1004262049414647809'
+     weblogs: '1006247458906591372',
+     modlogs: '1006247811613982791'
      }
      
 }
