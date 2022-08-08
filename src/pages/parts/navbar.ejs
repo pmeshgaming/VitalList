@@ -1,0 +1,50 @@
+<head>
+    <link rel="stylesheet" type="text/css" href="/assets/navbar.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/main.css" />
+
+</head>
+<nav class="navbar">
+    <div class="logo"><a href="/"><img style="margin-left: -95;" src="/img/icon.png" alt="VitalList Logo" width="50" height="50"><p class="title" style="margin-top: -40px;margin-left: 75px;">VitalList </p></a></div>
+    <ul class="nav-links">
+        <input type="checkbox" id="checkbox_toggle" />
+        <label for="checkbox_toggle" class="hamburger">&#9776;</label>
+      <div class="menu">
+        <li><a href="/servers"><i class="fa-solid fa-server"></i> Servers</a></li>
+        <li><a href="/partners"><i class="fa-solid fa-handshake"></i> Partners</a></li>
+        <% if (user) { %>
+          <div class="dropdown">
+          <button onclick="myFunction()" class="dropbtn"><%= user.username %> <i class="fa-solid fa-caret-down"></i></button>
+          <img class="right" draggable="false" src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png?" width="50" height="50" style="border-radius:100%;" />
+            <div id="myDropdown" class="dropdown-content">
+          <a href="../user/<%= user.id %>" style="color:white;"><i class="fa-solid fa-address-card"></i> Profile</a>
+          <a href="../bot/add" style="color:white;"><i class="fa-solid fa-circle-plus"></i> Add Bot</a>
+          <a href="../auth/logout" style="color:red;"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+            </div>
+          </div>
+          <script>
+          /* When the user clicks on the button, 
+          toggle between hiding and showing the dropdown content */
+          function myFunction() {
+            document.getElementById("myDropdown").classList.toggle("show");
+          }
+          // Close the dropdown if the user clicks outside of it
+          window.onclick = function(event) {
+            if (!event.target.matches('.dropbtn')) {
+              var dropdowns = document.getElementsByClassName("dropdown-content");
+              var i;
+              for (i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                  openDropdown.classList.remove('show');
+                }
+              }
+            }
+          }
+          </script>
+                <% } else { %>
+          <a class="right" href="../auth/login"><p style="margin-top:15px;">Login via Discord</p></a>
+                  
+                <% } %>
+      </div>
+    </ul>
+  </nav>

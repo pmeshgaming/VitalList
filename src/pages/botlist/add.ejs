@@ -1,0 +1,20 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Vital List</title>
+    <%- include("../parts/head.ejs") %>
+</head>
+    <%- include("../parts/navbar.ejs") %>
+    <body style="background-color:#0a1128;"></body>
+    <p style="color:white;font-size: 50;margin-top: 175px;"><b>Add Bot</b></p><p style="color:white;font-size: 20"><b>Fill out the below form in order to add your bot to Vital list.</p><br><br>
+    <div style="text-align:center;">
+        <form action="/bot/new" method="post">
+        <input class="addbot_field" type="text" placeholder="&nbsp;*Client ID" name="clientid" required ><br>
+        <input class="addbot_field" type="text" placeholder="&nbsp;*Prefix" name="prefix" style="margin-top:15px;" required > 
+        <!-- <imput class="addbot_field" type="text" placeholder="&nbsp;" -->
+          <br>
+           <input type="submit" value="Submit" class="addbot_button" style="cursor:pointer;">
+        </form>
+        </div>

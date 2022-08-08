@@ -1,0 +1,85 @@
+const mongoose = require("mongoose");
+
+let app = mongoose.Schema({
+  id: {
+    type: String,
+    required: true
+  },
+  invite: {
+    type: String,
+    required: false
+  }, 
+  servers: {
+    type: String,
+    required: false,
+    default: 0
+  },
+  website: {
+    type: String,
+    required: false
+  },
+  owner: {
+    type: Number,
+    required: false
+  },
+  prefix: {
+    type: String,
+    required: false
+  },
+  github: {
+    type: String,
+    required: false
+  },
+  views: {
+    type: Number,
+    required: false
+  },
+  votes: {
+    type: Number,
+    required: false,
+    default: 0
+  },
+  votedate: {
+  type: Number,
+    required: false
+  },
+  approvedOn: {
+    type: String,
+    required: false
+  },
+  submittedOn: {
+    type: String,
+    required: false
+  },
+  uniqueViews: {
+    type: Number,
+    required: false
+  },
+  tags: {
+    type: Array,
+    required: false
+  },
+  shortDesc: {
+    type: String,
+    required: false
+  },
+  desc: {
+    type: String,
+    required: false
+  },
+  support: {
+    type: String,
+    required: false
+  },
+  approved: {
+    type: Boolean,
+    required: false,
+    default: false
+  },
+  certified: {
+    type: Boolean,
+    required: false,
+    default: false
+  }
+});
+module.exports = mongoose.model("bot", app);
