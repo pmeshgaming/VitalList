@@ -32,7 +32,7 @@
     font-size: 18px;
    }
    .menu li:hover {
-    background-color: #001f54;
+    background-color: #003060;
     border-radius: 5px;
     transition: 5s ease-in-out;
    }
@@ -55,7 +55,7 @@
    .menu { 
     display:none;
     position: absolute;
-    background-color: #001f54;
+    background-color: #003060;
     right: 0;
     left: 0;
     top: 67;
@@ -64,7 +64,7 @@
    }
    .menu li:hover {
     display: inline-block;
-    background-color:#001f54;
+    background-color:#003060;
     transition: 0.3s ease;
    }
    .menu li + li {
