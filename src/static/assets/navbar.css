@@ -39,31 +39,10 @@
    .menu li {
     padding: 5px 14px;
    }
-   .services {
-    position: relative; 
-   }
-   .dropdown {
-    background-color: #001f54;
-    padding: 1em 0;
-    position: fixed; 
-    display: none;
-    border-radius: 50px;
-    top: 35px;
-   }
-   .dropdown li + li {
-    margin-top: 500px;
-   }
-   .dropdown li {
-    padding: 0.5em 1em;
-    width: 8em;
-    text-align: center;
-   }
-   .dropdown li:hover {
-    background-color: #001f54;
-   }
-   .services:hover .dropdown {
-    display: block;
-   }
+    .menu li:hover a {
+      color: #fff;
+    }
+
    input[type=checkbox]{
     display: none;
    } 
@@ -97,15 +76,7 @@
    .hamburger {
     display: block;
    }
-   .dropdown {
-    left: 50%;
-    top: 100px;
-    transform: translateX(35%);
-   }
-   .dropdown li:hover {
-    background-color: #001f54;
-   }
-   }
+  }
 ::-webkit-scrollbar {
     width: 10px;
   }
@@ -125,45 +96,16 @@
   }
 
   .navbar_avatar {
-    border-radius: 50%;
+    border-radius: 100%;
     height: 40px;
     width: 40px;
   }
 
   .username {
     font-size: 18px;
-    margin: 5px;
+    margin: 10px;
+    
   }
-
-  .dropdown {
-    background: transparent;
-    }
-    
-    .dropdown-content {
-      display: none;
-      color:white;
-      float:right;
-      background-color: #12263a;
-      border-radius:5px;
-      min-width: 110px;
-      overflow: auto;
-      margin-right:-170px;
-      margin-top:60px;
-      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-      z-index: 1;
-    }
-    
-    .dropbtn {
-      background: transparent;
-      color: ghostwhite;
-      padding: 14px 16px;
-      font-size: 16px;
-      margin-top:15px;
-      float:right;
-      border: none;
-      cursor: pointer;
-    }
-
     .right {
       float: right;
       color: #f2f2f2;
@@ -175,12 +117,6 @@
       height:50px;
     }
 
-      .dropdown-content a {
-      color: black;
-      padding: 12px 16px;
-      text-decoration: none;
-      display: block;
-    }
     .show {display: block;}
       .links_ad {
         color:white;
