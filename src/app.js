@@ -138,8 +138,9 @@ app.get('/info', async (req, res) => {
 })
 
 app.get("/auth/logout", function (req, res) {
-  req.logout();
-  res.redirect("/");
+  req.logout(() => {
+    res.redirect("/");
+  });
 });
 
 //-BotList-//

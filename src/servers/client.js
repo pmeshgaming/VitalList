@@ -9,7 +9,7 @@ client.on('ready', () => {
 })
 
 client.on("messageCreate", async (message) => {
-    const prefix = config.bot.prefix;
+    const prefix = config.servers.prefix;
     const args = message.content.split(' ');
      const command = args.shift().toLowerCase();
       if(message.author.bot) return;
