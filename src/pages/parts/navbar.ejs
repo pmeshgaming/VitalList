@@ -8,14 +8,14 @@
         <input type="checkbox" id="checkbox_toggle" />
         <label for="checkbox_toggle" class="hamburger">&#9776;</label>
       <div class="menu">
-        <li style="margin-top:10px;"><a href="/servers"><i class="fa-solid fa-server"></i> Servers</a></li>
-        <li style="margin-top:50px;margin-right: 50;position: absolute;"><a href="/partners"><i class="fa-solid fa-handshake"></i> Partners</a></li>
+        <li><a href="/servers"><i class="fa-solid fa-server"></i> Servers</a></li>
+        <li></li><a href="/partners"><i class="fa-solid fa-handshake"></i> Partners</a></li>
         <% if (user) { %>
             <img class="navbar_avatar" style="margin-top:4px; margin-right:0" class="right" draggable="false" src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png?"/>
           <div style="margin: 7;margin-top:13px;font-size: 17px;"><%= user.username %>#<%= user.discriminator %></div>
           
         <% } else { %>
-          <li><a href="/auth/login"><i class="fa-solid fa-sign-in-alt"></i> Login</a></li>
+          <li style="margin-top:11px;position:relative;margin-right: 25px;"><a href="/auth/login"><i class="fa-solid fa-sign-in-alt"></i> Login</a></li>
         <% } %>
       </div>
     </ul>

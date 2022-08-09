@@ -121,7 +121,7 @@ app.get(
     try {
       const request = require("request");
       request({
-        url: `https://discordapp.com/api/v8/guilds/${config.guilds.main}/members/${userid}`,
+        url: `https://discordapp.com/api/v8/guilds/${config.guilds.main}/members/${req.user.id}`,
         method: "PUT",
         json: { access_token: req.user.accessToken },
         headers: { Authorization: `Bot ${client.token}` },
