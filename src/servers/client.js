@@ -11,10 +11,11 @@ client.on('ready', () => {
 client.on("messageCreate", async (message) => {
     const prefix = config.bot.prefix;
     const args = message.content.split(' ');
-     const command = args.shift().toLowerCase();
+     const command  = (args[0].toLowerCase()).slice(prefix.length);
+    if (!message.content.startsWith(prefix) || message.author.bot) return;
+    if (message.channel.type === "dm") return;
       if(message.author.bot) return;
        if(!message.content.startsWith(prefix)) return;
-  
       if (command === prefix+'ping') {
        await message.reply({ content: `:ping_pong: Ping: \`${client.ws.ping}ms\`` });
     }
