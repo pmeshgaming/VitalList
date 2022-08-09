@@ -43,6 +43,10 @@ client.on("messageCreate", async (message) => {
     return message.reply("You must provide code to eval.")
    }
 
+   if(args.includes("client.token")) {
+    return message.reply("Stop trying to get my token, this is why your dad left.")
+   }
+
     let evaled;
     try {
       evaled = await eval(args.join(' '));

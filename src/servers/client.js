@@ -11,7 +11,7 @@ client.on('ready', () => {
 client.on("messageCreate", async (message) => {
     const prefix = config.servers.prefix;
     const args = message.content.split(' ');
-     const command  = (args[0].toLowerCase()).slice(prefix.length);
+     const command  = args.shift().toLowerCase();
     if (!message.content.startsWith(prefix) || message.author.bot) return;
     if (message.channel.type === "dm") return;
       if(message.author.bot) return;
