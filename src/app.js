@@ -119,12 +119,10 @@ app.get(
     const client = global.client;
 
     try {
-      const request = require("request");
-      request({
-        url: `https://discordapp.com/api/v8/guilds/${config.guilds.main}/members/${req.user.id}`,
+      fetch(`https://discordapp.com/api/v8/guilds/${config.guilds.main}/members/${req.user.id}`, {
         method: "PUT",
-        json: { access_token: req.user.accessToken },
-        headers: { Authorization: `Bot ${client.token}` },
+        body: JSON.stringify({ access_token: req.user.accessToken }),
+        headers: { 'Content-Type': 'application/json', Authorization: `Bot ${client.token}` },
       });
     } catch {}
 

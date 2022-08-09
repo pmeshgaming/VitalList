@@ -28,7 +28,6 @@
     "passport-oauth2": "^1.6.1",
     "passport-oauth2-refresh": "^2.1.0",
     "quick.db": "^7.1.3",
-    "request": "^2.88.2",
     "sanitize-html": "^2.7.0",
     "util": "^0.12.4"
   }
