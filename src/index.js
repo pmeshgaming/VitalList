@@ -11,10 +11,10 @@ require('./app.js');
 
 const client = new Client({ 
   intents: [
-    GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent
+    GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMembers
     ],
    partials: [
-    Partials.Channel, Partials.Message
+    Partials.Channel, Partials.Message, Partials.GuildMember
   ]
 });
 client.login(config.bot.token)
@@ -25,10 +25,10 @@ require('./client.js');
 
 const sclient = new Client({
     intents: [
-        GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent
+        GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMembers
     ],
     partials: [
-        Partials.Channel, Partials.Message
+        Partials.Channel, Partials.Message, Partials.GuildMember
     ]
 });
 sclient.login(config.servers.token)
