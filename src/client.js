@@ -2,7 +2,6 @@ const client = global.client;
 const config = global.config;
 const logger = global.logger;
 const { EmbedBuilder } = require('discord.js');
-const model = require("./models/bot.js")
 const { inspect } = require('util');
 
 client.on('ready', () => {
@@ -26,30 +25,23 @@ client.on('guildMemberRemove', async (member) => {
 client.on("messageCreate", async (message) => {
   const prefix = config.bot.prefix;
   const args = message.content.split(' ');
-   const command = args.shift().toLowerCase();
-    if(message.author.bot) return;
-     if(!message.content.startsWith(prefix)) return;
-
-    if (command === prefix+'ping') {
-     await message.reply({ content: `:ping_pong: Ping: \`${client.ws.ping}ms\`` });
-  }
-      if (command === prefix+'eval') {
-
-        if (!config.owners.includes(message.author.id)) {
-          return message.reply("You do not have permission to use this command.")
-        } 
-    
-   if(!args[0]) {
-    return message.reply("You must provide code to eval.")
-   }
-
-   if(args.includes("client.token")) {
-    return message.reply("Stop trying to get my token, this is why your dad left.")
-   }
-
+  const command = args.shift().toLowerCase();
+  if(message.author.bot) return;
+  if(!message.content.startsWith(prefix)) return;
+  if(message.channel.type === "dm") return;
+  if (command === prefix+'ping') return await message.reply({ content: `:ping_pong: Ping: \`${client.ws.ping}ms\`` });
+  if (command === prefix+'eval') {
+    if (!config.owners.includes(message.author.id)) return message.reply("You do not have permission to use this command.")
+    if(!args[0]) return message.reply("You must provide code to eval.")
     let evaled;
     try {
       evaled = await eval(args.join(' '));
+      if (evaled == client.token) return message.reply("Stop trying to get my token, this is why your dad left.")
+  
+      if (typeof evaled !== 'string') {
+        evaled = inspect(evaled);
+        message.channel.send(evaled, { code: 'js' });
+      }
       message.channel.send("```js\n"+inspect(evaled)+"```");
     }
     catch (error) {
