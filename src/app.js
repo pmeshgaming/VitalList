@@ -285,24 +285,13 @@ function checkAuth(req, res, next) {
 function checkStaff(req, res, next) {
   const client = global.client;
   const config = global.config;
-
-  if (!config.staff.includes(req.user.id)) {
-    return res.render("errors/403.ejs", { user: req.user || null });
-  }
-
+  if (!config.staff.includes(req.user.id)) return res.render("errors/403.ejs", { user: req.user || null });
   return next();
 }
 function checkMaintenance(req, res, next) {
   const client = global.client;
   const config = global.config;
-
-if(!req.user) {
- return res.render("errors/503.ejs", { user: req.user || null });
-}
-
-  if (!config.staff.includes(req.user.id)) {
-    return res.render("errors/503.ejs", { user: req.user || null });
-  }
-
+  if(!req.user) return res.render("errors/503.ejs", { user: req.user || null });
+  if (!config.staff.includes(req.user.id)) return res.render("errors/503.ejs", { user: req.user || null });
   return next();
 }
