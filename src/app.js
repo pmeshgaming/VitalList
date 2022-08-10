@@ -208,7 +208,7 @@ await model
        website: data.website || null
        });
 
-       logs.send("<@"+req.user.id+"> has added **"+bot.tag+"** to Vital List.")
+       logs.send("<@"+req.user.id+"> has submitted **"+bot.tag+"** to Vital List.")
 
        res.redirect("/?=success")
    

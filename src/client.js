@@ -71,6 +71,49 @@ client.on("messageCreate", async (message) => {
  }
 })
 
+client.on('messageCreate', async message => {
+const config = global.config;
+const prefix = config.bot.prefix;
+const model = require("./models/user.js");
+
+  if (message.author.bot) return; 
+  if (message.content.startsWith(prefix)) return;
+
+  let user = await model.findOne({ id: message.author.id});
+  if(!user) return await model.create({ id: message.author.id, messages: 1 });
+  
+  user.messages = user.messages + 1;
+ await user.save();
+
+ if(user.messages == 25) {
+    user.level = 1;
+    await user.save();
+  client.channels.cache.get(config.channels.levelup).send(`GG <@${message.author.id}>, You have leveled up to level 1!`)
+}
+if(user.messages == 50) {
+  user.level = 2;
+  await user.save();
+client.channels.cache.get(config.channels.levelup).send(`GG <@${message.author.id}>, You have leveled up to level 2!`)
+}
+if(user.messages == 75) {
+  user.level = 3;
+  await user.save();
+client.channels.cache.get(config.channels.levelup).send(`GG <@${message.author.id}>, You have leveled up to level 3!`)
+}
+if(user.messages == 100) {
+  user.level = 4;
+  await user.save();
+client.channels.cache.get(config.channels.levelup).send(`GG <@${message.author.id}>, You have leveled up to level 4!`)
+}
+if(user.messages == 125) {
+  user.level = 5;
+  await user.save();
+message.author.roles.add(config.levels.five)
+client.channels.cache.get(config.channels.levelup).send(`GG <@${message.author.id}>, You have leveled up to level 5!`)
+}
+ 
+  })
+
 //-Button Roles-//
 client.on("interactionCreate", async (interaction) => {
   const r1 = "1006653826843029654";
