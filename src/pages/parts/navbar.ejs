@@ -7,16 +7,19 @@
     <ul class="nav-links">
         <input type="checkbox" id="checkbox_toggle" />
         <label for="checkbox_toggle" class="hamburger">&#9776;</label>
-      <div class="menu">
-        <li><a href="/servers"><i class="fa-solid fa-server"></i> Servers</a></li>
-        <li></li><a href="/partners"><i class="fa-solid fa-handshake"></i> Partners</a></li>
+        <div class="menu">
+          <li style="margin-top:11px;"><a href="/"><i class="fa-solid fa-house-chimney"></i> Home</a></li>
+          <li style="margin-top:11px;"><a href="/servers"><i class="fa-solid fa-server"></i> Servers</a></li>
+          <li style="margin-top:11px;"><a href="/partners"><i class="fa-solid fa-handshake"></i> Partners</a></li>
+          <li style="margin-top:11px;margin-right:850px"><a href="/certification"><i class="fa-solid fa-certificate"></i> Certification</a></li>
         <% if (user) { %>
-            <img class="navbar_avatar" class="right" draggable="false" src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png?"/>
-          <div><%= user.username %>#<%= user.discriminator %></div>
+            <img style="margin-top:5px;" class="navbar_avatar" class="right" draggable="false" src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png?"/>
+          <p style="margin-top:15px;"><%= user.username %>#<%= user.discriminator %></p>
           
         <% } else { %>
-          <li style="margin-top:11px;position:relative;margin-right: 25px;"><a href="/auth/login"><i class="fa-solid fa-sign-in-alt"></i> Login</a></li>
+          <li style="margin-top:11px;"><a href="/auth/login"><i class="fa-solid fa-sign-in-alt"></i> Login via Discord</a></li>
         <% } %>
+        
       </div>
     </ul>
   </nav>
