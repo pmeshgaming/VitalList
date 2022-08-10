@@ -143,7 +143,7 @@ app.get("/auth/logout", function (req, res) {
 
 //-BotList-//
 
-app.get("/", async (req, res) => {
+app.get("/", checkMaintenance, async (req, res) => {
   const client = global.client;
 
   let model = require("./models/bot.js");
@@ -171,7 +171,7 @@ bots[i].tags = bots[i].tags.join(", ")
   });
 })
 
-app.get("/bot/new", checkAuth, async (req, res) => {
+app.get("/bot/new", checkMaintenance, checkAuth, async (req, res) => {
   const client = global.client;
 
   res.render("botlist/add.ejs", {
@@ -221,7 +221,7 @@ await model
 
 //-ServerList-//
 
-app.get("/servers", async (req, res) => {
+app.get("/servers", checkMaintenance, async (req, res) => {
   const client = global.client;
 
   res.render("servers/index.ejs", {
@@ -259,16 +259,20 @@ app.get("/401", async (req, res) => {
       });
     })
 
+    //-Other Pages-//
+
+app.get("/discord", (req, res ) => res.redirect("https://discord.gg/DWX3d5r2wW"))
+
+app.listen(config.port, () => {
+  logger.system(`Running on port ${config.port}.`);
+});
+
 app.use(function(req, res, next){
 
   if (req.accepts('html')) {
 return res.redirect("/404")
   }
 
-});
-
-app.listen(config.port, () => {
-  logger.system(`Running on port ${config.port}.`);
 });
 
 //-Functions-//
@@ -284,6 +288,20 @@ function checkStaff(req, res, next) {
 
   if (!config.staff.includes(req.user.id)) {
     return res.render("errors/403.ejs", { user: req.user || null });
+  }
+
+  return next();
+}
+function checkMaintenance(req, res, next) {
+  const client = global.client;
+  const config = global.config;
+
+if(!req.user) {
+ return res.render("errors/503.ejs", { user: req.user || null });
+}
+
+  if (!config.staff.includes(req.user.id)) {
+    return res.render("errors/503.ejs", { user: req.user || null });
   }
 
   return next();
