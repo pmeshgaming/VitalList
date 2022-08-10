@@ -14,6 +14,11 @@ let app = mongoose.Schema({
     required: false,
     default: 0
   },
+  shards: {
+    type: String,
+    required: false,
+    default: 0
+  },
   website: {
     type: String,
     required: false

@@ -4,7 +4,6 @@ const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
 const mongoose = require("mongoose");
 const config = global.config;
-const client = global.client;
 global.logger = logger;
 const path = require("path");
 const express = require("express"),
@@ -84,7 +83,7 @@ passport.use(
       scope: scopes,
       prompt: prompt,
     },
-    function (accessToken, refreshToken, profile, done) {
+    function (_accessToken, refreshToken, profile, done) {
       process.nextTick(function () {
         return done(null, profile);
       });
@@ -171,16 +170,14 @@ bots[i].tags = bots[i].tags.join(", ")
   });
 })
 
-app.get("/bot/new", checkMaintenance, checkAuth, async (req, res) => {
-  const client = global.client;
-
+app.get("/bots/new", checkMaintenance, checkAuth, async (req, res) => {
   res.render("botlist/add.ejs", {
     bot: req.bot,
     user: req.user || null
   });
 })
 
-app.post("/bot/new", checkAuth, async (req, res) => { 
+app.post("/bots/new", checkAuth, async (req, res) => { 
   let user = req.user;
   const client = global.client;
   const logs = client.channels.cache.get(config.channels.weblogs)
@@ -217,12 +214,44 @@ await model
    
       })
 
+//-API-//
+
+app.get('/api/bots/:id', async (req, res) => {
+  const client = global.client;
+  let data = await client.users.fetch(req.params.id);
+  let model = require("./models/bot.js");
+  let bot = await model.findOne({ id: req.params.id }).lean().then(rs => {
+    if (!rs) return res.status(404).json({ message: "This bot is not in our database." })
+    delete rs._id;
+    delete rs.__v
+    return rs;
+  });
+  if(!data) return res.status(404).json({ message: "This bot is not on our list." });
+  res.json(bot)
+})
+
+app.post('/api/bots/:id/', async (req, res) => {
+  const client = global.client
+  let data = await client.users.fetch(req.params.id);
+  let model = require("./models/bot.js");
+  let bot = await model.findOne({ id: req.params.id });
+  if(!bot) return res.status(404).json({ message: "This bot is not on our list." });
+  if(!data) return res.status(404).json({ message: "This bot is not on our list." });
+  if(!req.body.server_count) return res.status(400).json({ message: "Please provide a server count." });
+  if(!req.body.shard_count) return res.status(400).json({ message: "Please provide a shard count." });
+  bot.servers = req.body.server_count;
+  bot.servers = bot.servers.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  bot.shards = req.body.shard_count;
+  bot.shards = bot.shards.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  bot.save();
+  res.json({ message: "Successfully updated." });
+
+})
 
 
 //-ServerList-//
 
 app.get("/servers", checkMaintenance, async (req, res) => {
-  const client = global.client;
 
   res.render("servers/index.ejs", {
     bot: req.bot,
@@ -283,13 +312,11 @@ function checkAuth(req, res, next) {
 }
 
 function checkStaff(req, res, next) {
-  const client = global.client;
   const config = global.config;
   if (!config.staff.includes(req.user.id)) return res.render("errors/403.ejs", { user: req.user || null });
   return next();
 }
 function checkMaintenance(req, res, next) {
-  const client = global.client;
   const config = global.config;
   if(!req.user) return res.render("errors/503.ejs", { user: req.user || null });
   if (!config.staff.includes(req.user.id)) return res.render("errors/503.ejs", { user: req.user || null });

@@ -20,3 +20,4 @@ client.on("messageCreate", async (message) => {
        await message.reply({ content: `:ping_pong: Ping: \`${client.ws.ping}ms\`` });
     }
   })
+  
