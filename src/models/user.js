@@ -15,9 +15,9 @@ let app = mongoose.Schema({
     default: 0
   },
   level: {
-    type: String,
+    type: Number,
     required: false,
     default: 0
   }
 });
-module.exports = mongoose.model("user", app);
+module.exports = mongoose.model("user1", app);
