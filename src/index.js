@@ -36,5 +36,5 @@ global.sclient = sclient;
 require('./servers/client.js');
 
 //process.on('unhandledRejection', (reason, promise) => console.log(`Unhandled Rejection at: ${promise} reason: ${reason}`));
-process.on('uncaughtException', (err) => console.log(`Uncaught Exception: ${err}`))
+//process.on('uncaughtException', (err) => console.log(`Uncaught Exception: ${err}`))
 

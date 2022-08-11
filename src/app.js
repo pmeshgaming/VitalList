@@ -12,6 +12,8 @@ const express = require("express"),
   Strategy = require('passport-discord').Strategy;
   app = express();
 
+const { inspect } = require("util");
+
 //-Database Login-//
 
 try {
@@ -217,17 +219,18 @@ await model
 //-API-//
 
 app.get('/api/bots/:id', async (req, res) => {
-  const client = global.client;
-  let data = await client.users.fetch(req.params.id);
   let model = require("./models/bot.js");
-  let bot = await model.findOne({ id: req.params.id }).lean().then(rs => {
+  let data = await model.findOne({ id: req.params.id }).lean().then(rs => {
     if (!rs) return res.status(404).json({ message: "This bot is not in our database." })
+    if (!rs.approved) return res.status(404).json({ message: "This bot is not approved." })
     delete rs._id;
     delete rs.__v
+    delete rs.approved
     return rs;
+    
   });
-  if(!data) return res.status(404).json({ message: "This bot is not on our list." });
-  res.json(bot)
+  if (!data) return res.status(404).json({ message: "This bot is not in our database." })
+  res.end(inspect(data));
 })
 
 app.post('/api/bots/:id/', async (req, res) => {
