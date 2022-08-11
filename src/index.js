@@ -10,6 +10,10 @@ require('./app.js');
 //-Main Client-//
 
 const client = new Client({ 
+  allowedMentions: {
+    parse: ['users', 'roles'],
+    repliedUser: false
+  },
   intents: [
     GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMembers
     ],

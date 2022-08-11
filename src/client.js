@@ -3,6 +3,7 @@ const config = global.config;
 const logger = global.logger;
 const { EmbedBuilder, ButtonBuilder, ActionRowBuilder, AttachmentBuilder } = require('discord.js');
 const { inspect } = require('util');
+const canvacord = require('canvacord');
 
 client.on('ready', () => {
     logger.system(`${client.user.tag} is online and ready.`);
@@ -70,36 +71,40 @@ client.on("messageCreate", async (message) => {
  }
  if(command === prefix+"level") {
   let model = require("./models/user.js")
-  let user = await model.findOne({ id: message.author.id })
-  let embed = new EmbedBuilder()
-  .setTitle("Leveling System")
-  .setDescription(`${message.author}'s Level and XP in VitalList.`)
-  .addFields(
-		{ name: 'Level:', value: `${user.level}` },
-		{ name: 'XP:', value: `${user.messages}`}
-	)
-  message.reply({ embeds: [embed] })
 
-  const canvacord = require("canvacord");
+  let user = await model.findOne({ id: message.author.id })
+  if (!user) {
+    user = new model({
+      id: message.author.id,
+      messages: 0,
+      level: 0,
+    })
+    user.save()
+  }
   const img = message.author.displayAvatarURL();
-  
-  const rank = new canvacord.Rank()
+  let level = user.level + 1;
+  let flitered = await model.find({}).sort({ messages: -1 }).limit(10)
+  let sorted = flitered.map(x => x.messages).sort((a, b) => b - a)
+  let rank = sorted.splice(0, message.guild.memberCount)
+  let rankIndex = rank.indexOf(user.messages) + 1
+  const userrank = new canvacord.Rank()
       .setAvatar(img)
       .setCurrentXP(user.messages)
-      .setRequiredXP(100)
+      .setRequiredXP(level * 25)
       .setStatus("online")
       .setLevel(user.level)
+      .setRank(rankIndex)
       .setProgressBar("#FFFFFF", "COLOR")
       .setUsername(message.author.username)
       .setDiscriminator(message.author.discriminator);
   
-  rank.build()
+  userrank.build()
       .then(data => {
           const attachment = new AttachmentBuilder(data, {name: "RankCard.png" });
           message.reply({ files: [attachment] });
       });
- }
-})
+    }
+  });
 
 client.on('messageCreate', async message => {
 const config = global.config;
@@ -113,36 +118,13 @@ const model = require("./models/user.js");
   if(!user) return await model.create({ id: message.author.id, messages: 1 });
   
   user.messages = user.messages + 1;
- await user.save();
-
- if(user.messages == 25) {
-    user.level = 1;
+  await user.save();
+  if (user.messages % 25 === 0) {
+    user.level = user.level + 1;
     await user.save();
-  client.channels.cache.get(config.channels.levelup).send(`GG <@${message.author.id}>, You have leveled up to level 1!`)
-}
-if(user.messages == 50) {
-  user.level = 2;
-  await user.save();
-client.channels.cache.get(config.channels.levelup).send(`GG <@${message.author.id}>, You have leveled up to level 2!`)
-}
-if(user.messages == 75) {
-  user.level = 3;
-  await user.save();
-client.channels.cache.get(config.channels.levelup).send(`GG <@${message.author.id}>, You have leveled up to level 3!`)
-}
-if(user.messages == 100) {
-  user.level = 4;
-  await user.save();
-client.channels.cache.get(config.channels.levelup).send(`GG <@${message.author.id}>, You have leveled up to level 4!`)
-}
-if(user.messages == 125) {
-  user.level = 5;
-  await user.save();
-message.author.roles.add(config.levels.five)
-client.channels.cache.get(config.channels.levelup).send(`GG <@${message.author.id}>, You have leveled up to level 5!`)
-}
- 
-  })
+    client.channels.cache.get(config.channels.levelup).send(`GG <@${message.author.id}>, You have leveled up to level ${user.level}!`)
+  }
+})
 
 //-Button Roles-//
 client.on("interactionCreate", async (interaction) => {
