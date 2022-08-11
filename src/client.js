@@ -1,7 +1,7 @@
 const client = global.client;
 const config = global.config;
 const logger = global.logger;
-const { EmbedBuilder, ButtonBuilder, ActionRowBuilder } = require('discord.js');
+const { EmbedBuilder, ButtonBuilder, ActionRowBuilder, AttachmentBuilder } = require('discord.js');
 const { inspect } = require('util');
 
 client.on('ready', () => {
@@ -40,9 +40,8 @@ client.on("messageCreate", async (message) => {
   
       if (typeof evaled !== 'string') {
         evaled = inspect(evaled);
-        message.channel.send(evaled, { code: 'js' });
+        message.channel.send("```js\n"+evaled+"```");
       }
-      message.channel.send("```js\n"+inspect(evaled)+"```");
     }
     catch (error) {
       console.error(error);
@@ -68,6 +67,37 @@ client.on("messageCreate", async (message) => {
     const fetched = await message.channel.messages.fetch({limit: deleteCount + 1});
 
     message.channel.bulkDelete(fetched)
+ }
+ if(command === prefix+"level") {
+  let model = require("./models/user.js")
+  let user = await model.findOne({ id: message.author.id })
+  let embed = new EmbedBuilder()
+  .setTitle("Leveling System")
+  .setDescription(`${message.author}'s Level and XP in VitalList.`)
+  .addFields(
+		{ name: 'Level:', value: `${user.level}` },
+		{ name: 'XP:', value: `${user.messages}`}
+	)
+  message.reply({ embeds: [embed] })
+
+  const canvacord = require("canvacord");
+  const img = message.author.displayAvatarURL();
+  
+  const rank = new canvacord.Rank()
+      .setAvatar(img)
+      .setCurrentXP(user.messages)
+      .setRequiredXP(100)
+      .setStatus("online")
+      .setLevel(user.level)
+      .setProgressBar("#FFFFFF", "COLOR")
+      .setUsername(message.author.username)
+      .setDiscriminator(message.author.discriminator);
+  
+  rank.build()
+      .then(data => {
+          const attachment = new AttachmentBuilder(data, {name: "RankCard.png" });
+          message.reply({ files: [attachment] });
+      });
  }
 })
 
