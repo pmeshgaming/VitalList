@@ -9,7 +9,7 @@ let app = mongoose.Schema({
     type: String,
     required: false
   }, 
-  messages: {
+  xp: {
     type: Number,
     required: false,
     default: 0

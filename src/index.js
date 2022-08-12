@@ -2,7 +2,7 @@
 //-Config Varibles-//
 const config = require('./config.js');
 global.config = config;
-const { Client, GatewayIntentBits, Partials } = require('discord.js');
+const { Client, GatewayIntentBits, Partials, Collection} = require('discord.js');
 
 //-Other Files-//
 require('./app.js');
@@ -21,9 +21,11 @@ const client = new Client({
     Partials.Channel, Partials.Message, Partials.GuildMember
   ]
 });
+client.commands = new Collection();
+
 client.login(config.bot.token)
 global.client = client;
-require('./client.js');
+require('../mainbot/client.js');
 
 //-ServerList Client-//
 
