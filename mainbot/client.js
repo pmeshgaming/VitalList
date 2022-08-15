@@ -23,14 +23,14 @@ client.on('guildMemberRemove', async (member) => {
 })
 
 
-const cfiles = fs.readdirSync('./mainbot/commands').filter(file => file.endsWith('.js'));
+const cfiles = fs.readdirSync(join(__dirname, 'commands')).filter(file => file.endsWith('.js'));
 for(const cfile of cfiles) {
   const command = require(join(__dirname, "commands", `${cfile}`))
   client.commands.set(command.name, command);
 
 }
 
-const efiles = fs.readdirSync('./mainbot/events').filter(file => file.endsWith('.js'));
+const efiles = fs.readdirSync(join(__dirname, 'events')).filter(file => file.endsWith('.js'));
 for(const efile of efiles) {
   const event = require(join(__dirname, "events", `${efile}`))
   const eventName = efile.split(".")[0];
