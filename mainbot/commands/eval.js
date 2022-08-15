@@ -1,4 +1,5 @@
- module.exports = {
+const inspect = require('util').inspect;
+module.exports = {
     name: 'eval',
     async run(client,message, args) {
         if(!global.config.owners.includes(message.author.id)) return;
