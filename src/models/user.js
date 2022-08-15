@@ -20,4 +20,4 @@ let app = mongoose.Schema({
     default: 0
   }
 });
-module.exports = mongoose.model("user1", app);
+module.exports = mongoose.model("users", app);

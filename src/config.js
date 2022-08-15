@@ -35,7 +35,8 @@ module.exports = {
     channels: {
      weblogs: '1006247458906591372',
      levelup: '1007055641199779910',
-     modlogs: '1006247811613982791'
+     modlogs: '1006247811613982791',
+     leaderboard: '1008533581238374430',
      }
      
 }

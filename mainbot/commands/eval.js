@@ -11,6 +11,8 @@ module.exports = {
             if (typeof evaled !== 'string') {
                 evaled = inspect(evaled);
                 message.channel.send({ content: `:white_check_mark: Successfully evaluated.\n\`\`\`js\n${evaled}\n\`\`\`` });
+            } else {
+                message.channel.send({ content: `:white_check_mark: Successfully evaluated.\n\`\`\`js\n${evaled}\n\`\`\`` });
             }
         }
         catch(error) {
