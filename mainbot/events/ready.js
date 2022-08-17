@@ -7,7 +7,6 @@ module.exports = {
 
         const lb_message = await client.channels.cache.get(global.config.channels.leaderboard).messages.fetch("1008537121637814363");
         setInterval(async () => {
-            console.log('e')
             const model = require("../../src/models/user.js");
             const users = await model.find({}).sort({ xp: -1 }).limit(10)
             const sorted = users.sort((a, b) => b.xp - a.xp);
