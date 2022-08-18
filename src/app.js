@@ -158,6 +158,8 @@ app.get("/", checkMaintenance, async (req, res) => {
        dbot.deleteOne()
        dbot.save()
     }
+  }
+
 
 
   for (let i = 0; i < bots.length; i++) {
