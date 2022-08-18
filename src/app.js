@@ -310,8 +310,7 @@ app.get("/bots/:id/approve", checkAuth, checkStaff, async (req, res) => {
   await bot.save();
 
   const BotRaw = await client.users.fetch(id);
-
-bot.tag = BotRaw.tag;
+  bot.tag = BotRaw.tag;
 
   res.redirect("/admin?=successfully approved")
 
@@ -319,7 +318,7 @@ bot.tag = BotRaw.tag;
 
 })
 
-app.get("/bots/:id/approve", checkAuth, checkStaff, async (req, res) => {
+app.get("/bots/:id/deny", checkAuth, checkStaff, async (req, res) => {
   let user = req.user;
   const client = global.client;
   let id = req.params.id;
@@ -335,8 +334,7 @@ app.get("/bots/:id/approve", checkAuth, checkStaff, async (req, res) => {
   await bot.save();
 
   const BotRaw = await client.users.fetch(id);
-
-bot.tag = BotRaw.tag;
+  bot.tag = BotRaw.tag;
 
   res.redirect("/admin?=successfully approved")
 
