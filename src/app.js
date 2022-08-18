@@ -319,7 +319,7 @@ bot.tag = BotRaw.tag;
 
 })
 
-app.get("/bots/:id/approve", checkAuth, checkStaff, async (req, res) => {
+app.get("/bots/:id/deny", checkAuth, checkStaff, async (req, res) => {
   let user = req.user;
   const client = global.client;
   let id = req.params.id;
@@ -329,18 +329,6 @@ app.get("/bots/:id/approve", checkAuth, checkStaff, async (req, res) => {
   if(!await model.findOne({ id: id }))  return res.status(404).json({ message: "This application could not be found in our site." });
 
   let bot = await model.findOne({ id: id});
-
-  bot.approved = true
-
-  await bot.save();
-
-  const BotRaw = await client.users.fetch(id);
-
-bot.tag = BotRaw.tag;
-
-  res.redirect("/admin?=successfully approved")
-
-  logs.send("<@"+bot.owner.toString()+">'s bot **"+bot.tag+"** has been approved by <@"+req.user.id+">")
 
 })
 
