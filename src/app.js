@@ -209,7 +209,6 @@ await model
        github: data.github || null,
        website: data.website || null
        });
-
        logs.send("<@"+req.user.id+"> has submitted **"+bot.tag+"** to Vital List.")
 
        res.redirect("/?=success")
@@ -261,6 +260,90 @@ app.get("/servers", checkMaintenance, async (req, res) => {
     user: req.user || null
   });
 })
+
+//-Admin Pages-//
+
+app.get("/admin", checkAuth, checkStaff, async (req, res) => {
+
+  const client = global.client;
+  const config = global.config;
+
+  let model = require("./models/bot.js");
+  let bots = await model.find({ approved: false });
+  for (let i = 0; i < bots.length; i++) {
+    const BotRaw = await client.users.fetch(bots[i].id);
+    bots[i].name = BotRaw.username;
+    bots[i].avatar = BotRaw.avatar;
+bots[i].name = bots[i].name.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
+bots[i].tags = bots[i].tags.join(", ")
+  }
+  Array.prototype.shuffle = function () {
+    let a = this;
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+
+  res.render("admin/index.ejs", {
+    bot: req.bot,
+    bots: bots.shuffle(),
+    config: config,
+    user: req.user || null
+  });
+})
+
+app.get("/bots/:id/approve", checkAuth, checkStaff, async (req, res) => {
+  let user = req.user;
+  const client = global.client;
+  let id = req.params.id;
+  const logs = client.channels.cache.get(config.channels.weblogs)
+  let model = require("./models/bot.js");
+
+  if(!await model.findOne({ id: id }))  return res.status(404).json({ message: "This application could not be found in our site." });
+
+  let bot = await model.findOne({ id: id});
+
+  bot.approved = true
+
+  await bot.save();
+
+  const BotRaw = await client.users.fetch(id);
+
+bot.tag = BotRaw.tag;
+
+  res.redirect("/admin?=successfully approved")
+
+  logs.send("<@"+bot.owner.toString()+">'s bot **"+bot.tag+"** has been approved by <@"+req.user.id+">")
+
+})
+
+app.get("/bots/:id/approve", checkAuth, checkStaff, async (req, res) => {
+  let user = req.user;
+  const client = global.client;
+  let id = req.params.id;
+  const logs = client.channels.cache.get(config.channels.weblogs)
+  let model = require("./models/bot.js");
+
+  if(!await model.findOne({ id: id }))  return res.status(404).json({ message: "This application could not be found in our site." });
+
+  let bot = await model.findOne({ id: id});
+
+  bot.approved = true
+
+  await bot.save();
+
+  const BotRaw = await client.users.fetch(id);
+
+bot.tag = BotRaw.tag;
+
+  res.redirect("/admin?=successfully approved")
+
+  logs.send("<@"+bot.owner.toString()+">'s bot **"+bot.tag+"** has been approved by <@"+req.user.id+">")
+
+})
+
 
 //-Error Pages-//
 
