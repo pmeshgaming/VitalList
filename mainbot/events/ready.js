@@ -11,9 +11,11 @@ module.exports = {
             const users = await model.find({}).sort({ xp: -1 }).limit(10)
             const sorted = users.sort((a, b) => b.xp - a.xp);
             const flitered = sorted.map(x => x.xp).sort((a, b) => b - a)
+            const list = flitered.map(x => sorted.find(y => y.xp === x));
+            console.log(list.map(x => x.xp).id);
             const embed = new EmbedBuilder()
             .setTitle(`Top 10 Leaderboard`)
-            .setDescription(`${flitered.map((x, i) => `${i + 1}. ${client.users.fetch(users.find(y => y.xp == x).id, {force: true})}`).join('\n')}`)
+            .setDescription(list.toString())
             //Promise "error"
             .setColor('Random')
             .setThumbnail(lb_message.guild.iconURL())
@@ -24,3 +26,6 @@ module.exports = {
 
     }
 }
+
+//{flitered.map((x, i) => `${i + 1}. ${client.users.fetch(users.find(y => y.xp == x).id, {force: true})}`).join('\n')}`
+//.setDescription(`${flitered.map((x, i) => `${i + 1}. ${client.users.fetch(users.find(y => y.xp == x).id, {force: true})}`).join('\n')}`)
