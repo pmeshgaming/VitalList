@@ -314,7 +314,7 @@ app.get("/bots/:id/approve", checkAuth, checkStaff, async (req, res) => {
 
   res.redirect("/admin?=successfully approved")
 
-  logs.send("<@"+bot.owner.toString()+">'s bot **"+bot.tag+"** has been approved by <@"+req.user.id+">")
+  logs.send("<@"+bot.owner+">'s bot **"+bot.tag+"** has been approved by <@"+req.user.id+">")
 
 })
 
@@ -329,8 +329,7 @@ app.get("/bots/:id/deny", checkAuth, checkStaff, async (req, res) => {
 
   let bot = await model.findOne({ id: id});
 
-  bot.approved = true
-
+  bot.denied = true
   await bot.save();
 
   const BotRaw = await client.users.fetch(id);

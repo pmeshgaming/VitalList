@@ -7,5 +7,28 @@
     <%- include("../parts/head.ejs") %>
 </head>
     <%- include("../parts/navbar.ejs") %>
-
-   <p> not coming soon </p>
+    <body style="background-color:#0a1128;"></body>
+   <p class="top_bots"><i class="fa-solid fa-circle-exclamation"></i> <b>Unapproved Bots</b><br><span style="font-size:15px;">These are the bots waiting to be checked.</span></p>
+    <div style="margin-left:50px;">
+    <% let allbots = bots %>
+    <% let voted = allbots.sort((a,b) => b.votes - a.votes) %>
+           <% for(let i = 0; i < voted.length; i++){ %>
+                                       <%  if (i === 6) break; %>
+   <div class="card" style="border-radius:10px;">
+     <img src="https://cdn.discordapp.com/avatars/<%= voted[i].id %>/<%= voted[i].avatar %>.png" alt="<%= voted[i].name %>'s Avatar" draggable="false" class="botimg_main">
+   <p class="botname_main"><%= voted[i].name %><br>
+    <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-server"></i> <%= voted[i].servers %> • <i class="fa-solid fa-check-to-slot"></i> <%= voted[i].votes %></span></p>
+   <div class="botdesc_main">
+    <i class="fa-solid fa-file-lines"></i> <%= voted[i].shortDesc %>
+   </div>
+   <div class="bottags_main">
+    <i class="fa-solid fa-hashtag"></i> <%= voted[i].tags %>
+   </div>
+   <div style="margin-left:20px;">
+    <a href="/bots/<%= voted[i].id %>/approve">
+   <button class="viewbtn">Approve</button>
+   </div></a>
+   <a href="/bots/<%= voted[i].id %>/deny">
+   <button class="votebtn">Deny</button></a>
+   </div></a>
+         <% } %>

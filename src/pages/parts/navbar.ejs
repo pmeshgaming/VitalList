@@ -10,11 +10,18 @@
     <div class="menu">
       <li style="margin-top: 4px"><a href="/servers"><i class="fa-solid fa-server"></i> Servers</a></li>
       <li style="margin-top: 4px"><a href="/partners"><i class="fa-solid fa-handshake"></i> Partners</a></li>
+      <% if(user) { %>
+        
+          
+          <li style="margin-top: 4px"><a href="/admin"><i class="fa fa-magic mr-1"></i> Admin</a></li>
+
+        <% } %>
       <% if (user) { %>
         <div style="margin: 10; font-size: 17px;"><i class="fa-solid fa-id-card"></i> <%= user.username %>#<%= user.discriminator %></div>
       <% } else { %>
         <li style="margin-top: 4px"><a href="/auth/login"><i class="fa-solid fa-sign-in-alt"></i> Login via Discord</a></li>
       <% } %>
+      
     </div>
   </ul>
 </nav>
