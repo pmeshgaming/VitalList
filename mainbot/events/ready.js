@@ -4,8 +4,9 @@ const model1 = require('../../src/models/bot.js')
 module.exports = {
     name: 'ready',
     async run(client, message, args) {
+        const bots = await model1.find();
         global.logger.system(`${client.user.tag} is online and ready.`);
-        client.user.setActivity("vitallist.xyz" || model1.length(), { type: 3 })
+        client.user.setActivity(`vitallist.xyz | ${bots.length} bots.`, { type: 3 })
 
         const lb_message = await client.channels.cache.get(global.config.channels.leaderboard).messages.fetch("1008537121637814363");
         setInterval(async () => {

@@ -8,14 +8,6 @@ const fs = require('fs')
 const { join } = require('path')
 
 
-
-client.on('guildMemberAdd', async (member) => {
-  if (member.guild.id === config.guilds.main) {
-    member.roles.add(config.roles.members)
-    client.channels.cache.get("1006065497562943610").send(`<:add:1006511788155752558> \`${member.user.tag}\` has just joined the server!`)
-  }
-})
-
 client.on('guildMemberRemove', async (member) => {
   if (member.guild.id === config.guilds.main) {
     client.channels.cache.get("1006065497562943610").send(`<a:leave:1006511956011790418> \`${member.user.tag}\` has just left the server.`)

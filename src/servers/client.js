@@ -2,10 +2,12 @@ const client = global.sclient;
 const config = global.config;
 const logger = global.logger;
 const { EmbedBuilder } = require('discord.js');
+const serversModel = require('../models/server.js')
 
-client.on('ready', () => {
+client.on('ready', async () => {
+    const servers = await serversModel.find();
     logger.system(`${client.user.tag} is online and ready.`)
-    client.user.setActivity("vitallist.xyz/servers", { type: 3 })
+    client.user.setActivity(`vitallist.xyz/servers | ${servers.length} servers.`, { type: 3 })
 })
 
 client.on("messageCreate", async (message) => {
