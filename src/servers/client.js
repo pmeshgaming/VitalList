@@ -5,7 +5,7 @@ const { EmbedBuilder } = require('discord.js');
 
 client.on('ready', () => {
     logger.system(`${client.user.tag} is online and ready.`)
-    client.user.setActivity("You", { type: 3 })
+    client.user.setActivity("vitallist.xyz/servers", { type: 3 })
 })
 
 client.on("messageCreate", async (message) => {
