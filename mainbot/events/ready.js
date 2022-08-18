@@ -1,9 +1,11 @@
 const { EmbedBuilder } = require('discord.js');
+const { model } = require('mongoose');
+const model1 = require('../../src/models/bot.js')
 module.exports = {
     name: 'ready',
     async run(client, message, args) {
         global.logger.system(`${client.user.tag} is online and ready.`);
-        client.user.setActivity("Stalking")
+        client.user.setActivity("vitallist.xyz" || model1.length(), { type: 3 })
 
         const lb_message = await client.channels.cache.get(global.config.channels.leaderboard).messages.fetch("1008537121637814363");
         setInterval(async () => {
