@@ -52,7 +52,11 @@ let app = mongoose.Schema({
     type: String,
     required: false
   },
-  submittedOn: {
+  deniedOn: {
+    type: String,
+    required: false
+  },
+submittedOn: {
     type: String,
     required: false
   },
@@ -78,6 +82,11 @@ let app = mongoose.Schema({
   },
   approved: {
     type: Boolean,
+    required: false,
+    default: false
+  },
+  denied: {
+    type: Boolean, 
     required: false,
     default: false
   },

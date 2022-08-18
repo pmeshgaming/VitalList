@@ -49,6 +49,7 @@ app.use((req, res, next) => {
 //-Alaways use protection!-//
 
 var minifyHTML = require("express-minify-html-terser");
+const { debug } = require('console');
 app.use(
   minifyHTML({
     override: true,
@@ -149,12 +150,22 @@ app.get("/", checkMaintenance, async (req, res) => {
 
   let model = require("./models/bot.js");
   let bots = await model.find({ approved: true });
+  let dbots = await model.find({ denied: false });
+
+  for (dbot of dbots) {
+    const tendaysago = new Date().getTime() - 10 * 24 * 60 * 60 * 1000;
+    if (dbot.deniedOn < tendaysago) {
+       dbot.deleteOne()
+       dbot.save()
+    }
+
+
   for (let i = 0; i < bots.length; i++) {
     const BotRaw = await client.users.fetch(bots[i].id);
     bots[i].name = BotRaw.username;
     bots[i].avatar = BotRaw.avatar;
-bots[i].name = bots[i].name.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
-bots[i].tags = bots[i].tags.join(", ")
+    bots[i].name = bots[i].name.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
+    bots[i].tags = bots[i].tags.join(", ")
   }
   Array.prototype.shuffle = function () {
     let a = this;
@@ -164,6 +175,7 @@ bots[i].tags = bots[i].tags.join(", ")
     }
     return a;
   };
+
 
   res.render("index.ejs", {
     bot: req.bot,
@@ -329,7 +341,8 @@ app.get("/bots/:id/deny", checkAuth, checkStaff, async (req, res) => {
 
   let bot = await model.findOne({ id: id});
 
-  bot.denied = true
+  bot.denied = true;
+  bot.deniedOn = Date.now();
   await bot.save();
 
   const BotRaw = await client.users.fetch(id);
