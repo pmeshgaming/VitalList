@@ -15,7 +15,6 @@ module.exports = {
             const sorted = users.sort((a, b) => b.xp - a.xp);
             const flitered = sorted.map(x => x.xp).sort((a, b) => b - a)
             const list = flitered.map(x => sorted.find(y => y.xp === x));
-            console.log(list.map(x => x.xp).id);
             const embed = new EmbedBuilder()
             .setTitle(`Top 10 Leaderboard`)
             .setDescription(list.toString())

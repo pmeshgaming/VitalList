@@ -315,7 +315,7 @@ bot.tag = BotRaw.tag;
 
   res.redirect("/admin?=successfully approved")
 
-  logs.send("<@"+bot.owner.toString()+">'s bot **"+bot.tag+"** has been approved by <@"+req.user.id+">")
+  logs.send("<@"+bot.owner+">'s bot **"+bot.tag+"** has been approved by <@"+req.user.id+">")
 
 })
 
