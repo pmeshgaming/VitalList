@@ -7,8 +7,9 @@ module.exports = {
         if (message.channel.type === "dm") return;
         if (message.guild.id != "1006065494257848433") return;
         let user = await model.findOne({ id: message.author.id});
-        if(!user) return await model.create({ id: message.author.id, username: message.author.username, xp: 1 });
+        if(!user) return await model.create({ id: message.author.id, username: message.author.tag, xp: 1 });
         user.xp = 1 + user.xp;
+        if (message.content.length > 50) user.xp = user.xp + 24;
         await user.save();
         if (user.xp % 50 === 0) {
             user.xp = 0;
