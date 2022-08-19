@@ -160,8 +160,6 @@ app.get("/", checkMaintenance, async (req, res) => {
     }
   }
 
-
-
   for (let i = 0; i < bots.length; i++) {
     const BotRaw = await client.users.fetch(bots[i].id);
     bots[i].name = BotRaw.username;
@@ -356,7 +354,7 @@ app.get("/bots/:id/deny", checkAuth, checkStaff, async (req, res) => {
   res.redirect("/admin?=successfully declined")
   console.log(bot.owner)
 
-  logs.send(":x: <@"+bot.owner+">'s bot **"+bot.tag+"** has been declined by <@"+req.user.id+">")
+  logs.send(":x: <@"+bot.owner+">'s bot **"+bot.tag+"** has been denied by <@"+req.user.id+">")
 
 })
 

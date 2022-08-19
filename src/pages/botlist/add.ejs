@@ -10,7 +10,7 @@
     <body style="background-color:#0a1128;"></body>
     <p style="color:white;font-size: 50;margin-top: 175px;"><b>Add Bot</b></p><p style="color:white;font-size: 20">Fill out the below form in order to add your bot to Vital list.</p><br><br>
     <div style="text-align:center;">
-        <form action="/bot/new" method="post">
+        <form action="/bots/new" method="post">
         <label style="color: red;font-size: 25;">*</label><label style="color: white;font-size: 25;">Client ID</label><br><br>
         <input class="addbot_field" type="text" placeholder="&nbsp;ex. 1004264023111507979" name="clientid" required ><br><br>
         <label style="color: white;font-size: 25;">Prefix</label><br>
@@ -24,16 +24,16 @@
         <label style="color: red;font-size: 25;">*</label><label style="color: white;font-size: 25;">Tags</label><br>
         <input class="addbot_field" type="text" placeholder="&nbsp;Seperated by space, ex. Fun, Utillty, Meme" name="tags" style="margin-top:15px;" required ><br><br>
         <label style="color: white;font-size: 25;">Website</label><br>
-        <input class="addbot_field" type="text" placeholder="&nbsp;ex. https://vitalist.xyz" name="website" style="margin-top:15px;" required ><br><br>
+        <input class="addbot_field" type="text" placeholder="&nbsp;ex. https://vitalist.xyz" name="website" style="margin-top:15px;" ><br><br>
         <label style="color: white;font-size: 25;">Github</label><br>
-        <input class="addbot_field" type="text" placeholder="&nbsp;ex. https://github.com/somereallyawesomegithublink" name="github" style="margin-top:15px;" required ><br><br>
+        <input class="addbot_field" type="text" placeholder="&nbsp;ex. https://github.com/somereallyawesomegithublink" name="github" style="margin-top:15px;"><br><br>
         <label style="color: white;font-size: 25;">Support Server</label><br>
-        <input class="addbot_field" type="text" placeholder="&nbsp;ex. https://discord.gg/DWX3d5r2wW" name="support" style="margin-top:15px;" required ><br><br>
+        <input class="addbot_field" type="text" placeholder="&nbsp;ex. https://discord.gg/DWX3d5r2wW" name="support" style="margin-top:15px;"><br><br>
         <!-- <input class="addbot_field" type="text" placeholder="&nbsp;" -->
         <label style="color: white">Fields with <label style="color: red;">*</label> are required.</label><br>
           <br><br>
-<label style="color: white;" for="tos">By clicking Submit, you have read and agreed to the <a href="/terms">Terms & Conditions.</a></label><br>
+          <label style="color: white;" for="tos">By clicking Submit, you have read and agreed to the <a href="/terms">Terms & Conditions.</a></label><br>
            <input type="submit" value="Submit" class="addbot_button" style="cursor:pointer;">
         </form>
         <br><br><br><br><br>
-        </div>
+     </div>
