@@ -90,10 +90,15 @@ submittedOn: {
     required: false,
     default: false
   },
+  tested: {
+    type: Boolean, 
+    required: false,
+    default: false
+  },
   certified: {
     type: Boolean,
     required: false,
     default: false
   }
 });
-module.exports = mongoose.model("bot", app);
+module.exports = mongoose.model("bots", app);

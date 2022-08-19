@@ -8,16 +8,32 @@
 </head>
     <%- include("../parts/navbar.ejs") %>
     <body style="background-color:#0a1128;"></body>
-    <p style="color:white;font-size: 50;margin-top: 175px;"><b>Add Bot</b></p><p style="color:white;font-size: 20"><b>Fill out the below form in order to add your bot to Vital list.</p><br><br>
+    <p style="color:white;font-size: 50;margin-top: 175px;"><b>Add Bot</b></p><p style="color:white;font-size: 20">Fill out the below form in order to add your bot to Vital list.</p><br><br>
     <div style="text-align:center;">
         <form action="/bot/new" method="post">
-        <input class="addbot_field" type="text" placeholder="&nbsp;*Client ID" name="clientid" required ><br>
-        <input class="addbot_field" type="text" placeholder="&nbsp;*Prefix" name="prefix" style="margin-top:15px;" required ><br>
-        <input class="addbot_field" type="text" placeholder="&nbsp;*Short Description" name="shortDesc" style="margin-top:15px;" required ><br>
-        <textarea class="addbot_field" rows="3" placeholder="&nbsp;*Long Description" style="margin-top:15px;" name="desc" onkeyup="setValidation($(this), checkValid($(this), 'char_300'))" autocomplete="off" required></textarea><br>
-        <input class="addbot_field" type="text" placeholder="&nbsp;*Bot Invite" name="invite" style="margin-top:15px;" required ><br>
+        <label style="color: red;font-size: 25;">*</label><label style="color: white;font-size: 25;">Client ID</label><br><br>
+        <input class="addbot_field" type="text" placeholder="&nbsp;ex. 1004264023111507979" name="clientid" required ><br><br>
+        <label style="color: white;font-size: 25;">Prefix</label><br>
+        <input class="addbot_field" type="text" placeholder="&nbsp;ex. vs!" name="prefix" style="margin-top:15px;"><br><br>
+        <label style="color: red;font-size: 25;">*</label><label style="color: white;font-size: 25;">Short Description</label><br>
+        <input class="addbot_field" type="text" placeholder="&nbsp;This bot can solve world hunger..." name="shortDesc" style="margin-top:15px;" required ><br><br>
+        <label style="color: red;font-size: 25;">*</label><label style="color: white;font-size: 25;">Long Description</label><br>
+        <textarea class="addbot_field" rows="3" placeholder="&nbsp;More about solving world hunger..." style="margin-top:15px;" name="desc" onkeyup="setValidation($(this), checkValid($(this), 'char_300'))" autocomplete="off" required></textarea><br><br>
+        <label style="color: red;font-size: 25;">*</label><label style="color: white;font-size: 25;">Invite URL</label><br>
+        <input class="addbot_field" type="text" placeholder="&nbsp;ex. https://discord.com/oauth2/authorize?client_id=1004264023111507979&scope=bot&permissions=0" name="invite" style="margin-top:15px;" required ><br><br>
+        <label style="color: red;font-size: 25;">*</label><label style="color: white;font-size: 25;">Tags</label><br>
+        <input class="addbot_field" type="text" placeholder="&nbsp;Seperated by space, ex. Fun, Utillty, Meme" name="tags" style="margin-top:15px;" required ><br><br>
+        <label style="color: white;font-size: 25;">Website</label><br>
+        <input class="addbot_field" type="text" placeholder="&nbsp;ex. https://vitalist.xyz" name="website" style="margin-top:15px;" required ><br><br>
+        <label style="color: white;font-size: 25;">Github</label><br>
+        <input class="addbot_field" type="text" placeholder="&nbsp;ex. https://github.com/somereallyawesomegithublink" name="github" style="margin-top:15px;" required ><br><br>
+        <label style="color: white;font-size: 25;">Support Server</label><br>
+        <input class="addbot_field" type="text" placeholder="&nbsp;ex. https://discord.gg/DWX3d5r2wW" name="support" style="margin-top:15px;" required ><br><br>
         <!-- <input class="addbot_field" type="text" placeholder="&nbsp;" -->
-          <br>
+        <label style="color: white">Fields with <label style="color: red;">*</label> are required.</label><br>
+          <br><br>
+<label style="color: white;" for="tos">By clicking Submit, you have read and agreed to the <a href="/terms">Terms & Conditions.</a></label><br>
            <input type="submit" value="Submit" class="addbot_button" style="cursor:pointer;">
         </form>
+        <br><br><br><br><br>
         </div>

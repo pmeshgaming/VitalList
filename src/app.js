@@ -283,7 +283,7 @@ app.get("/admin", checkAuth, checkStaff, async (req, res) => {
   const config = global.config;
 
   let model = require("./models/bot.js");
-  let bots = await model.find({ approved: false });
+  let bots = await model.find({ tested: false });
   for (let i = 0; i < bots.length; i++) {
     const BotRaw = await client.users.fetch(bots[i].id);
     bots[i].name = BotRaw.username;
@@ -320,6 +320,8 @@ app.get("/bots/:id/approve", checkAuth, checkStaff, async (req, res) => {
   let bot = await model.findOne({ id: id});
 
   bot.approved = true
+  bot.approvedOn = Date.now();
+  bot.tested = true
 
   await bot.save();
 
@@ -328,7 +330,7 @@ app.get("/bots/:id/approve", checkAuth, checkStaff, async (req, res) => {
 
   res.redirect("/admin?=successfully approved")
 
-  logs.send("<@"+bot.owner+">'s bot **"+bot.tag+"** has been approved by <@"+req.user.id+">")
+  logs.send(":white_check_mark: <@"+bot.owner+">'s bot **"+bot.tag+"** has been approved by <@"+req.user.id+">")
 
 })
 
@@ -344,15 +346,17 @@ app.get("/bots/:id/deny", checkAuth, checkStaff, async (req, res) => {
   let bot = await model.findOne({ id: id});
 
   bot.denied = true;
+  bot.tested = true;
   bot.deniedOn = Date.now();
   await bot.save();
 
   const BotRaw = await client.users.fetch(id);
   bot.tag = BotRaw.tag;
 
-  res.redirect("/admin?=successfully approved")
+  res.redirect("/admin?=successfully declined")
+  console.log(bot.owner)
 
-  logs.send("<@"+bot.owner.toString()+">'s bot **"+bot.tag+"** has been approved by <@"+req.user.id+">")
+  logs.send(":x: <@"+bot.owner+">'s bot **"+bot.tag+"** has been declined by <@"+req.user.id+">")
 
 })
 

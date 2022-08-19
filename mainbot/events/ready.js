@@ -8,26 +8,40 @@ module.exports = {
         global.logger.system(`${client.user.tag} is online and ready.`);
         client.user.setActivity(`vitallist.xyz | ${bots.length} bots.`, { type: 3 })
 
-       // const lb_message = await client.channels.cache.get(global.config.channels.leaderboard).messages.fetch("1008537121637814363");
-      //  setInterval(async () => {
-        //    const model = require("../../src/models/user.js");
-          //  const users = await model.find({}).sort({ xp: -1 }).limit(10)
-            //const sorted = users.sort((a, b) => b.xp - a.xp);
-            //const flitered = sorted.map(x => x.xp).sort((a, b) => b - a)
-            //const list = flitered.map(x => sorted.find(y => y.xp === x));
-            //const embed = new EmbedBuilder()
-            //.setTitle(`Top 10 Leaderboard`)
-            //.setDescription(`${list.map(x => `${x.username} - ${x.xp} xp`).join("\n")}`)
+        const lb_message = await client.channels.cache.get(global.config.channels.leaderboard).messages.fetch("1008537121637814363");
+        setInterval(async () => {
+            const model = require("../../src/models/user.js");
+            const users = await model.find({}).sort({ xp: -1 }).limit(10)
+            const sorted = users.sort((a, b) => b.xp - a.xp);
+            const flitered = sorted.map(x => x.xp).sort((a, b) => b - a)
+            const list = flitered.map(x => sorted.find(y => y.xp === x));
+            const embed = new EmbedBuilder()
+            .setTitle(`Top 10 Leaderboard`)
+            .setDescription(`${list.map(x => `${x.username} - ${x.xp} xp`).join("\n")}`)
             //Promise "error"
-            //.setColor('Random')
-            //.setThumbnail(lb_message.guild.iconURL())
-            //.setTimestamp()
-            //await lb_message.edit({embeds: [embed]});
-        //}, 10000);
-        
+            .setColor('Random')
+            .setThumbnail(lb_message.guild.iconURL())
+            .setTimestamp()
+            .setFooter({ text: lb_message.guild.name+" - Live Leaderboard", iconURL: "https://vitallist.xyz/img/icon.png"})
+            await lb_message.edit({embeds: [embed]});
+        }, 10000);
+        /*
+        const model = require("../../src/models/user.js");
 
+        const users = await model.find();
+        users.forEach(getUsername)
+        */
     }
 }
+
+/*
+async function getUsername(user) {
+  let userRaw = await client.users.fetch(user.id);
+  
+  user.username = userRaw.username;
+  user.save();
+}
+*/
 
 //{flitered.map((x, i) => `${i + 1}. ${client.users.fetch(users.find(y => y.xp == x).id, {force: true})}`).join('\n')}`
 //.setDescription(`${flitered.map((x, i) => `${i + 1}. ${client.users.fetch(users.find(y => y.xp == x).id, {force: true})}`).join('\n')}`)
