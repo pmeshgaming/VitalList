@@ -8,7 +8,7 @@ module.exports = {
     mongo: process.env.mongo,
     bot: {
         id: "1004263717355126845",
-        prefix: "v!",
+        prefix: "vl!",
         secret: process.env.secret,
         redirect: "http://localhost/auth/callback",
         token: process.env.token
