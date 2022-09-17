@@ -382,6 +382,17 @@ app.get("/admin", checkAuth, checkStaff, async(req, res) => {
     });
 })
 
+app.get("/bots/:id/deny", checkAuth, checkStaff, async(req, res) => {
+  const config = global.config; 
+
+  res.render("admin/deny.ejs", {
+    bot: req.bot,
+    id: req.params.id,
+    config: config,
+    user: req.user || null
+});
+})
+
 app.use('/bots/:id/status', checkAuth, checkStaff, async(req, res) => {
     const client = global.client;
     const logs = client.channels.cache.get(config.channels.weblogs)
@@ -400,8 +411,8 @@ app.use('/bots/:id/status', checkAuth, checkStaff, async(req, res) => {
         bot.tested = true
 
         await bot.save();
-        res.redirect("/admin?=successfully approved");
-        logs.send("<:greentick:1020134758753255555> <@" + bot.owner + ">'s bot **" + bot.tag + "** has been approved by <@" + req.user.id + ">");  
+        logs.send("<:greentick:1020134758753255555> <@" + bot.owner + ">'s bot **" + bot.tag + "** has been approved by <@" + req.user.id + ">.");  
+        return res.redirect("/admin?=successfully approved");
     }
 
     if (req.method == "DELETE") {
@@ -412,8 +423,8 @@ app.use('/bots/:id/status', checkAuth, checkStaff, async(req, res) => {
         bot.deniedOn = Date.now();
 
         await bot.save();
-        res.redirect("/admin?=successfully declined")
-        logs.send("<:redcross:1020135034075746404> <@" + bot.owner + ">'s bot **" + bot.tag + "** has been denied by <@" + req.user.id + ">")
+        logs.send("<:redcross:1020135034075746404> <@" + bot.owner + ">'s bot **" + bot.tag + "** has been denied by <@" + req.user.id + ">.\n**Reason**: "+ bot.reason)
+        return res.redirect("/admin?=successfully declined");
     }
 })
 
