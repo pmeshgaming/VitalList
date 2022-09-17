@@ -45,30 +45,23 @@
             <% let voted = allbots.sort((a,b) => b.votes - a.votes) %>
                    <% for(let i = 0; i < voted.length; i++){ %>
                                                <%  if (i === 6) break; %>
-                                               <div class="row">
-                        <div class="col-md-3 mb-3 bot-card-col" style="border-radius: 8px;">
-                            <div class="card" style="border-radius: 8px;">
-                                <% if (voted[i].avatar) { %>
-                                    <img class="card-img-top" style="border-radius: 8px;" src="https://cdn.discordapp.com/avatars/<%= voted[i].id %>/<%= voted[i].avatar %>.png?size=1280" alt="<%= voted[i].name %>">
-                                <% } else { %>
-                                    <img class="card-img-top" src="https://cdn.discordapp.com/embed/avatars/<%= (voted[i].id % 5) %>.png" alt="<%= voted[i].name %>">
-                                <% } %>
-                                <div class="card-body">
-                                    <h4 class="card-title" style="margin-bottom: 0;"><%= voted[i].name %></h4>
-                                    <center>
-                                        <div class="badges">
-                                            <span style="border-radius: 8px;" class="badge badge-success">Online</span>
-                                            <span style="border-radius: 8px;" class="badge badge-primary">Servers: <%= voted[i].servers %></span>
-                                            <span style="border-radius: 8px;" class="badge badge-danger">Upvotes: <%= bots[i].votes %></span>
-                                        </div>
-                                    </center>
-                                    <p class="card-text"><%= voted[i].shortDesc.length > 100 ? voted[i].shortDesc.substr(0, 97) + "..." : voted[i].shortDesc %></p>
-                                    <div class="btn-group" id="bot-card-bottons" role="group" aria-label="Basic example" style="width: 100%;">
-                                        <a href="/bots/<%= bots[i].id %>" style="border-radius: 8px;" type="button" class="btn btn-primary">View</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                                               <div class="card" style="border-radius:10px;">
+                                                <img src="https://cdn.discordapp.com/avatars/<%= voted[i].id %>/<%= voted[i].avatar %>.png" alt="<%= voted[i].name %>'s Avatar" draggable="false" class="botimg_main">
+                                              <p class="botname_main"><%= voted[i].name %><br>
+                                               <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-server"></i> <%= voted[i].servers %> • <i class="fa-solid fa-check-to-slot"></i> <%= voted[i].votes %></span></p>
+                                              <div class="botdesc_main">
+                                               <i class="fa-solid fa-file-lines"></i> <%= voted[i].shortDesc %>
+                                              </div>
+                                              <div class="bottags_main">
+                                               <i class="fa-solid fa-hashtag"></i> <%= voted[i].tags %>
+                                              </div>
+                                              <div style="margin-left:20px;">
+                                               <a href="/bot/<%= voted[i].id %>">
+                                              <button class="viewbtn">View</button>
+                                              </div></a>
+                                              <a href="/bot/<%= voted[i].id %>/vote">
+                                              <button class="votebtn">Vote</button></a>
+                                              </div></a>                                           
                     <% } %>
                 </div>
         </div>
@@ -76,16 +69,167 @@
 </body>
 
 <style>
-.bot-card-avatar {
-    width: 100%;
-    margin-bottom: 20px;
-}
-
 @media screen and (max-width: 757px) {
     .bot-card-col {
         margin: 0 30px;
     }
 }
+  .card {
+    height: 400px;
+    width: 400px;
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(17, 25, 40, 0.75);
+    border-radius: 10px;
+    margin-top: 15px;
+    margin-left: auto;
+    transition: all 0.2s;
+    margin-right: 10px;
+    position: relative;
+    display:inline-block;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  }
+
+  .viewbtn {
+    background-color:#480ddd;
+    height:40px;
+    width:150px;
+    border:none;
+    color:white;
+    border-radius:5px;
+    position:relative;
+    cursor:pointer;
+    bottom:0;
+    margin-left:15px;
+    margin-top: 65px;
+  }
+  .votebtn { 
+    background-color:#480ddd;
+    height:40px;
+    width:150px;
+    border:none;
+    cursor:pointer;
+    float:right;
+    margin-right:35px;
+    color:white;
+    border-radius:5px;
+    position:relative;
+    bottom:0;
+    margin-top:-40px;
+  }
+
+  .card_2 {
+    background-color:#001724;
+    width:350px;
+    text-decoration:none;
+    color:white;
+    border-radius:10px;
+    transition: all 0.2s;
+    display:inline-block;
+    height:300px;
+    margin-left:305px;
+    margin-top:10px;
+  }
+    .card:hover{
+    top: -7px;
+  }
+  .botname_main {
+    color:white;
+    font-size:25px;
+    margin-top:-95px;
+    margin-left:125px;
+    border-radius:10px;
+    font-weight:bold;
+  }
+    .adbutton {
+      background-color:#DF235B;
+      width:250px;
+      height:40px;
+      border:none;
+      overflow:visible;
+      color:white;
+      border-radius:5px;
+      margin-top:-50px;
+      cursor:pointer;
+
+    }
+  .botimg_main {
+    width:115px;
+    height:115px;
+    border-radius:100%;
+    margin-top: 5px;
+    margin-left:1px;
+
+  }
+    .botdesc_main {
+      color:white;
+      font-size:15px;
+      border: 10px solid transparent;
+      margin-top: 50px;
+      overflow:hidden;
+      text-align: left;
+
+    }
+
+    .bottags_main {
+        color:white;
+        font-size:15px;
+        border: 10px solid transparent;
+        margin-top: 15;
+        overflow:hidden;
+        text-align: left;
+   
+      }
+  
+  /* On mouse-over, add a deeper shadow */
+  .card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  }
+  
+  .container {
+    padding: 2px 16px;
+  }
+
+  .top_bots {
+    color:ghostwhite;
+    font-size:25px;
+    margin-left:50px;
+    margin-top:150px;
+    position: static
+  }
+
+  .shortdesc {
+    background-color:#001724;
+  width: 350px;
+    height:500px;
+    float:right;
+      text-overflow:hidden;
+    margin-right:50px;
+    margin-top:100px;
+    border-radius:5px;
+    position: absolute;
+  }
+  .secondbg {
+    width:100%;
+    height:100%;
+    background-color:#001724;
+  }
+  .botimg {
+    border-radius:100%;
+    width:150px;
+    height:150px;
+    float:left;
+    border: 7px solid #001724;
+    margin-top:50px;
+    margin-left:-300px;
+  }
+  .botname {
+    font-size:30px;
+    color:white;
+    margin-left:-50px;
+    margin-top:80px;
+  }
+
 </style>
 <script>
     $(function (params) {
