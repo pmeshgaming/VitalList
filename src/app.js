@@ -382,74 +382,39 @@ app.get("/admin", checkAuth, checkStaff, async(req, res) => {
     });
 })
 
-app.get("/bots/:id/approve", checkAuth, checkStaff, async(req, res) => {
-    let user = req.user;
+app.use('/bots/:id/status', checkAuth, checkStaff, async(req, res) => {
     const client = global.client;
-    let id = req.params.id;
     const logs = client.channels.cache.get(config.channels.weblogs)
+    const BotRaw = await client.users.fetch(req.params.id);
     let model = require("./models/bot.js");
+    let bot = await model.findOne({ id: req.params.id });
 
-    if (!await model.findOne({
-            id: id
-        })) return res.status(404).json({
+    if (!bot) return res.status(404).json({
         message: "This application could not be found in our site."
     });
+ 
+    if (req.method === 'POST') {
+        bot.tag = BotRaw.tag;
+        bot.approved = true
+        bot.approvedOn = Date.now();
+        bot.tested = true
 
-    let bot = await model.findOne({
-        id: id
-    });
+        await bot.save();
+        res.redirect("/admin?=successfully approved");
+        logs.send("<:greentick:1020134758753255555> <@" + bot.owner + ">'s bot **" + bot.tag + "** has been approved by <@" + req.user.id + ">");  
+    }
 
-    bot.approved = true
-    bot.approvedOn = Date.now();
-    bot.tested = true
+    if (req.method == "DELETE") {
+        bot.tag = BotRaw.tag;
+        bot.denied = true;
+        bot.tested = true;
+        bot.reason = req.body.reason;
+        bot.deniedOn = Date.now();
 
-    await bot.save();
-
-    const BotRaw = await client.users.fetch(id);
-    bot.tag = BotRaw.tag;
-
-    res.redirect("/admin?=successfully approved")
-
-    logs.send("<:greentick:1020134758753255555> <@" + bot.owner + ">'s bot **" + bot.tag + "** has been approved by <@" + req.user.id + ">")
-
-})
-
-app.get("/bots/:id/deny", checkAuth, checkStaff, async(req, res) => {
-//do stuff 
-//render /pages/admin/deny.ejs
-})
-
-app.post("/bots/:id/deny", checkAuth, checkStaff, async(req, res) => {
-    let user = req.user;
-    const client = global.client;
-    let id = req.params.id;
-    const resaon = req.body.reason;
-    const logs = client.channels.cache.get(config.channels.weblogs)
-    let model = require("./models/bot.js");
-
-    if (!await model.findOne({
-            id: id
-        })) return res.status(404).json({
-        message: "This application could not be found in our site."
-    });
-
-    let bot = await model.findOne({
-        id: id
-    });
-
-    bot.denied = true;
-    bot.tested = true;
-    bot.deniedOn = Date.now();
-    await bot.save();
-
-    const BotRaw = await client.users.fetch(id);
-    bot.tag = BotRaw.tag;
-
-    res.redirect("/admin?=successfully declined")
-    console.log(bot.owner)
-
-    logs.send("<:redcross:1020135034075746404> <@" + bot.owner + ">'s bot **" + bot.tag + "** has been denied by <@" + req.user.id + ">")
-
+        await bot.save();
+        res.redirect("/admin?=successfully declined")
+        logs.send("<:redcross:1020135034075746404> <@" + bot.owner + ">'s bot **" + bot.tag + "** has been denied by <@" + req.user.id + ">")
+    }
 })
 
 
