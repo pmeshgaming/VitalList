@@ -11,6 +11,7 @@ const express = require("express"),
   passport = require("passport"),
   Strategy = require('passport-discord').Strategy;
   app = express();
+  const SQLiteStore = require('connect-sqlite3')(session);
 
 const { inspect } = require("util");
 
@@ -67,10 +68,11 @@ app.use(
 
 //-Passport Discord-//
 
-passport.serializeUser(function (user, done) {
+passport.serializeUser(function(user, done) {
   done(null, user);
 });
-passport.deserializeUser(function (obj, done) {
+
+passport.deserializeUser(function(obj, done) {
   done(null, obj);
 });
 
@@ -86,18 +88,20 @@ passport.use(
       scope: scopes,
       prompt: prompt,
     },
-    function (_accessToken, refreshToken, profile, done) {
+    function (accessToken, refreshToken, profile, done) {
       process.nextTick(function () {
+        profile.tokens = { accessToken };
         return done(null, profile);
-      });
+    });
     }
   )
 );
 
 app.use(
   session({
+    store: new SQLiteStore,
     secret:
-      "keyboard cat is not a great secret bryden is a complete an utter pillock and should be fired right away",
+      "supprtsecretsecretforaveryepicsecert",
     resave: false,
     saveUninitialized: false,
   })
@@ -165,7 +169,7 @@ app.get("/", checkMaintenance, async (req, res) => {
     bots[i].name = BotRaw.username;
     bots[i].avatar = BotRaw.avatar;
     bots[i].name = bots[i].name.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
-    bots[i].tags = bots[i].tags.join(", ")
+    bots[i].tags = bots[i].tags.join(",")
   }
   Array.prototype.shuffle = function () {
     let a = this;
@@ -191,7 +195,7 @@ app.get("/bots/new", checkMaintenance, checkAuth, async (req, res) => {
   });
 })
 
-app.post("/bots/new", checkAuth, async (req, res) => { 
+app.post("/bots/new", checkMaintenance, checkAuth, async (req, res) => { 
   let user = req.user;
   const client = global.client;
   const logs = client.channels.cache.get(config.channels.weblogs)
@@ -202,9 +206,10 @@ app.post("/bots/new", checkAuth, async (req, res) => {
    res.redirect('/')
  }
   
-if(await model.findOne({ id: data.clientid }))  return res.status(409).json({ message: "This application has already been added to our site." });
+ data.tags = data.tags.split(',');
 
- 
+if(await model.findOne({ id: data.clientid })) return res.status(409).json({ message: "This application has already been added to our site." });
+
 const bot = await client.users.fetch(data.clientid);
 await model
        .create({
@@ -266,9 +271,30 @@ app.post('/api/bots/:id/', async (req, res) => {
 //-ServerList-//
 
 app.get("/servers", checkMaintenance, async (req, res) => {
+  const client = global.sclient;
+
+  let model = require("./models/server.js");
+  let servers = await model.find({ published: true });
+
+  for (let i = 0; i < servers.length; i++) {
+    const ServerRaw = await client.guilds.fetch(servers[i].id);
+    servers[i].name = ServerRaw.username;
+    servers[i].avatar = ServerRaw.avatar;
+    servers[i].name = servers[i].name.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
+    servers[i].tags = servers[i].tags.join(",")
+  }
+  Array.prototype.shuffle = function () {
+    let a = this;
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
 
   res.render("servers/index.ejs", {
     bot: req.bot,
+    servers: servers.shuffle(),
     user: req.user || null
   });
 })

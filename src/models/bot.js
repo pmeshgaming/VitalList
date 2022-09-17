@@ -24,7 +24,7 @@ let app = mongoose.Schema({
     required: false
   },
   owner: {
-    type: Number,
+    type: String,
     required: false
   },
   prefix: {

@@ -1,27 +1,57 @@
-<head>
-  <link rel="stylesheet" type="text/css" href="/assets/navbar.css" />
-  <link rel="stylesheet" type="text/css" href="/assets/main.css" />
-</head>
-<nav class="navbar">
-  <div class="logo"><a href="/"><img style="margin-left: -95;" src="/img/icon.png" alt="VitalList Logo" width="50" height="50"><p class="title" style="margin-top: -40px;margin-left: 75px;">VitalList </p></a></div>
-  <ul class="nav-links">
-      <input type="checkbox" id="checkbox_toggle" />
-      <label for="checkbox_toggle" style="cursor: pointer;" class="hamburger">&#9776;</label>
-    <div class="menu">
-      <li style="margin-top: 4px"><a href="/servers"><i class="fa-solid fa-server"></i> Servers</a></li>
-      <li style="margin-top: 4px"><a href="/partners"><i class="fa-solid fa-handshake"></i> Partners</a></li>
-      <% if(user) { %>
-        
-          <% if(config.owners.includes(user.id)) { %>
-          <li style="margin-top: 4px"><a href="/admin"><i class="fa fa-magic mr-1"></i> Admin</a></li>
+<nav class="navbar navbar-expand-lg navbar-dark dark">
+  <a class="navbar-brand" href="/"><img src="/img/icon.png" style="height: 50px; width: 50px;"></a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarColor02">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/"><i class="fa-solid fa-house"></i>&nbsp;Home<span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/bots"><i class="fa-solid fa-robot"></i>&nbsp;Bots</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/partners"><i class="fa-solid fa-handshake"></i>&nbsp;Partners</a>
+      </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+          <li class="nav-item dropdown mr-2">
+              <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa-solid fa-paint-roller"></i>&nbsp;Themes</a>
+              <div class="dropdown-menu">
+                  <center class="btn-group-vertical" style="width: calc(100% - 20px); margin: 0 10px;">
+                      <button type="button" onclick="toggleTheme('white')" class="btn btn-primary" style="background-color: white; color: black; border: 1px solid white;border-radius: 4px;">White</button>
+                      <button type="button" onclick="toggleTheme('dark')" style="border-radius: 4px;" class="btn btn-secondary">Dark</button>
+                      <button type="button" onclick="toggleTheme('ocean')" style="border-radius: 4px;" class="btn btn-primary">Ocean</button>
+                  </center>
+              </div>
+          </li>
+          <% if (user) { %>
+              <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle btn btn-primary pl-3 pr-3 mr-3" style="border-radius: 8px;" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" style="color: white !important;"><%= user.username %>#<%= user.discriminator %></a>
+                      <div class="dropdown-menu">
+                      <a class="dropdown-item" href="/me"><i class="fa-solid fa-address-card"></i>&nbsp;&nbsp;Profile</a>
+                      <a class="dropdown-item" href="/bots/new"><i class="fa-solid fa-plus"></i>&nbsp;&nbsp;Add Bot</a>
+                      <a class="dropdown-item" href="/auth/logout"><i class="fa-solid fa-right-from-bracket"></i>&nbsp;&nbsp;Logout</a>
+                      <% if(config.owners.includes(user.id)) { %>
+                          <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="/admin"><i class="fa fa-magic mr-1"></i>Admin Panel</a>
+                      <% } %>
+                  </div>
+              </li>
+          <% } else { %>
+              <li class="nav-item">
+                  <a href="/auth/login" style="border-radius: 8px;" class="btn btn-primary pl-3 pr-3 mr-3"><i class="fa-solid fa-sign-in-alt"></i>&nbsp;&nbsp;Login via Discord</a>
+              </li>
           <% } %>
-        <% } %>
-      <% if (user) { %>
-        <div style="margin: 10; font-size: 17px;"><i class="fa-solid fa-id-card"></i> <%= user.username %>#<%= user.discriminator %></div>
-      <% } else { %>
-        <li style="margin-top: 4px"><a href="/auth/login"><i class="fa-solid fa-sign-in-alt"></i> Login via Discord</a></li>
-      <% } %>
-      
-    </div>
-  </ul>
+      </ul>
+  </div>
 </nav>
+
+<script>
+function toggleTheme(theme) {
+  localStorage.setItem("theme", theme);
+  location.reload();
+}
+</script>
