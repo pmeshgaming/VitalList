@@ -14,13 +14,22 @@ create a fourm and post to /bots/:id/deny
     <center>
     <h1 class="title"><b><i class="fa fa-magic mr-1"></i> Deny Bot</b><br></h1><p>Fill out the reason below in order to deny the bot.</p>
 </center>
-<form action="/bots/<%- id %>/status" method="DELETE">
     <div class="form-group required">
         <label for="reason">Reason</label>
         <input type="text" class="form-control" id="reason" placeholder="Stupid Ahh bot" autocomplete="off">
     </div>
-    <input type="submit" value="Submit" class="addbot_button" style="cursor:pointer;">
-</form>
+    <input type="submit" value="Submit" class="addbot_button" onclick='denybot()'style="cursor:pointer;">
+    <script>
+    function denybot(_id) {
+        const request = new XMLHttpRequest();
+        request.open('DELETE', `/bot/<%- id %>/status`, true);
+        request.setRequestHeader('id', '#{note.id}');
+        request.send(JSON.stringify({id: _id, reason: document.getElementById('reason').value}));
+        //window.location.reload();
+    }
+
+    </script>
+
 </div>
 </div>
         <br><br><br><br><br>
