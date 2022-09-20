@@ -18,7 +18,11 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
           <li class="nav-item dropdown mr-2">
-              <a class="nav-link dropdown-toggle" style="margin-top:10px" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa-solid fa-paint-roller"></i>&nbsp;Themes</a>
+            <% if (user) { %>
+              <a class="nav-link dropdown-toggle" style="margin-top:10px " data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa-solid fa-paint-roller"></i>&nbsp;Themes</a>
+            <% } else { %>
+              <a class="nav-link dropdown-toggle" style="margin-top:4px" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa-solid fa-paint-roller"></i>&nbsp;Themes</a>
+            <% } %>
               <div class="dropdown-menu">
                   <center class="btn-group-vertical" style="width: calc(100% - 20px); margin: 0 10px;">
                       <button type="button" onclick="toggleTheme('white')" class="btn btn-primary" style="background-color: white; color: black; border: 1px solid white;border-radius: 4px;">White</button>
@@ -36,13 +40,14 @@
                       <a class="dropdown-item" href="/auth/logout"><i class="fa-solid fa-right-from-bracket"></i>&nbsp;&nbsp;Logout</a>
                       <% if(config.owners.includes(user.id)) { %>
                           <div class="dropdown-divider"></div>
-                          <a class="dropdown-item" href="/admin"><i class="fa fa-magic mr-1"></i>Admin Panel</a>
+                          <a class="dropdown-item" href="/queue"><i class="fa fa-bars mr-1"></i>Queue</a>
                       <% } %>
                   </div>
               </li>
           <% } else { %>
               <li class="nav-item">
-                  <a href="/auth/login" style="border-radius: 8px;" class="btn btn-primary pl-3 pr-3 mr-3"><i class="fa-solid fa-sign-in-alt"></i>&nbsp;&nbsp;Login via Discord</a>
+                  <a href="/auth/login" style="border-radius: 8px; " class="btn btn-primary pl-3 pr-3 mr-3"><i class="fa-solid fa-sign-in-alt"></i>&nbsp;&nbsp;Login via Discord</a>
+                  
               </li>
           <% } %>
       </ul>
