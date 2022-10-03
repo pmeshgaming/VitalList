@@ -10,7 +10,7 @@
 $(document).ready(function() {
     const themeFromLocal = localStorage.getItem("theme");
     const themes = ["white", "dark", "ocean"];
-    const currentTheme = themes.includes(themeFromLocal) ? themeFromLocal : "white";
+    const currentTheme = themes.includes(themeFromLocal) ? themeFromLocal : "ocean";
     $("#theme").attr("href", `/assets/${currentTheme}.css`);
 });
 </script>

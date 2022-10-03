@@ -1,4 +1,4 @@
 node_modules
 .env
-VitalList.code-workspace
 package-lock.json
+sessions

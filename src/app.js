@@ -444,9 +444,9 @@ app.post("/bots/:id/deny", checkAuth, checkStaff, async(req, res) => {
 app.use('/bots/:id/status', checkAuth, checkStaff, async(req, res) => {
     const client = global.client;
     const logs = client.channels.cache.get(config.channels.weblogs)
-    const BotRaw = await client.users.fetch(req.params.id);
+    const BotRaw = await client.users.fetch(req.body.id);
     let model = require("./models/bot.js");
-    let bot = await model.findOne({ id: req.params.id });
+    let bot = await model.findOne({ id: req.body.id });
 
     if (!bot) return res.status(404).json({
         message: "This application could not be found in our site."
