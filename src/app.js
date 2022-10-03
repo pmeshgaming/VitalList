@@ -1,10 +1,11 @@
 const logger = require('../functions/logger');
-
+const { EmbedBuilder} = require('discord.js')
 const fetch = (...args) =>
     import ("node-fetch").then(({
         default: fetch
     }) => fetch(...args));
 const mongoose = require("mongoose");
+const subdomain = require('express-subdomain');
 const config = global.config;
 global.logger = logger;
 const path = require("path");
@@ -191,7 +192,7 @@ app.get("/", checkMaintenance, async(req, res) => {
         bots[i].name = BotRaw.username;
         bots[i].avatar = BotRaw.avatar;
         bots[i].name = bots[i].name.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
-        bots[i].tags = bots[i].tags.join(",")
+        bots[i].tags = bots[i].tags.join(", ")
     }
     Array.prototype.shuffle = function() {
         let a = this;
@@ -212,7 +213,7 @@ app.get("/", checkMaintenance, async(req, res) => {
 
 app.get("/bots/new", checkMaintenance, checkAuth, async(req, res) => {
     res.render("botlist/add.ejs", {
-        bot: req.bot,
+        bot: global.client,
         user: req.user || null
     });
 })
@@ -228,22 +229,20 @@ app.post("/bots/new", checkMaintenance, checkAuth, async(req, res) => {
         res.redirect('/')
     }
 
-    data.tags = data.tags.split(',');
-
     if (await model.findOne({
             id: data.clientid
         })) return res.status(409).json({
         message: "This application has already been added to our site."
     });
 
-    const bot = await client.users.fetch(data.clientid);
+    const bot = await client.users.fetch(data.id);
     await model
         .create({
-            id: data.clientid,
+            id: data.id,
             prefix: data.prefix,
             owner: req.user.id,
-            desc: data.desc,
-            shortDesc: data.shortDesc,
+            desc: data.description.long,
+            shortDesc: data.description.short,
             submitedOn: Date.now(),
             views: 0,
             tags: data.tags,
@@ -349,7 +348,7 @@ app.get("/servers", checkMaintenance, async(req, res) => {
 
 //-Admin Pages-//
 
-app.get("/admin", checkAuth, checkStaff, async(req, res) => {
+app.get("/queue", checkAuth, checkStaff, async(req, res) => {
 
     const client = global.client;
     const config = global.config;
@@ -374,7 +373,7 @@ app.get("/admin", checkAuth, checkStaff, async(req, res) => {
         return a;
     };
 
-    res.render("admin/index.ejs", {
+    res.render("queue/index.ejs", {
         bot: req.bot,
         bots: bots.shuffle(),
         config: config,
@@ -382,16 +381,65 @@ app.get("/admin", checkAuth, checkStaff, async(req, res) => {
     });
 })
 
+app.get("/bots/:id/approve", checkAuth, checkStaff, async(req, res) => {
+    const config = global.config; 
+  
+    res.render("queue/approve.ejs", {
+      bot: req.bot,
+      id: req.params.id,
+      config: config,
+      user: req.user || null
+  });
+  })
+
 app.get("/bots/:id/deny", checkAuth, checkStaff, async(req, res) => {
   const config = global.config; 
 
-  res.render("admin/deny.ejs", {
+  res.render("queue/deny.ejs", {
     bot: req.bot,
     id: req.params.id,
     config: config,
     user: req.user || null
 });
 })
+
+app.post("/bots/:id/deny", checkAuth, checkStaff, async(req, res) => {
+    const config = global.config; 
+    const logs = client.channels.cache.get(config.channels.weblogs)
+    const BotRaw = await client.users.fetch(req.params.id);
+    let model = require("./models/bot.js");
+    let bot = await model.findOne({ id: req.params.id });
+
+    if (!bot) return res.status(404).json({
+        message: "This application could not be found in our site."
+    });
+    
+    const OwnerRaw = await client.users.fetch(bot.owner);
+
+    bot.tag = BotRaw.tag;
+    bot.denied = true;
+    bot.tested = true;
+    bot.ownerName = OwnerRaw.tag;
+    bot.reason = req.body.reason;
+    bot.deniedOn = Date.now();
+    const date = new Date();
+
+    await bot.save();
+
+    const denyEmbed = new EmbedBuilder()
+    .setTitle("Bot Denied")
+    .setDescription("<:redcross:1020135034075746404> " + bot.tag + " has been denied on Vital List.")
+    .setColor("Red")
+    .addFields({ name: "Bot", value: `[${bot.tag}](https://vitallist.xyz/bots/${bot.id})`, inline: true})
+    .addFields({ name: "Owner", value: `[${bot.ownerName}](https://vitallist.xyz/user/${bot.owner})`, inline: true})
+    .addFields({ name: "Reviewer", value: `[${req.user.username}#${req.user.discriminator}](https://vitallist.xyz/user/${req.user.id})`, inline: true})
+    .addFields({ name: "Reason", value: `${bot.reason}`, inline: true})
+    .addFields({ name: "Date", value: `${date.toLocaleString()}`, inline: true})
+    .setFooter({ text: "Deny Logs - VitalList", iconURL: `${global.client.user.displayAvatarURL()}`})
+
+    logs.send({ embeds: [denyEmbed] })
+    return res.redirect("/queue?=successfully declined");
+  });
 
 app.use('/bots/:id/status', checkAuth, checkStaff, async(req, res) => {
     const client = global.client;
@@ -404,27 +452,29 @@ app.use('/bots/:id/status', checkAuth, checkStaff, async(req, res) => {
         message: "This application could not be found in our site."
     });
  
+    const OwnerRaw = await client.users.fetch(bot.owner);
+
     if (req.method === 'POST') {
         bot.tag = BotRaw.tag;
         bot.approved = true
+        bot.ownerName = OwnerRaw.tag;
         bot.approvedOn = Date.now();
         bot.tested = true
-
         await bot.save();
-        logs.send("<:greentick:1020134758753255555> <@" + bot.owner + ">'s bot **" + bot.tag + "** has been approved by <@" + req.user.id + ">.");  
-        return res.redirect("/admin?=successfully approved");
-    }
+        const date = new Date();
 
-    if (req.method == "DELETE") {
-        bot.tag = BotRaw.tag;
-        bot.denied = true;
-        bot.tested = true;
-        bot.reason = req.body.reason;
-        bot.deniedOn = Date.now();
+        const approveEmbed = new EmbedBuilder()
+    .setTitle("Bot Approved")
+    .setDescription("<:greentick:1020134758753255555> "+ bot.tag + " has been approved on Vital List.")
+    .setColor("Green")
+    .addFields({ name: "Bot", value: `[${bot.tag}](https://vitallist.xyz/bots/${bot.id})`, inline: true})
+    .addFields({ name: "Owner", value: `[${bot.ownerName}](https://vitallist.xyz/user/${bot.owner})`, inline: true})
+    .addFields({ name: "Reviewer", value: `[${req.user.username}#${req.user.discriminator}](https://vitallist.xyz/user/${req.user.id})`, inline: true})
+    .addFields({ name: "Date", value: `${date.toLocaleString()}`, inline: true})
+    .setFooter({ text: "Approve Logs - VitalList", iconURL: `${global.client.user.displayAvatarURL()}`})
 
-        await bot.save();
-        logs.send("<:redcross:1020135034075746404> <@" + bot.owner + ">'s bot **" + bot.tag + "** has been denied by <@" + req.user.id + ">.\n**Reason**: "+ bot.reason)
-        return res.redirect("/admin?=successfully declined");
+    logs.send({ embeds: [approveEmbed] })
+        return res.redirect("/queue?=successfully approved");
     }
 })
 
