@@ -14,12 +14,12 @@
             <form action="/bots/new/" method="POST" onsubmit="return validateForm()">
                 <div class="form-group required">
                     <label for="botID">Your Bot ID</label>
-                    <input type="number" class="form-control" id="botID" placeholder="<%= bot.user.id %>" aria-describedby="botIDhelp" onkeyup="setValidation($(this), checkValid($(this)))" autocomplete="off">
+                    <input type="number" class="form-control" id="botID" placeholder="1026362109287739423" aria-describedby="botIDhelp" onkeyup="setValidation($(this), checkValid($(this)))" autocomplete="off">
                     <small id="botIDhelp" class="form-text text-muted">Can be found at <a style="color: #094cdb" target="__blank" href="https://discord.com/developers">Discord Developers Page</a></small>
                 </div>
                 <div class="form-group required">
                     <label for="botPrefix">Prefix</label>
-                    <input type="text" class="form-control" id="botPrefix" placeholder="<%= global.config.prefix %>" onkeyup="setValidation($(this), checkValid($(this)))" autocomplete="off">
+                    <input type="text" class="form-control" id="botPrefix" placeholder="vl!" onkeyup="setValidation($(this), checkValid($(this)))" autocomplete="off">
                 </div>
                 <div class="form-group required">
                     <label for="botShortDesc">Short Description</label>
@@ -39,6 +39,11 @@
                         </div>
                     </div>
                 </div>
+                <div class="form-group required">
+                    <label for="botInvite">Invite URL</label>
+                    <input type="url" class="form-control" id="botInvite" aria-describedby="botInvitehelp" placeholder="https://discordapp.com/oauth2/authorize?client_id=<%= bot.user.id %>&scope=bot&permissions=8" autocomplete="off" required>
+                    <small id="botInvitehelp" class="form-text text-muted">Can be generated at <a style="color: #094cdb" target="__blank" href="https://discordapi.com/permissions.html">Discord API Permissions</a></small>
+                </div>
                 <div class="form-group">
                     <label for="botWebsite">Website</label>
                     <input type="url" class="form-control" id="botWebsite" placeholder="https://vitallist.xyz" autocomplete="off">
@@ -55,11 +60,6 @@
                         </div>
                         <input type="text" class="form-control" id="botSupport" placeholder="HrWe2BwVbd" autocomplete="off">
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="botInvite">Invite URL</label>
-                    <input type="url" class="form-control" id="botInvite" aria-describedby="botInvitehelp" placeholder="https://discordapp.com/oauth2/authorize?client_id=<%= bot.user.id %>&scope=bot&permissions=8" autocomplete="off">
-                    <small id="botInvitehelp" class="form-text text-muted">Can be generated at <a style="color: #094cdb" target="__blank" href="https://discordapi.com/permissions.html">Discord API Permissions</a></small>
                 </div>
                 <div class="form-group" id="tags-box">
                     <label class="mb-0">Bot Tags</label>

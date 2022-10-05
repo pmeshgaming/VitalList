@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%- bot.name %> - VitalList</title>
+    <%- include("../parts/head.ejs") %>
+</head>
+<body>
+    <%- include("../parts/navbar.ejs", { bot, user }) %>
+
+    <div class="container">
+        <div class="jumbotron mt-5">
+            <div class="row" style="width: 100%;">
+                <div class="col-sm-2">
+
+                    <img class="card-img-top" src="https://cdn.discordapp.com/avatars/<%= bot.id %>/<%= bot.avatar %>.png?size=1280">
+
+                </div>
+                    <div class="col-sm">
+                        <h3><%= bot.name %><small class="text-muted">#<%= bot.discriminator %></small></h3>
+                    </div>
+                    </div>
+                    </div>
