@@ -332,6 +332,11 @@ app.post("/bots/new", checkMaintenance, checkAuth, async(req, res) => {
 
 })
 
+//-TAG-//
+app.get('/tag', async(req, res) => {
+    
+})
+
 //-API-//
 
 app.get('/api/bots/:id', async(req, res) => {
