@@ -443,9 +443,11 @@ app.get("/queue", checkAuth, checkStaff, async(req, res) => {
     let inprogress = await model.find({
         inprogress: true
     });
+
     for (let i = 0; i < inprogress.length; i++) {
+        console.log(inprogress[i])
         const IPRaw = await client.users.fetch(inprogress[i].id);
-        const reviewerRaw = await client.users.fetch(inprogress[i].reviewer)
+        const reviewerRaw = await client.users.fetch("529815278456930314")
         inprogress[i].tag = IPRaw.tag;
         inprogress[i].name = IPRaw.username;
         inprogress[i].avatar = IPRaw.avatar;
