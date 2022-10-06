@@ -15,7 +15,7 @@ const client = new Client({
     repliedUser: false
   },
   intents: [
-    GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMembers
+    GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildPresences
     ],
    partials: [
     Partials.Channel, Partials.Message, Partials.GuildMember

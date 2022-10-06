@@ -257,30 +257,6 @@ app.get("/bots", checkMaintenance, async(req, res) => {
     });
 })
 
-app.get("/bots/:id", checkMaintenance, async(req, res) => {
-    let id = req.params.id;
-    const client = global.client;
-    const model = require("./models/bot.js")
-    const bot = await model.findOne({ id: id});
-    if(!bot) return res.status(404).send("This bot was not found on our list.");
-
-    const BotRaw = (await client.users.fetch(id)) || null;
-    const OwnerRaw = client.users.fetch(bot.owner);
-    bot.name = BotRaw.username;
-    bot.avatar = BotRaw.avatar;
-    bot.discriminator = BotRaw.discriminator;
-    bot.tag = BotRaw.tag;
-    bot.ownerTag = OwnerRaw.tag;
-    bot.ownerAvatar = OwnerRaw.avatar;
-    bot.tags = bot.tags.join(", ")
-
-    res.render("botlist/viewbot.ejs", {
-        bot2: req.bot,
-        bot: bot,
-        user: req.user || null
-    });
-})
-
 app.get("/bots/new", checkMaintenance, checkAuth, async(req, res) => {
     res.render("botlist/add.ejs", {
         bot: global.client,
@@ -332,6 +308,37 @@ app.post("/bots/new", checkMaintenance, checkAuth, async(req, res) => {
 
 })
 
+app.get("/bots/:id", checkMaintenance, async(req, res) => {
+    let id = req.params.id;
+    const client = global.client;
+    const model = require("./models/bot.js")
+    const bot = await model.findOne({ id: id});
+    const guild = await client.guilds.fetch(global.config.guilds.main)
+    if(!bot) return res.status(404).send("This bot was not found on our list.");
+
+    try { 
+        guild.members.fetch(id) || null;
+     } catch(err) {
+             return res.status(404).send("This bot is not in our Discord server, so we could not fetch it's data. Error: "+ err);
+     }
+
+    const BotRaw = (await client.users.fetch(id)) || null;
+    const OwnerRaw = client.users.fetch(bot.owner);
+    const PresenceRaw = await guild.members.fetch(id) || null;
+    bot.name = BotRaw.username;
+    bot.avatar = BotRaw.avatar;
+    bot.presence = PresenceRaw.presence;
+    bot.discriminator = BotRaw.discriminator;
+    bot.tag = BotRaw.tag;
+    bot.ownerTag = OwnerRaw.tag;
+    bot.ownerAvatar = OwnerRaw.avatar;
+    bot.tags = bot.tags.join(", ")
+
+    res.render("botlist/viewbot.ejs", {
+        bot2: req.bot,
+        bot: bot,
+        user: req.user || null
+    });
 //-TAG-//
 app.get('/tag', async(req, res) => {
     
@@ -444,6 +451,21 @@ app.get("/queue", checkAuth, checkStaff, async(req, res) => {
         bots[i].name = bots[i].name.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
         bots[i].tags = bots[i].tags.join(", ")
     }
+
+    let inprogress = await model.find({
+        inprogress: true
+    });
+
+    for (let i = 0; i < inprogress.length; i++) {
+        const IPRaw = await client.users.fetch(inprogress[i].id);
+        const ReviewerRaw = await client.users.fetch(inprogress[i].reviewer);
+        inprogress[i].tag = IPRaw.tag;
+        inprogress[i].name = IPRaw.username;
+        inprogress[i].avatar = IPRaw.avatar;
+        inprogress[i].reviewer = ReviewerRaw.tag;
+        inprogress[i].tags = inprogress[i].tags.join(", ")
+    }
+
     Array.prototype.shuffle = function() {
         let a = this;
         for (let i = a.length - 1; i > 0; i--) {
@@ -463,6 +485,11 @@ app.get("/queue", checkAuth, checkStaff, async(req, res) => {
 
 app.get("/bots/:id/approve", checkAuth, checkStaff, async(req, res) => {
     const config = global.config; 
+    let model = require("./models/bot.js");
+    let bot = await model.findOne({ id: req.params.id });
+    if (!bot) return res.status(404).json({
+        message: "This application could not be found in our site."
+    });
   
     res.render("queue/approve.ejs", {
       bot: req.bot,
@@ -474,7 +501,12 @@ app.get("/bots/:id/approve", checkAuth, checkStaff, async(req, res) => {
 
 app.get("/bots/:id/deny", checkAuth, checkStaff, async(req, res) => {
   const config = global.config; 
-
+  let model = require("./models/bot.js");
+  let bot = await model.findOne({ id: req.params.id });
+  if (!bot) return res.status(404).json({
+      message: "This application could not be found in our site."
+  });
+  
   res.render("queue/deny.ejs", {
     bot: req.bot,
     id: req.params.id,
@@ -499,6 +531,7 @@ app.post("/bots/:id/deny", checkAuth, checkStaff, async(req, res) => {
     bot.tag = BotRaw.tag;
     bot.denied = true;
     bot.tested = true;
+    bot.inprogress = false;
     bot.ownerName = OwnerRaw.tag;
     bot.reason = req.body.reason;
     bot.deniedOn = Date.now();
@@ -537,6 +570,7 @@ app.use('/bots/:id/status', checkAuth, checkStaff, async(req, res) => {
     if (req.method === 'POST') {
         bot.tag = BotRaw.tag;
         bot.approved = true
+        bot.inprogress = false;
         bot.ownerName = OwnerRaw.tag;
         bot.approvedOn = Date.now();
         bot.tested = true
@@ -588,6 +622,8 @@ app.get("/403", async(req, res) => {
     });
 })
 
+})
+
 //-Other Pages-//
 
 app.get("/discord", (req, res) => res.redirect("https://discord.gg/DWX3d5r2wW"))
@@ -603,7 +639,6 @@ app.use(function(req, res, next) {
     }
 
 });
-
 //-Functions-//
 
 function checkAuth(req, res, next) {
