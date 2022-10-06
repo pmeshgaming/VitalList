@@ -343,6 +343,7 @@ app.get("/bots/:id", checkMaintenance, async(req, res) => {
 app.get('/tag', async(req, res) => {
     
 })
+})
 
 //-API-//
 
@@ -621,8 +622,6 @@ app.get("/403", async(req, res) => {
         bot: req.bot,
         user: req.user || null
     });
-})
-
 })
 
 //-Other Pages-//
