@@ -623,6 +623,8 @@ app.get("/403", async(req, res) => {
     });
 })
 
+})
+
 //-Other Pages-//
 
 app.get("/discord", (req, res) => res.redirect("https://discord.gg/DWX3d5r2wW"))
@@ -638,7 +640,6 @@ app.use(function(req, res, next) {
     }
 
 });
-
 //-Functions-//
 
 function checkAuth(req, res, next) {
@@ -666,4 +667,3 @@ function checkMaintenance(req, res, next) {
 } 
     return next();
 }
-})
