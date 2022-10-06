@@ -308,7 +308,6 @@ app.post("/bots/new", checkMaintenance, checkAuth, async(req, res) => {
 
 })
 
-<<<<<<< HEAD
 app.get("/bots/:id", checkMaintenance, async(req, res) => {
     let id = req.params.id;
     const client = global.client;
@@ -340,11 +339,9 @@ app.get("/bots/:id", checkMaintenance, async(req, res) => {
         bot: bot,
         user: req.user || null
     });
-=======
 //-TAG-//
 app.get('/tag', async(req, res) => {
     
->>>>>>> bfae1a08ad917029fecba7649db93f05483f10ed
 })
 
 //-API-//
@@ -669,3 +666,4 @@ function checkMaintenance(req, res, next) {
 } 
     return next();
 }
+})
