@@ -434,11 +434,25 @@ app.get("/queue", checkAuth, checkStaff, async(req, res) => {
     });
     for (let i = 0; i < bots.length; i++) {
         const BotRaw = await client.users.fetch(bots[i].id);
+        bots[i].tag = BotRaw.tag;
         bots[i].name = BotRaw.username;
         bots[i].avatar = BotRaw.avatar;
-        bots[i].name = bots[i].name.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
         bots[i].tags = bots[i].tags.join(", ")
     }
+
+    let inprogress = await model.find({
+        inprogress: true
+    });
+    for (let i = 0; i < inprogress.length; i++) {
+        const IPRaw = await client.users.fetch(inprogress[i].id);
+        const reviewerRaw = await client.users.fetch(inprogress[i].reviewer)
+        inprogress[i].tag = IPRaw.tag;
+        inprogress[i].name = IPRaw.username;
+        inprogress[i].avatar = IPRaw.avatar;
+        inprogress[i].reviewer = reviewerRaw.tag;
+        inprogress[i].tags = inprogress[i].tags.join(", ")
+    }
+
     Array.prototype.shuffle = function() {
         let a = this;
         for (let i = a.length - 1; i > 0; i--) {
@@ -451,6 +465,7 @@ app.get("/queue", checkAuth, checkStaff, async(req, res) => {
     res.render("queue/index.ejs", {
         bot: req.bot,
         bots: bots.shuffle(),
+        inprogress: inprogress.shuffle(),
         config: config,
         user: req.user || null
     });

@@ -2385,6 +2385,27 @@ a.btn.disabled,fieldset:disabled a.btn{
 .btn-primary:hover{
     color:#fff;
 }
+.viewbtn {
+    background-color:#480ddd;
+    border:none;
+    color:white;
+    border-radius:5px;
+    position:relative;
+    cursor:pointer;
+    bottom:0;
+  }
+  .votebtn { 
+    background-color:#480ddd;
+    height:40px;
+    width:150px;
+    border:none;
+    cursor:pointer;
+    float:right;
+    color:white;
+    border-radius:5px;
+    position:relative;
+    bottom:0;
+  }
 .btn-primary:focus,.btn-primary.focus{
     color:#fff;
     -webkit-box-shadow:0 0 0 0.2rem rgba(228,128,60,0.5);

@@ -28,7 +28,61 @@
                     <th scope="col">Actions</th>
                   </tr>
                 </thead>
-                <tbody class="bots-list-body"></tbody>
+                  <tbody class="bots-list-body" style="color: #D9E4EC;">
+                    <% for(let i = 0; i < bots.length; i++){ %>
+                    <tr></tr>
+                    <td style="color: #D9E4EC;"><%= i+1 %>.</td>
+                    <td style="color: #D9E4EC;"><%= bots[i].prefix %></td>
+                    <td style="color: #D9E4EC;">
+                      <img
+                        src="https://cdn.discordapp.com/avatars/<%= bots[i].id %>/<%= bots[i].avatar %>.png?size=32"
+                        class="rounded-circle"
+                      />
+                      <%= bots[i].tag %>
+                    </td>
+                    <td style="color: #D9E4EC;"><%= bots[i].id %></td>
+                    <td style="color: #D9E4EC;">
+                      <a
+                        target="__blank"
+                        href="https://discordapp.com/oauth2/authorize?client_id=<%= bots[i].id %>&scope=bot&permissions=0&guild_id=<%= global.config.guilds.testing %>"
+                        class="btn btn-primary"
+                        >Invite</a
+                      >
+                      <a
+                        href="/bots/<%= bots[i].id%>"
+                        type="button"
+                        class="btn btn-warning"
+                        >View</a
+                      >
+                      <a
+                      type="button"
+                      class="btn btn-light"
+                      >Start Testing</a
+                    >
+                    </td>
+                    <!--
+<td style="color: #D9E4EC;">
+                   
+                    
+                        <a
+                        target="__blank"
+                        href="/bots/bots[i].id/approve"
+                        class="btn btn-success"
+                        >Approve</a
+                      >
+                      
+                    </td>
+                    <td style="color: #D9E4EC;">
+                      <a
+                        target="__blank"
+                        href="/bots/bots[i].id/deny"
+                        class="btn btn-danger"
+                        >Deny</a
+                      >
+                    </td>
+                    -->
+                    <% } %>
+                </tbody>
             </table> 
         </div>
         <div class="progress-list">
@@ -42,9 +96,53 @@
                     <th scope="col">Tag</th>
                     <th scope="col">ID</th>
                     <th scope="col">Actions</th>
+                    <th scope="col">Reviewer</th>
                   </tr>
                 </thead>
-                <tbody class="progress-list-body"></tbody>
+                    <tbody class="bots-list-body" style="color: #D9E4EC;">
+                      <% for(let i = 0; i < inprogress.length; i++){ %>
+                      <tr></tr>
+                      <td style="color: #D9E4EC;"><%= i+1 %>.</td>
+                      <td style="color: #D9E4EC;"><%= inprogress[i].prefix %></td>
+                      <td style="color: #D9E4EC;">
+                        <img
+                          src="https://cdn.discordapp.com/avatars/<%= inprogress[i].id %>/<%= inprogress[i].avatar %>.png?size=32"
+                          class="rounded-circle"
+                        />
+                        <%= inprogress[i].tag %>
+                      </td>
+                      <td style="color: #D9E4EC;"><%= inprogress[i].id %></td>
+                      <td style="color: #D9E4EC;">
+                        <a
+                          target="__blank"
+                          href="https://discordapp.com/oauth2/authorize?client_id=<%= inprogress[i].id %>&scope=bot&permissions=0&guild_id=<%= global.config.guilds.testing %>"
+                          class="btn btn-primary"
+                          >Invite</a
+                        >
+                        <a
+                          href="/bots/<%= inprogress[i].id%>"
+                          type="button"
+                          class="btn btn-warning"
+                          >View</a
+                        >
+                          <a
+                          target="__blank"
+                          href="/bots/inprogress[i].id/approve"
+                          class="btn btn-success"
+                          >Approve</a
+                        >
+                        
+                        <a
+                          target="__blank"
+                          href="/bots/inprogress[i].id/deny"
+                          class="btn btn-danger"
+                          >Deny</a
+                        >
+                      </td>
+                      <td>
+                        <%- inprogress[i].reviewer %>
+                      </td>
+                      <% } %>
             </table> 
         </div>
     </div>
