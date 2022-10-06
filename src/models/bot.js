@@ -80,6 +80,10 @@ submittedOn: {
     type: String,
     required: false
   },
+  reviewer: {
+    type: String,
+    required: false
+  },
   approved: {
     type: Boolean,
     required: false,
@@ -93,6 +97,11 @@ submittedOn: {
   tested: {
     type: Boolean, 
     required: false,
+    default: false
+  },
+  inprogress: {
+    type: Boolean,
+    required: false, 
     default: false
   },
   certified: {
