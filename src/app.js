@@ -566,6 +566,7 @@ app.post('/bots/:id/testing', checkAuth, checkStaff, async(req, res) => {
         message: "This application could not be found in our site."
     });
     const LogRaw = (await client.users.fetch(bot.id)) || null;
+    const ReviewerRaw = (await client.users.fetch(req.user.id)) || null;
     bot.inprogress = true;   
     bot.tested = true;
     bot.reviewer = req.user.id;
@@ -573,8 +574,7 @@ app.post('/bots/:id/testing', checkAuth, checkStaff, async(req, res) => {
 
     res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${bot.id}&scope=bot&permissions=0&guild_id=${global.config.guilds.testing}`)
     let guild = client.guilds.cache.get(global.config.guilds.testing);
-    let channel = await guild.channels.create({ name: bot.id, topic: `Testing channel for ${LogRaw.tag}.` })
-    if(client.channels.cache.find(channel => channel.name === bot.id)) channel.setParent(global.config.channels.testingcategory);
+    let channel = await guild.channels.create({ name: `${LogRaw.username}-${LogRaw.discriminator}`, topic: `Testing channel for ${LogRaw.tag}.`, parent: global.config.channels.testingcategory })
     const embed = new EmbedBuilder()
     .setTitle("New Testing Session")
     .setDescription(`Welcome to your new testing session for ${LogRaw}.\nYou may now begin testing this bot. Any questions? View the queue page or ask a admin.`)
