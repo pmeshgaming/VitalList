@@ -38,18 +38,10 @@
                         src="https://cdn.discordapp.com/avatars/<%= bots[i].id %>/<%= bots[i].avatar %>.png?size=32"
                         class="rounded-circle"
                       />
-                      <%= bots[i].tag %>
+                      <a href="/bots/<%= bots[i].id %>" type="button"><%= bots[i].tag %><yy</a>
                     </td>
                     <td style="color: #D9E4EC;"><%= bots[i].id %></td>
                     <td style="color: #D9E4EC;">
-
-                      <a
-                        href="/bots/<%= bots[i].id%>"
-                        type="button"
-                        style="border-radius: 5px;"
-                        class="btn btn-warning"
-                        >View</a
-                      >
                       <form target="__blank" action="/bots/<%= bots[i].id %>/testing" method="post">
                         <button type="submit" style="border-radius: 5px;" class="btn btn-light">Start Testing</button>
                         </form>
