@@ -21,6 +21,7 @@ module.exports = {
     guilds: {
       main: '1006065494257848433',
       testing: '1006248338380820531'
+    
     },
     roles: {
       mod: '',
@@ -38,6 +39,7 @@ module.exports = {
      levelup: '1007055641199779910',
      modlogs: '1006247811613982791',
      leaderboard: '1008533581238374430',
+     testingcategory: "1006664887084273685"
      }
      
 }

@@ -459,11 +459,11 @@ app.get("/queue", checkAuth, checkStaff, async(req, res) => {
 
     for (let i = 0; i < inprogress.length; i++) {
         const IPRaw = await client.users.fetch(inprogress[i].id);
-        const ReviewerRaw = await client.users.fetch(inprogress[i].reviewer);
+       // const ReviewerRaw = await client.users.fetch(inprogress[i].reviewer);
         inprogress[i].tag = IPRaw.tag;
         inprogress[i].name = IPRaw.username;
         inprogress[i].avatar = IPRaw.avatar;
-        inprogress[i].reviewer = ReviewerRaw.tag;
+        //inprogress[i].reviewer = ReviewerRaw.tag;
         inprogress[i].tags = inprogress[i].tags.join(", ")
     }
 
@@ -480,7 +480,8 @@ app.get("/queue", checkAuth, checkStaff, async(req, res) => {
         bot: req.bot,
         bots: bots.shuffle(),
         config: config,
-        user: req.user || null
+        user: req.user || null,
+        inprogress: inprogress
     });
 })
 
@@ -555,6 +556,24 @@ app.post("/bots/:id/deny", checkAuth, checkStaff, async(req, res) => {
     return res.redirect("/queue?=successfully declined");
   });
 
+app.post('/bots/:id/testing', checkAuth, checkStaff, async(req, res) => {
+    let model = require("./models/bot.js");
+    let bot = await model.findOne({ id: req.params.id });
+
+    if (!bot) return res.status(404).json({
+        message: "This application could not be found in our site."
+    });
+    bot.inprogress = true;   
+    await bot.save();
+
+    res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${bot.id}&scope=bot&permissions=0&guild_id=${global.config.guilds.testing}`)
+    let client = global.client;
+    let guild = client.guilds.cache.get(global.config.guilds.testing);
+    let channel = await guild.channels.create({ name: bot.id, topic: `Testing channel for ${bot.tag}` })
+    if(client.channels.cache.find(channel => channel.name === bot.id)) channel.setParent(global.config.channels.testingcategory);
+    //await channel.send({content: }) ping the user
+
+})
 app.use('/bots/:id/status', checkAuth, checkStaff, async(req, res) => {
     const client = global.client;
     const logs = client.channels.cache.get(config.channels.weblogs)
