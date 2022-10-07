@@ -1,5 +1,5 @@
 const logger = require('../functions/logger');
-const { EmbedBuilder} = require('discord.js')
+const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle } = require('discord.js');
 const fetch = (...args) =>
     import ("node-fetch").then(({
         default: fetch
@@ -448,6 +448,7 @@ app.get("/queue", checkAuth, checkStaff, async(req, res) => {
     for (let i = 0; i < bots.length; i++) {
         const BotRaw = await client.users.fetch(bots[i].id);
         bots[i].name = BotRaw.username;
+        bots[i].tag = BotRaw.tag;
         bots[i].avatar = BotRaw.avatar;
         bots[i].name = bots[i].name.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
         bots[i].tags = bots[i].tags.join(", ")
@@ -459,11 +460,11 @@ app.get("/queue", checkAuth, checkStaff, async(req, res) => {
 
     for (let i = 0; i < inprogress.length; i++) {
         const IPRaw = await client.users.fetch(inprogress[i].id);
-       // const ReviewerRaw = await client.users.fetch(inprogress[i].reviewer);
+        const ReviewerRaw = await client.users.fetch(inprogress[i].reviewer);
         inprogress[i].tag = IPRaw.tag;
         inprogress[i].name = IPRaw.username;
         inprogress[i].avatar = IPRaw.avatar;
-        //inprogress[i].reviewer = ReviewerRaw.tag;
+        inprogress[i].reviewer = ReviewerRaw.tag;
         inprogress[i].tags = inprogress[i].tags.join(", ")
     }
 
@@ -559,19 +560,33 @@ app.post("/bots/:id/deny", checkAuth, checkStaff, async(req, res) => {
 app.post('/bots/:id/testing', checkAuth, checkStaff, async(req, res) => {
     let model = require("./models/bot.js");
     let bot = await model.findOne({ id: req.params.id });
+    let client = global.client;
 
     if (!bot) return res.status(404).json({
         message: "This application could not be found in our site."
     });
+    const LogRaw = (await client.users.fetch(bot.id)) || null;
     bot.inprogress = true;   
+    bot.tested = true;
+    bot.reviewer = req.user.id;
     await bot.save();
 
     res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${bot.id}&scope=bot&permissions=0&guild_id=${global.config.guilds.testing}`)
-    let client = global.client;
     let guild = client.guilds.cache.get(global.config.guilds.testing);
-    let channel = await guild.channels.create({ name: bot.id, topic: `Testing channel for ${bot.tag}` })
+    let channel = await guild.channels.create({ name: bot.id, topic: `Testing channel for ${LogRaw.tag}.` })
     if(client.channels.cache.find(channel => channel.name === bot.id)) channel.setParent(global.config.channels.testingcategory);
-    //await channel.send({content: }) ping the user
+    const embed = new EmbedBuilder()
+    .setTitle("New Testing Session")
+    .setDescription(`Welcome to your new testing session for ${LogRaw}.\nYou may now begin testing this bot. Any questions? View the queue page or ask a admin.`)
+    .setFooter({ text: "Testing Session - VitalList", iconURL: `${global.client.user.displayAvatarURL()}`})
+    const row = new ActionRowBuilder()
+    .addComponents(
+    new ButtonBuilder()
+.setURL(`https://vitallist.xyz/queue`)
+.setLabel('View Queue')
+.setStyle(ButtonStyle.Link)
+        );
+    await channel.send({content: `<@${req.user.id}>`, embeds: [embed], components: [row]}) 
 
 })
 app.use('/bots/:id/status', checkAuth, checkStaff, async(req, res) => {
