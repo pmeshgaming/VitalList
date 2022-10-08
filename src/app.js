@@ -546,7 +546,9 @@ app.get("/users/:id", checkAuth, async(req, res) => {
     let userm = await umodel.findOne({
         id: req.params.id
     })
-    user.bio = userm.bio;
+    if(userm) {
+        user.bio = userm.bio
+    }
 
     let bmodel = require("./models/bot.js");
     let bots = await bmodel.find({
@@ -683,8 +685,7 @@ app.post("/bots/:id/deny", checkAuth, checkStaff, async(req, res) => {
     const channelName = `${BotRaw.username}-${BotRaw.discriminator}`;
     let guild = client.guilds.cache.get(global.config.guilds.testing);
     let channel = await guild.channels.cache.find(c => c.name == channelName.toLowerCase())
-    console.log(channelName.toLowerCase())
-    console.log(channel)
+    if(channel) channel.delete();
     return res.redirect("/queue?=successfully declined");
   });
 

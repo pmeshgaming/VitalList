@@ -56,10 +56,10 @@
                                                <i class="fa-solid fa-hashtag"></i> <%= voted[i].tags %>
                                               </div>
                                               <div style="margin-left:20px;">
-                                               <a href="/bot/<%= voted[i].id %>">
+                                               <a href="/bots/<%= voted[i].id %>">
                                               <button class="viewbtn">View</button>
                                               </div></a>
-                                              <a href="/bot/<%= voted[i].id %>/vote">
+                                              <a href="/bots/<%= voted[i].id %>/vote">
                                               <button class="votebtn">Vote</button></a>
                                               </div></a>                                           
                     <% } %> 
@@ -89,11 +89,25 @@
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
   }
 
-  .botContainer{
-  width: 98%;
-  padding-left: 150px;
+  @media only screen and (max-width: 600px) {
+    .botContainer{
+    width:100%;
+    padding-right:15px;
+    padding-left:15px;
+    margin-right:auto;
+    margin-left:auto
+}
 }
 
+@media only screen and (min-width: 1080px) {
+    .botContainer{
+    width:100%;
+    padding-right:15px;
+    padding-left:150px;
+    margin-right:auto;
+    margin-left:auto
+}
+}
 
   .viewbtn {
     background-color:#480ddd;
