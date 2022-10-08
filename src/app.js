@@ -594,6 +594,9 @@ app.post("/bots/:id/deny", checkAuth, checkStaff, async(req, res) => {
     .setFooter({ text: "Deny Logs - VitalList", iconURL: `${global.client.user.displayAvatarURL()}`})
 
     logs.send({ embeds: [denyEmbed] })
+    let guild = client.guilds.cache.get(global.config.guilds.testing);
+    let channel = await guild.channels.cache.find(c => c.name == `${LogRaw.username}-${LogRaw.discriminator}`)
+    channel.delete()
     return res.redirect("/queue?=successfully declined");
   });
 
@@ -614,7 +617,7 @@ app.post('/bots/:id/testing', checkAuth, checkStaff, async(req, res) => {
 
     res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${bot.id}&scope=bot&permissions=0&guild_id=${global.config.guilds.testing}`)
     let guild = client.guilds.cache.get(global.config.guilds.testing);
-    let channel = await guild.channels.create({ name: `${LogRaw.username}-${LogRaw.discriminator}`, topic: `Testing channel for ${LogRaw.tag}.`, parent: global.config.channels.testingcategory })
+    let channel = await guild.channels.create({ name: `${LogRaw.username}-${LogRaw.discriminator}`, reason: `Testing channel for ${LogRaw.tag}.`, parent: global.config.channels.testingcategory })
     const embed = new EmbedBuilder()
     .setTitle("New Testing Session")
     .setDescription(`Welcome to your new testing session for ${LogRaw}.\nYou may now begin testing this bot. Any questions? View the queue page or ask a admin.`)
@@ -622,10 +625,9 @@ app.post('/bots/:id/testing', checkAuth, checkStaff, async(req, res) => {
     const row = new ActionRowBuilder()
     .addComponents(
     new ButtonBuilder()
-.setURL(`https://vitallist.xyz/queue`)
-.setLabel('View Queue')
-.setStyle(ButtonStyle.Link)
-        );
+    .setURL(`https://vitallist.xyz/queue`)
+    .setLabel('View Queue')
+    .setStyle(ButtonStyle.Link));
     await channel.send({content: `<@${req.user.id}>`, embeds: [embed], components: [row]}) 
 
 })
