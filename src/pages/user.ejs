@@ -1,7 +1,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%- user2.username %> - VitalList</title>
+    <title><%- fetched_user.username %> - VitalList</title>
     <%- include ("./parts/head.ejs") %>
 </head>
     <%- include ("./parts/navbar.ejs") %>
@@ -10,12 +10,12 @@
             <div class="row" style="width: 100%;">
                 <div class="col-sm-2">
 
-                    <img style="border-radius: 50%;" class="card-img-top" src="https://cdn.discordapp.com/avatars/<%= user2.id %>/<%= user2.avatar %>.png?size=1280">
+                    <img style="border-radius: 50%;" class="card-img-top" src="https://cdn.discordapp.com/avatars/<%= fetched_user.id %>/<%= fetched_user.avatar %>.png?size=1280">
 
                 </div>
                     <div class="col-sm">
-                        <h3><%= user2.username %><small class="text-muted">#<%= user2.discriminator %></small></h3>
-                        <%- user2.bio || "This user has no bio set." %>
+                        <h3><%= fetched_user.username %><small class="text-muted">#<%= fetched_user.discriminator %></small></h3>
+                        <%- fetched_user.bio %>
     </div>
     </div>
     </div>
