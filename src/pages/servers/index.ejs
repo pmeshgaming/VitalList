@@ -41,8 +41,8 @@ startDelay: 1000,
 </center>
 <br><br><br>
 
-    <p class="top_bots"><i class="fa-solid fa-fire-flame-curved"></i> <b>Top Voted Servers</b><br><span style="font-size:15px;">These are the top voted bots for this month.</span></p>
-    <div style="margin-left:50px;">
+<div class="serverContainer">
+    <h3><i class="fa-solid fa-clock"></i> <b>Recently Bumped Servers</b></h3><p>These are the most recently bumped servers.</p>
     <% let allservers = servers %>
     <% let voted = allservers.sort((a,b) => b.votes - a.votes) %>
            <% for(let i = 0; i < voted.length; i++){ %>
@@ -65,11 +65,189 @@ startDelay: 1000,
    <button class="votebtn">Vote</button></a>
    </div></a>
          <% } %>
+</div>
 
          <br><br><br><br>
-
          <style>
-            body {
-                font-family: Helvetica, sans-serif;
+            @media screen and (max-width: 757px) {
+                .bot-card-col {
+                    margin: 0 30px;
+                }
             }
-         </style>
+              .card {
+                height: 400px;
+                width: 400px;
+                backdrop-filter: blur(16px) saturate(180%);
+                -webkit-backdrop-filter: blur(16px) saturate(180%);
+                background-color: rgba(17, 25, 40, 0.75);
+                border-radius: 10px;
+                margin-top: 15px;
+                margin-left: auto;
+                transition: all 0.2s;
+                margin-right: 10px;
+                position: relative;
+                display:inline-block;
+                box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+              }
+            
+              @media only screen and (max-width: 600px) {
+                .serverContainer{
+                width:100%;
+                padding-right:15px;
+                padding-left:15px;
+                margin-right:auto;
+                margin-left:auto
+            }
+            }
+            
+            @media only screen and (min-width: 1080px) {
+                .serverContainer{
+                width:100%;
+                padding-right:15px;
+                padding-left:150px;
+                margin-right:auto;
+                margin-left:auto
+            }
+            }
+            
+              .viewbtn {
+                background-color:#480ddd;
+                height:40px;
+                width:150px;
+                border:none;
+                color:white;
+                border-radius:5px;
+                position:relative;
+                cursor:pointer;
+                bottom:0;
+                margin-left:15px;
+                margin-top: 65px;
+              }
+              .votebtn { 
+                background-color:#480ddd;
+                height:40px;
+                width:150px;
+                border:none;
+                cursor:pointer;
+                float:right;
+                margin-right:35px;
+                color:white;
+                border-radius:5px;
+                position:relative;
+                bottom:0;
+                margin-top:-40px;
+              }
+            
+              .card_2 {
+                background-color:#001724;
+                width:350px;
+                text-decoration:none;
+                color:white;
+                border-radius:10px;
+                transition: all 0.2s;
+                display:inline-block;
+                height:300px;
+                margin-left:305px;
+                margin-top:10px;
+              }
+                .card:hover{
+                top: -7px;
+              }
+              .botname_main {
+                color:white;
+                font-size:25px;
+                margin-top:-95px;
+                margin-left:125px;
+                border-radius:10px;
+                font-weight:bold;
+              }
+                .adbutton {
+                  background-color:#DF235B;
+                  width:250px;
+                  height:40px;
+                  border:none;
+                  overflow:visible;
+                  color:white;
+                  border-radius:5px;
+                  margin-top:-50px;
+                  cursor:pointer;
+            
+                }
+              .botimg_main {
+                width:115px;
+                height:115px;
+                border-radius:100%;
+                margin-top: 5px;
+                margin-left:5px;
+            
+              }
+                .botdesc_main {
+                  color:white;
+                  font-size:15px;
+                  border: 10px solid transparent;
+                  margin-top: 50px;
+                  overflow:hidden;
+                  text-align: left;
+            
+                }
+            
+                .bottags_main {
+                    color:white;
+                    font-size:15px;
+                    border: 10px solid transparent;
+                    margin-top: 15;
+                    overflow:hidden;
+                    text-align: left;
+               
+                  }
+              
+              /* On mouse-over, add a deeper shadow */
+              .card:hover {
+                box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+              }
+              
+              .container {
+                padding: 2px 16px;
+              }
+            
+              .top_bots {
+                color:ghostwhite;
+                font-size:25px;
+                margin-left:50px;
+                margin-top:150px;
+                position: static
+              }
+            
+              .shortdesc {
+                background-color:#001724;
+              width: 350px;
+                height:500px;
+                float:right;
+                  text-overflow:hidden;
+                margin-right:50px;
+                margin-top:100px;
+                border-radius:5px;
+                position: absolute;
+              }
+              .secondbg {
+                width:100%;
+                height:100%;
+                background-color:#001724;
+              }
+              .botimg {
+                border-radius:100%;
+                width:150px;
+                height:150px;
+                float:left;
+                border: 7px solid #001724;
+                margin-top:50px;
+                margin-left:-300px;
+              }
+              .botname {
+                font-size:30px;
+                color:white;
+                margin-left:-50px;
+                margin-top:80px;
+              }
+            
+            </style>
