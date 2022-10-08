@@ -513,10 +513,10 @@ app.get("/me", checkAuth, async(req, res) => {
     const user = req.user || null;
     //const response = await fetch(`https://japi.rest/discord/v1/user/${req.user.id}`)
     let umodel = require("./models/user.js");
-    let userm = await umodel.find({
+    let userm = await umodel.findOne({
         id: req.user.id,
     })
-    user.bio = userm.bio
+    user.bio = userm?.bio || "No bio has been set"
     let model = require("./models/bot.js");
     let bots = await model.find({
         tested: true,
@@ -534,28 +534,27 @@ app.get("/users/:id", checkAuth, async(req, res) => {
     const guild = await client.guilds.fetch(global.config.guilds.main);
     let user = (await guild.members.fetch(req.params.id)) || null;
     user = user?.user
-
+    if (user.bot) return res.redirect('/'); 
     if(!user) {
         res.status(404).json({ message: "This user was not found on Discord."})
     }
     
     let umodel = require("./models/user.js");
     let userm = await umodel.findOne({
-        id: req.params.id
+        id: req.params.id,
     })
-    if(userm) {
-        user.bio = userm.bio
-    }
+    user.bio = userm?.bio || "This user has no bio set."
+
 
     let bmodel = require("./models/bot.js");
     let bots = await bmodel.find({
         tested: true,
         owner: req.params.id
-
     });
+    
     res.render("user.ejs", {
         bot: req.bot,
-        user2: user,
+        fetched_user: user,
         user: req.user || null
     });
 })
