@@ -19,7 +19,7 @@ let app = mongoose.Schema({
     required: false
   },
   owner: {
-    type: Number,
+    type: Array,
     required: false
   },
   views: {
@@ -36,10 +36,15 @@ let app = mongoose.Schema({
   type: Number,
     required: false
   },
-  submittedOn: {
+  date: {
     type: String,
     required: false
   },
+  published: {
+    type: Boolean,
+    required: false,
+    default: false
+},
   uniqueViews: {
     type: Number,
     required: false
@@ -50,11 +55,13 @@ let app = mongoose.Schema({
   },
   shortDesc: {
     type: String,
-    required: false
+    required: false,
+    default: "This server has no short description."
   },
   desc: {
     type: String,
-    required: false
+    required: false,
+    default: "This server has no long description."
   }
 });
 module.exports = mongoose.model("server", app);

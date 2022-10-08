@@ -1,0 +1,66 @@
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/1.1.0/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sanitize-html/1.26.0/sanitize-html.min.js"></script>
+    <title>Editing <%- server.name %>  - Vital List</title>
+    <%- include("../parts/head.ejs") %>
+</head>
+    <%- include("../parts/navbar.ejs") %>
+    <div class="container">
+    <h2 style="color:white;margin-top: 175px;"><b>Edit Server</b></h2><p style="color:white;font-size: 20">Fill out the below form in order to edit your server.</p><br><br>
+        <div class="form">
+            <form action="/servers/<%= server.id %>/edit" method="POST">
+                <div class="form-group">
+                    <label for="invite">Server Invite</label>
+                    <input type="text" class="form-control" id="invite" value="<%= server.invite %>" aria-describedby="inviteHelp" name="invite" autocomplete="off" ar readonly disabled>
+                    <small id="inviteHelp" class="form-text text-muted">Invite can be created by running the /invite command in your server.</small>
+                </div>
+                    <label for="botShortDesc">Short Description</label>
+                    <input type="text" class="form-control" id="botShortDesc" aria-describedby="botShortDeschelp" name="short_description" value="<%= server.shortDesc %>" placeholder="Revolutionary server with..." autocomplete="off">
+                    <small id="botShortDeschelp" class="form-text text-muted">Short Description about the bot (Min. 50 & Max. 100 characters)</small>
+                </div>
+                <div class="form-group">
+                    <label for="botLongDesc">Long Description</label>
+                    <textarea class="form-control" id="botLongDesc" rows="3" value="<%= server.desc %>" name="long_description" placeholder="More about the Revolution..." autocomplete="off" required>
+<%= server.desc %>
+                    </textarea>
+                    <small id="botLongDeschelp" class="form-text text-muted">HTML & Markdown can be used (Min. 300 characters)</small>
+                </div>
+                <div class="botLongDescPreviewBox">
+                    <label>Long Description Preview</label>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div id="botLongDescPreview"></div>
+                        </div>
+                    </div>
+                </div>
+    
+                <input type="submit" value="Submit" class="bluebtn">
+            </form>
+        </div>
+        <br><br>
+    </div>
+        <br><br><br><br><br>
+     </div>
+
+     <script>
+          const longDesc = $('#botLongDesc');
+        const longDescPreview = $('#botLongDescPreview');
+        
+        longDesc.on('change keyup paste', function () {
+            const markdownRender = marked(longDesc.val());
+            const allowedTags = sanitizeHtml.defaults.allowedTags.concat(["address", "article", "aside", "footer", "header", "h1", "h2", "h3", "h4",
+  "h5", "h6", "hgroup", "main", "nav", "section", "blockquote", "dd", "div",
+  "dl", "dt", "figcaption", "figure", "hr", "li", "main", "ol", "p", "pre",
+  "ul", "a", "abbr", "b", "bdi", "bdo", "br", "cite", "code", "data", "dfn",
+  "em", "i", "kbd", "mark", "q", "rb", "rp", "rt", "rtc", "ruby", "s", "samp",
+  "small", "span", "strong", "sub", "sup", "time", "u", "var", "wbr", "caption",
+  "col", "colgroup", "table", "tbody", "td", "tfoot", "th", "thead", "tr"]);
+            const sanitizedRender = sanitizeHtml(markdownRender, {
+                allowedTags
+            });
+            longDescPreview.html(sanitizedRender);
+        });
+     </script>

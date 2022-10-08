@@ -402,31 +402,112 @@ app.get("/servers", checkMaintenance, checkStaff, async(req, res) => {
     const client = global.sclient;
 
     let model = require("./models/server.js");
-    let servers = await model.find({
-        published: true
-    });
-
+    let servers = await model.find({ published: true });
     for (let i = 0; i < servers.length; i++) {
-        const ServerRaw = await client.guilds.fetch(servers[i].id);
-        servers[i].name = ServerRaw.username;
-        servers[i].avatar = ServerRaw.avatar;
-        servers[i].name = servers[i].name.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
-        servers[i].tags = servers[i].tags.join(",")
+      const ServerRaw = await client.guilds.fetch(servers[i].id);
+      servers[i].name = ServerRaw.name;
+      servers[i].icon = ServerRaw.iconURL({ dynamic: true });
+      servers[i].memberCount = ServerRaw.memberCount;
+      servers[i].boosts = ServerRaw.premiumSubscriptionCount;
+      servers[i].tags = servers[i].tags.join(", ")
     }
-    Array.prototype.shuffle = function() {
-        let a = this;
-        for (let i = a.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [a[i], a[j]] = [a[j], a[i]];
-        }
-        return a;
+  
+    Array.prototype.shuffle = function () {
+      let a = this;
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
     };
-
+  
     res.render("servers/index.ejs", {
-        bot: req.bot,
-        servers: servers.shuffle(),
-        user: req.user || null
+      bot: req.bot,
+      user: req.user || null,
+      servers: servers.shuffle()
     });
+});
+
+app.get("/servers/:id", checkMaintenance, async (req, res) => {
+    const client = global.sclient;
+    const model = require("./models/server.js")
+    const id = req.params.id;
+
+    const server = await model.findOne({ id: id })
+    if (!server) return res.redirect("/404");
+
+    if (server.published === false) {
+     if(!req.user) return res.redirect("/404?error=503");
+     if (!server.owner.includes(req.user.id)) return res.redirect("/404?error=503");
+    }
+
+    //-Cleaning Server Desc-//
+ const { marked } = require("marked");
+ server.desc = marked.parse(server.desc);
+
+ const ServerRaw = (await client.guilds.fetch(id)) || null;
+ (server.name = ServerRaw.name), (server.icon = ServerRaw.iconURL()), 
+ (server.memberCount = ServerRaw.memberCount), (server.boosts = ServerRaw.premiumSubscriptionCount);
+
+    res.render("servers/viewserver.ejs", {
+     bot: req.bot,
+     server: server,
+     user: req.user
+   });
+});
+
+app.get("/servers/:id/edit", checkMaintenance, checkAuth, async (req, res) => {
+    const client = global.sclient;
+    const model = require("./models/server.js")
+    const id = req.params.id;
+  
+    const server = await model.findOne({ id: id })
+    if (!server) return res.redirect("/404");
+  
+    if (!server.owner.includes(req.user.id)) return res.redirect("/");
+  
+  const ServerRaw = (await client.guilds.fetch(id)) || null;
+  
+  (server.name = ServerRaw.name), (server.icon = ServerRaw.iconURL()), (server.memberCount = ServerRaw.memberCount)
+  
+    res.render("servers/editserver.ejs", {
+     bot: req.bot,
+     server: server,
+     user: req.user
+   });
+});
+
+app.post("/servers/:id/edit", checkAuth, async (req, res) => {
+    const sclient = global.sclient;
+    const model = require("./models/server.js");
+    const id = req.params.id;
+    const data = req.body;
+  
+    const server = await model.findOne({ id: id });
+    if (!server) return res.redirect("/404");
+    
+    const logServer = await model.findOne({ id: id });
+  
+    if (!server.owner.includes(req.user.id)) return res.redirect("/");
+  
+    server.shortDesc = data.short_description;
+    server.desc = data.long_description;
+    server.banner = data.banner || "/img/ServerDefaultBanner.png";
+    server.published = true;
+    await server.save();
+  
+    const ServerRaw = (await sclient.guilds.fetch(server.id)) || null;
+    (server.name = ServerRaw.name)
+  
+    if(logServer.published === false) {
+      const logs = sclient.channels.cache.get(global.config.channels.weblogs);
+      logs.send({ content: `<@${req.user.id}> published **${server.name}**.`});
+      return res.redirect(`https://servers.ofdiscord.com/server/${id}`);
+    } else {
+      const logs = sclient.channels.cache.get(global.config.channels.weblogs);
+      logs.send({ content: `<@${req.user.id}> edited **${server.name}**.`});
+      return res.redirect(`https://servers.ofdiscord.com/server/${id}`);
+    }
 })
 
 //-User Pages-//
@@ -435,10 +516,10 @@ app.get("/me", checkAuth, async(req, res) => {
     const user = req.user || null;
     //const response = await fetch(`https://japi.rest/discord/v1/user/${req.user.id}`)
     let umodel = require("./models/user.js");
-    let userm = await umodel.find({
-        id: req.params.id
+    let userm = await umodel.findOne({
+        id: req.user.id
     })
-    user.bio = userm.shortDesc
+    user.bio = userm.bio
     let model = require("./models/bot.js");
     let bots = await model.find({
         tested: true,
@@ -462,10 +543,10 @@ app.get("/users/:id", checkAuth, async(req, res) => {
     }
     
     let umodel = require("./models/user.js");
-    let userm = await umodel.find({
+    let userm = await umodel.findOne({
         id: req.params.id
     })
-    user.bio = userm.shortDesc
+    user.bio = userm.bio;
 
     let bmodel = require("./models/bot.js");
     let bots = await bmodel.find({
@@ -475,7 +556,7 @@ app.get("/users/:id", checkAuth, async(req, res) => {
     });
     res.render("user.ejs", {
         bot: req.bot,
-        user2: user.user,
+        user2: user,
         user: req.user || null
     });
 })

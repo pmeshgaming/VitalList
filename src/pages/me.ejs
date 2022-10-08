@@ -15,7 +15,7 @@
                 </div>
                     <div class="col-sm">
                         <h3><%= user.username %><small class="text-muted">#<%= user.discriminator %></small></h3>
-                        <% - user.bio -%>
+                        <%- user.bio || "You do not have a bio set." %>
    
     </div>
     </div>
