@@ -1,11 +1,10 @@
 const logger = require('../functions/logger');
-const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle } = require('discord.js');
+const { EmbedBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle } = require('discord.js');
 const fetch = (...args) =>
     import ("node-fetch").then(({
         default: fetch
     }) => fetch(...args));
 const mongoose = require("mongoose");
-const subdomain = require('express-subdomain');
 const config = global.config;
 global.logger = logger;
 const path = require("path");
@@ -57,11 +56,6 @@ app.use((req, res, next) => {
 //-Alaways use protection!-//
 
 var minifyHTML = require("express-minify-html-terser");
-const {
-    debug
-} = require('console');
-const { accessSync } = require('fs');
-const { use } = require('passport');
 app.use(
     minifyHTML({
         override: true,
@@ -98,7 +92,7 @@ passport.use(
             scope: scopes,
             prompt: prompt,
         },
-        function(accessToken, refreshToken, profile, done) {
+        function(accessToken, _refreshToken, profile, done) {
             process.nextTick(function() {
                 profile.tokens = {
                     accessToken
@@ -112,7 +106,7 @@ passport.use(
 app.use(
     session({
         store: new SQLiteStore,
-        secret: "supprtsecretsecretforaveryepicsecert",
+        secret: "SupersercetratioskklnkWiOndy",
         resave: false,
         saveUninitialized: false,
     })
@@ -128,7 +122,7 @@ app.get(
         scope: scopes,
         prompt: prompt
     }),
-    function(req, res) {}
+    function(_req) {}
 );
 
 app.get(
@@ -267,7 +261,6 @@ app.get("/bots/new", checkMaintenance, checkAuth, async(req, res) => {
 })
 
 app.post("/bots/new", checkMaintenance, checkAuth, async(req, res) => {
-    let user = req.user;
     const client = global.client;
     const logs = client.channels.cache.get(config.channels.weblogs)
     let model = require("./models/bot.js");
@@ -609,7 +602,6 @@ app.post('/bots/:id/testing', checkAuth, checkStaff, async(req, res) => {
         message: "This application could not be found in our site."
     });
     const LogRaw = (await client.users.fetch(bot.id)) || null;
-    const ReviewerRaw = (await client.users.fetch(req.user.id)) || null;
     bot.inprogress = true;   
     bot.tested = true;
     bot.reviewer = req.user.id;
@@ -701,13 +693,13 @@ app.get("/403", async(req, res) => {
 
 //-Other Pages-//
 
-app.get("/discord", (req, res) => res.redirect("https://discord.gg/DWX3d5r2wW"))
+app.get("/discord", (_req, res) => res.redirect("https://discord.gg/DWX3d5r2wW"))
 
 app.listen(config.port, () => {
     logger.system(`Running on port ${config.port}.`);
 });
 
-app.use(function(req, res, next) {
+app.use(function(req, res) {
 
     if (req.accepts('html')) {
         return res.redirect("/404")
