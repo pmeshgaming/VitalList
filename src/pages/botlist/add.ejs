@@ -146,7 +146,7 @@
                     contentType: 'application/json',
                     data: JSON.stringify(data),
                     success: function () {
-                        window.location.replace("/bots/add/success");
+                        window.location.replace("/");
                     },
                     error: function (resp) {
                         if(resp.responseJSON.code === "INVALID_BOT") {
