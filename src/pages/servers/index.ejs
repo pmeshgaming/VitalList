@@ -8,33 +8,38 @@
     <%- include("../parts/head.ejs") %>
 </head>
     <%- include("../parts/navbar.ejs") %>
-    <body style="background-color:#003060;"></body>
-
-
- <img class="titlelogo" src="/img/icon.png" alt="VitalList Logo" width="150" height="150">
-
- <p class="title"><b>Vital Servers</b><br><span class="typing_desc" style="font-size:18px;"></span></p>
- <script>
-    new TypeIt(".typing_desc", {
-        speed: 90,
-        waitUntilVisible: true,
-        startDelay: 1000,
-    })
-    .type("A place where you can find servers, Vital List.")
-    .move(-20)
-    .type('Discord ')
-    .move(7)
-    .pause(5000)
-    .delete(7)
-    .type('bots')
-    .move(17)
-    .pause(5000)
-    .move(-15)
-    .delete(6)
-    .type('servers, ')    
-    .move(17)
-    .go()
-    </script>
+    <br><br><br><br>
+    <center>
+    <img class="titlelogo" src="/img/icon.png" alt="VitalList Logo" width="150" height="150">
+    <h2 class="title"><b>Vital List</b></h2><p><span class="typing_desc" style="font-size:18px;"></span></p>
+<script>
+new TypeIt(".typing_desc", {
+speed: 90,
+waitUntilVisible: true,
+startDelay: 1000,
+})
+.type("A place where you can find bots, Vital List.")
+.move(-17)
+.type('Discord ')
+.move(4)
+.delete(4)
+.type('servers')
+.move(13)
+.pause(1000)
+.move(-13)
+.delete(7)
+.type('bots')
+.move(13)
+.go()
+</script>
+<!--
+<div class="form-inline my-2 my-lg-0">
+    <input id="search-box" style="margin-left: 425px;border-radius: 8px;" class="form-control" type="text" placeholder="Search" autocomplete="off">
+    <button id="search-btn" class="btn btn-light my-2 my-sm-0" style="border-radius: 8px;" type="button">Search</button>
+</div>submittedOn
+-->
+</center>
+<br><br><br>
 
     <p class="top_bots"><i class="fa-solid fa-fire-flame-curved"></i> <b>Top Voted Servers</b><br><span style="font-size:15px;">These are the top voted bots for this month.</span></p>
     <div style="margin-left:50px;">
