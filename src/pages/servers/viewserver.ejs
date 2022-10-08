@@ -25,7 +25,7 @@
                         <span style="border-radius: 5px;" class="badge badge-danger" style="font-size: 20px;"><i class="fa-solid fa-eye"></i> Views: <%= server.views %></span>
                         <hr></hr>
                         <% if (server.invite) { %>
-                            <a href="<%= server.invite %>" type="button" style="border-radius: 5px;" class="btn btn-primary pr-3 pl-3 mr-1"><i class="fa-brands fa-discord"></i> Join</a>
+                            <a href="/servers/<%= server.id %>/join" type="button" style="border-radius: 5px;" class="btn btn-primary pr-3 pl-3 mr-1"><i class="fa-brands fa-discord"></i> Join</a>
                         <% } %>
                         <a href="/server/<%= server.id %>/vote" type="button" style="border-radius: 5px;" class="btn btn-info pr-3 pl-3 mr-1"><i class="fa-solid fa-check-to-slot"></i> Vote</a>
                         <% if (server.website) { %>

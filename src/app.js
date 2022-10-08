@@ -303,6 +303,19 @@ app.post("/bots/new", checkMaintenance, checkAuth, async(req, res) => {
 
 })
 
+app.get("/bots/:id/invite", async (req, res) => {
+    const model = require("./models/bot.js");
+    const id = req.params.id;
+    const bot = await model.findOne({ id: id });
+    if(!bot) return res.status(404).redirect("/404");
+
+    if(!bot.invite) {
+     return await res.redirect(`https://discord.com/oauth2/authorize?client_id=${id}&scope=bot%20applications.commands&permissions=8&response_type=code`);
+    }
+
+    return await res.redirect(bot.invite);
+})
+
 app.get("/bots/:id", checkMaintenance, async(req, res) => {
     let id = req.params.id;
     const client = global.client;
@@ -318,7 +331,8 @@ app.get("/bots/:id", checkMaintenance, async(req, res) => {
      }
 
     const BotRaw = (await client.users.fetch(id)) || null;
-    const OwnerRaw = client.users.fetch(bot.owner);
+    const OwnerRaw = (await client.users.fetch(bot.owner));
+    console.log(OwnerRaw)
     const PresenceRaw = await guild.members.fetch(id) || null;
     bot.name = BotRaw.username;
     bot.avatar = BotRaw.avatar;
@@ -334,6 +348,8 @@ app.get("/bots/:id", checkMaintenance, async(req, res) => {
         bot: bot,
         user: req.user || null
     });
+
+
 //-TAG-//
 app.get('/tag', async(req, res) => {
     
@@ -455,6 +471,19 @@ app.get("/servers/:id", checkMaintenance, async (req, res) => {
      user: req.user
    });
 });
+
+app.get("/servers/:id/join", async (req, res) => {
+    const model = require("./models/server.js");
+    const id = req.params.id;
+    const server = await model.findOne({ id: id });
+    if(!server) return res.status(404).redirect("/404");
+
+    if(!server.invite) {
+     return await res.send("This server does not have an invite set, please contact the owner or set one with the /invite command in this guild.")
+    }
+
+    return await res.redirect(server.invite);
+})
 
 app.get("/servers/:id/edit", checkMaintenance, checkAuth, async (req, res) => {
     const client = global.sclient;

@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/1.1.0/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sanitize-html/1.26.0/sanitize-html.min.js"></script>
     <title><%- bot.name %> - VitalList</title>
     <%- include("../parts/head.ejs") %>
 </head>
@@ -20,36 +22,117 @@
                     <div class="col-sm">
                         <h3><%= bot.name %><small class="text-muted">#<%= bot.discriminator %></small></h3>
                         <%- bot.shortDesc %><br>
-                        <% if (bot.presence && bot.presence.status === "online") { %>
-                            <span style="border-radius: 5px;" class="badge badge-success" style="font-size: 20px;"><i class="fa-solid fa-signal"></i> Online</span>
-                        <% } else if (bot.presence && bot.presence.status === "idle") { %>
-                            <span style="border-radius: 5px;" class="badge badge-warning" style="font-size: 20px;"><i class="fa-solid fa-signal"></i> Idle</span>
-                        <% } else if (bot.presence && bot.presence.status === "dnd") { %>
-                            <span style="border-radius: 5px;" class="badge badge-danger" style="font-size: 20px;"><i class="fa-solid fa-signal"></i> DND</span>
-                        <% } else { %>
-                            <span style="border-radius: 5px;" class="badge badge-secondary" style="font-size: 20px;"><i class="fa-solid fa-signal"></i> Offline</span>
-                        <% } %>
+                        <!---
                         <span style="border-radius: 5px;" class="badge badge-primary" style="font-size: 20px;"><i class="fa-solid fa-server"></i> Servers: <%= bot.servers %></span>
                         <span style="border-radius: 5px;" class="badge badge-danger" style="font-size: 20px;"><i class="fa-solid fa-check-to-slot"></i> Votes: <%= bot.votes %></span>
+                        -->
                         <hr></hr>
                         <% if (bot.invite) { %>
-                            <a href="<%= bot.invite %>" type="button" style="border-radius: 5px;" class="btn btn-primary pr-3 pl-3 mr-1"><i class="fa-solid fa-plus"></i> Invite</a>
+                            <a href="/bots/<%= bot.id %>/invite" type="button" style="border-radius: 5px;" class="btn btn-info pr-3 pl-3 mr-1"><i class="fa-solid fa-plus"></i> Invite</a>
                         <% } else { %>
                             <a href="https://discordapp.com/oauth2/authorize?client_id=<%= bot.id %>&scope=bot&permissions=0" type="button" style="border-radius: 5px;" class="btn btn-primary pr-3 pl-3 mr-1">i class="fa-solid fa-plus"></i> Invite</a>
                         <% } %>
                         <a href="/bots/<%= bot.id %>/vote" type="button" style="border-radius: 5px;" class="btn btn-info pr-3 pl-3 mr-1"><i class="fa-solid fa-check-to-slot"></i> Vote</a>
                         <% if (bot.website) { %>
-                            <a href="<%= bot.website %>" type="button" style="border-radius: 5px;" class="btn btn-success pr-3 pl-3 mr-1"><i class="fa-solid fa-globe"></i> Website</a>
+                            <a href="<%= bot.website %>" type="button" style="border-radius: 5px;" class="btn btn-info pr-3 pl-3 mr-1"><i class="fa-solid fa-globe"></i> Website</a>
                         <% } %>
                         <% if (bot.support) { %>
-                            <a href="https://discord.gg/<%= bot.support %>" type="button" style="border-radius: 5px;" class="btn btn-danger pr-3 pl-3 mr-1"><i class="fa-brands fa-discord"></i> Support</a>
+                            <a href="https://discord.gg/<%= bot.support %>" type="button" style="border-radius: 5px;" class="btn btn-info pr-3 pl-3 mr-1"><i class="fa-brands fa-discord"></i> Support</a>
                         <% } %>
                         <% if (bot.owner.includes(user.id)) { %>
-                            <a href="/bots/<%= bot.id %>/edit" type="button" style="border-radius: 5px;" class="btn btn-warning pr-3 pl-3 mr-1">Edit</a>
+                            <a href="/bots/<%= bot.id %>/edit" type="button" style="border-radius: 5px;" class="btn btn-warning pr-3 pl-3 mr-1"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
                         <% } %>
                     </div>
                 </div>
             </div>
+            </div>
+            <div class="infoContainer">
+                <h2><i class="fa-solid fa-circle-info"></i> Information</h2>
+                <hr></hr>
+                <p style="color: white; font-size: 16px;"><i class="fa-solid fa-terminal"></i> Prefix: <code style="padding: 3px 8px; font-weight: bold;"><%= bot.prefix %></code></p>
+                <p style="color: white; font-size: 16px;"><i class="fa-solid fa-crown"></i> Owner: <strong><a style="color: white;" href="/users/<%- bot.owner %>"><%= bot.ownerTag %></a></strong></p>
+                <p style="color: white; font-size: 16px;"><i class="fa-solid fa-hashtag"></i> Tags: <strong><%= bot.tags %></strong></p>
+                <% if (bot.presence && bot.presence.status === "online") { %>
+                    <p style="color: white; font-size: 16px;"><i class="fa-solid fa-power-off"></i> Status: <strong>Online</strong></p>
+                <% } else if (bot.presence && bot.presence.status === "idle") { %>
+                    <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal"></i> Status: <strong>Idle</strong></p>
+                <% } else if (bot.presence && bot.presence.status === "dnd") { %>
+                    <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal"></i> Status: <strong>DND</strong></p>
+                <% } else { %>
+                    <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal"></i> Status: <strong>Offline</strong></p>
+                <% } %><br>
+                <h2><i class="fa-solid fa-chart-simple"></i> Statistics</h2>
+                <hr></hr>
+                <p style="color: white; font-size: 16px;"><i class="fa-solid fa-check-to-slot"></i> Votes: <strong><%= bot.votes %></strong></p>
+                <p style="color: white; font-size: 16px;"><i  class="fa-solid fa-server"></i> Servers: <strong><%= bot.servers %></strong></p>
+                <p style="color: white; font-size: 16px;"> Shards: <strong><%= bot.shards %></strong></p>
+                </div>
                     </div>
                     </div>
                     </div>
+                    <div class="container">
+                    <div class="desccard">
+                        <div class="card-body">
+                            <div id="bot-description"><%= bot.desc %></div>
+                        </div>
+                    </div>
+                </div>
+
+                    <style>
+                    @media only screen and (max-width: 600px) {
+                        .infoContainer{
+                        width:100%;
+                        padding-right:35px;
+                        padding-left:35px;
+                        margin-right:auto;
+                        margin-left:auto
+                    }
+                    }
+                    
+                    @media only screen and (min-width: 1080px) {
+                        .infoContainer{
+                        width: 250px;
+                        margin-right: 200px;
+                        margin-left: 200px;
+                    }
+                    }
+
+                    @media only screen and (max-width: 600px) {
+                        .desccard{
+                        background: rgba( 255, 255, 255, 0.15 );
+                        box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+                        backdrop-filter: blur( 20px );
+                        -webkit-backdrop-filter: blur( 20px );
+                        border-radius: 10px;
+                        border: 1px solid rgba( 255, 255, 255, 0.18 );
+                      }
+               }
+                        .desccard{
+                        background: rgba( 255, 255, 255, 0.15 );
+                        box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+                        backdrop-filter: blur( 20px );
+                        -webkit-backdrop-filter: blur( 20px );
+                        width: 1000px;
+                        border-radius: 10px;
+                        margin-top: -460px;
+                        margin-right: 250px;
+                        margin-left: 250px;
+                        border: 1px solid rgba( 255, 255, 255, 0.18 );
+                      }
+                </style>
+                <script>
+$(document).ready(function () {
+    const descriptionBox = $("#bot-description");
+    const descriptionBoxText = descriptionBox.text() || descriptionBox.val();
+    const markdownRender = marked(descriptionBoxText);
+    const allowedTags = sanitizeHtml.defaults.allowedTags.concat(["address", "article", "aside", "footer", "header", "h1", "h2", "h3", "h4",
+  "h5", "h6", "hgroup", "main", "nav", "section", "blockquote", "dd", "div",
+  "dl", "dt", "figcaption", "figure", "hr", "li", "main", "ol", "p", "pre",
+  "ul", "a", "abbr", "b", "bdi", "bdo", "br", "cite", "code", "data", "dfn",
+  "em", "i", "kbd", "mark", "q", "rb", "rp", "rt", "rtc", "ruby", "s", "samp",
+  "small", "span", "strong", "sub", "sup", "time", "u", "var", "wbr", "caption",
+  "col", "colgroup", "table", "tbody", "td", "tfoot", "th", "thead", "tr"]);
+    const sanitizedRender = sanitizeHtml(markdownRender, { allowedTags });
+    descriptionBox.html(sanitizedRender);
+});
+</script>
