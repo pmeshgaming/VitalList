@@ -398,7 +398,7 @@ app.post('/api/bots/:id/', async(req, res) => {
 
 //-ServerList-//
 
-app.get("/servers", checkMaintenance, async(req, res) => {
+app.get("/servers", checkMaintenance, checkStaff, async(req, res) => {
     const client = global.sclient;
 
     let model = require("./models/server.js");
@@ -433,33 +433,46 @@ app.get("/servers", checkMaintenance, async(req, res) => {
 
 app.get("/me", checkAuth, async(req, res) => {
     const user = req.user || null;
-    const response = await fetch(`https://japi.rest/discord/v1/user/${req.user.id}`)
-    const data = await response.json();
-    console.log(data)
-    const marked = require("marked")
-    const bio = marked.parse(data.data.bio);
+    //const response = await fetch(`https://japi.rest/discord/v1/user/${req.user.id}`)
+    let umodel = require("./models/user.js");
+    let userm = await umodel.find({
+        id: req.params.id
+    })
+    user.bio = userm.shortDesc
+    let model = require("./models/bot.js");
+    let bots = await model.find({
+        tested: true,
+        owner: user.id
 
-    user.bio = bio;
-
+    });
     res.render("me.ejs", {
         bot: req.bot,
+        bots: bots,
         user: user || null
     });
 })
 
 app.get("/users/:id", checkAuth, async(req, res) => {
     const guild = await client.guilds.fetch(global.config.guilds.main);
-    const user = (await guild.members.fetch(req.params.id)) || null;
+    let user = (await guild.members.fetch(req.params.id)) || null;
+    user = user?.user
+
     if(!user) {
         res.status(404).json({ message: "This user was not found on Discord."})
     }
-    const response = await fetch(`https://japi.rest/discord/v1/user/${user.id}`)
-    const data = await response.json();
-    console.log(data)
-    const marked = require("marked")
-    const bio = marked.parse(data.data.bio);
-    user.user.bio = bio;
+    
+    let umodel = require("./models/user.js");
+    let userm = await umodel.find({
+        id: req.params.id
+    })
+    user.bio = userm.shortDesc
 
+    let bmodel = require("./models/bot.js");
+    let bots = await bmodel.find({
+        tested: true,
+        owner: req.params.id
+
+    });
     res.render("user.ejs", {
         bot: req.bot,
         user2: user.user,
@@ -664,17 +677,16 @@ app.use('/bots/:id/status', checkAuth, checkStaff, async(req, res) => {
 
 
 //-Error Pages-//
-
-app.get("/404", async(req, res) => {
-
+app.all('*', (req, res) => {
     res.status(404)
     res.render("errors/404.ejs", {
         bot: req.bot,
         user: req.user || null
     });
-})
 
-app.get("/401", async(req, res) => {
+  });
+
+app.all('*', (req, res) => {
 
     res.status(401)
     res.render("errors/401.ejs", {
@@ -683,7 +695,7 @@ app.get("/401", async(req, res) => {
     });
 })
 
-app.get("/403", async(req, res) => {
+app.all('*', (req, res) => {
 
     res.status(403)
     res.render("errors/403.ejs", {
@@ -700,18 +712,11 @@ app.listen(config.port, () => {
     logger.system(`Running on port ${config.port}.`);
 });
 
-app.use(function(req, res) {
-
-    if (req.accepts('html')) {
-        return res.redirect("/404")
-    }
-
-});
 //-Functions-//
 
 function checkAuth(req, res, next) {
     if (req.isAuthenticated()) return next();
-    res.redirect("/401");
+    res.status(401)
 }
 
 function checkStaff(req, res, next) {
