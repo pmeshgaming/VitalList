@@ -441,6 +441,9 @@ app.get("/servers/:id", checkMaintenance, async (req, res) => {
      if (!server.owner.includes(req.user.id)) return res.redirect("/404?error=503");
     }
 
+    server.views = server.views + 1;
+    await server.save();
+
     //-Cleaning Server Desc-//
  const { marked } = require("marked");
  server.desc = marked.parse(server.desc);
@@ -492,7 +495,6 @@ app.post("/servers/:id/edit", checkAuth, async (req, res) => {
   
     server.shortDesc = data.short_description;
     server.desc = data.long_description;
-    server.banner = data.banner || "/img/ServerDefaultBanner.png";
     server.published = true;
     await server.save();
   
