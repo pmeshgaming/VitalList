@@ -60,6 +60,8 @@ var minifyHTML = require("express-minify-html-terser");
 const {
     debug
 } = require('console');
+const { accessSync } = require('fs');
+const { use } = require('passport');
 app.use(
     minifyHTML({
         override: true,
@@ -434,6 +436,44 @@ app.get("/servers", checkMaintenance, async(req, res) => {
     });
 })
 
+//-User Pages-//
+
+app.get("/me", checkAuth, async(req, res) => {
+    const user = req.user || null;
+    const response = await fetch(`https://japi.rest/discord/v1/user/${req.user.id}`)
+    const data = await response.json();
+    console.log(data)
+    const marked = require("marked")
+    const bio = marked.parse(data.data.bio);
+
+    user.bio = bio;
+
+    res.render("me.ejs", {
+        bot: req.bot,
+        user: user || null
+    });
+})
+
+app.get("/users/:id", checkAuth, async(req, res) => {
+    const guild = await client.guilds.fetch(global.config.guilds.main);
+    const user = (await guild.members.fetch(req.params.id)) || null;
+    if(!user) {
+        res.status(404).json({ message: "This user was not found on Discord."})
+    }
+    const response = await fetch(`https://japi.rest/discord/v1/user/${user.id}`)
+    const data = await response.json();
+    console.log(data)
+    const marked = require("marked")
+    const bio = marked.parse(data.data.bio);
+    user.user.bio = bio;
+
+    res.render("user.ejs", {
+        bot: req.bot,
+        user2: user.user,
+        user: req.user || null
+    });
+})
+
 //-Admin Pages-//
 
 app.get("/queue", checkAuth, checkStaff, async(req, res) => {
@@ -547,8 +587,8 @@ app.post("/bots/:id/deny", checkAuth, checkStaff, async(req, res) => {
     .setDescription("<:redcross:1020135034075746404> " + bot.tag + " has been denied on Vital List.")
     .setColor("Red")
     .addFields({ name: "Bot", value: `[${bot.tag}](https://vitallist.xyz/bots/${bot.id})`, inline: true})
-    .addFields({ name: "Owner", value: `[${bot.ownerName}](https://vitallist.xyz/user/${bot.owner})`, inline: true})
-    .addFields({ name: "Reviewer", value: `[${req.user.username}#${req.user.discriminator}](https://vitallist.xyz/user/${req.user.id})`, inline: true})
+    .addFields({ name: "Owner", value: `[${bot.ownerName}](https://vitallist.xyz/usesr/${bot.owner})`, inline: true})
+    .addFields({ name: "Reviewer", value: `[${req.user.username}#${req.user.discriminator}](https://vitallist.xyz/users/${req.user.id})`, inline: true})
     .addFields({ name: "Reason", value: `${bot.reason}`, inline: true})
     .addFields({ name: "Date", value: `${date.toLocaleString()}`, inline: true})
     .setFooter({ text: "Deny Logs - VitalList", iconURL: `${global.client.user.displayAvatarURL()}`})
@@ -617,8 +657,8 @@ app.use('/bots/:id/status', checkAuth, checkStaff, async(req, res) => {
     .setDescription("<:greentick:1020134758753255555> "+ bot.tag + " has been approved on Vital List.")
     .setColor("Green")
     .addFields({ name: "Bot", value: `[${bot.tag}](https://vitallist.xyz/bots/${bot.id})`, inline: true})
-    .addFields({ name: "Owner", value: `[${bot.ownerName}](https://vitallist.xyz/user/${bot.owner})`, inline: true})
-    .addFields({ name: "Reviewer", value: `[${req.user.username}#${req.user.discriminator}](https://vitallist.xyz/user/${req.user.id})`, inline: true})
+    .addFields({ name: "Owner", value: `[${bot.ownerName}](https://vitallist.xyz/users/${bot.owner})`, inline: true})
+    .addFields({ name: "Reviewer", value: `[${req.user.username}#${req.user.discriminator}](https://vitallist.xyz/users/${req.user.id})`, inline: true})
     .addFields({ name: "Date", value: `${date.toLocaleString()}`, inline: true})
     .setFooter({ text: "Approve Logs - VitalList", iconURL: `${global.client.user.displayAvatarURL()}`})
 
