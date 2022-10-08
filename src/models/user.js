@@ -22,6 +22,10 @@ let app = mongoose.Schema({
     type: Number,
     required: false,
     default: 0
+  },
+  ApiKey: {
+    type: String, 
+    required: false,
   }
 });
 module.exports = mongoose.model("users", app);

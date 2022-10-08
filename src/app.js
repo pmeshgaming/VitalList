@@ -365,9 +365,8 @@ app.get('/api/bots/:id', async(req, res) => {
     res.end(inspect(data));
 })
 
-app.post('/api/bots/:id/', async(req, res) => {
-    const client = global.client
-    let data = await client.users.fetch(req.params.id);
+app.post('/api/bots/:id/', checkKey, async(req, res) => {
+    const client = global.client;
     let model = require("./models/bot.js");
     let bot = await model.findOne({
         id: req.params.id
@@ -375,9 +374,7 @@ app.post('/api/bots/:id/', async(req, res) => {
     if (!bot) return res.status(404).json({
         message: "This bot is not on our list."
     });
-    if (!data) return res.status(404).json({
-        message: "This bot is not on our list."
-    });
+
     if (!req.body.server_count) return res.status(400).json({
         message: "Please provide a server count."
     });
@@ -516,8 +513,8 @@ app.get("/me", checkAuth, async(req, res) => {
     const user = req.user || null;
     //const response = await fetch(`https://japi.rest/discord/v1/user/${req.user.id}`)
     let umodel = require("./models/user.js");
-    let userm = await umodel.findOne({
-        id: req.user.id
+    let userm = await umodel.find({
+        id: req.user.id,
     })
     user.bio = userm.bio
     let model = require("./models/bot.js");
@@ -819,4 +816,14 @@ function checkMaintenance(req, res, next) {
     })
 } 
     return next();
+}
+
+function checkKey(req, req, next) {
+    const key = req.body.key || null;
+    if (!key) return res.status(401).json({json: "Please provides a API Key"})
+    
+    let model = require("./models/user.js");
+    //apikey check and whatever
+    return next();
+
 }
