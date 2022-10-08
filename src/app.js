@@ -592,11 +592,12 @@ app.post("/bots/:id/deny", checkAuth, checkStaff, async(req, res) => {
     .addFields({ name: "Reason", value: `${bot.reason}`, inline: true})
     .addFields({ name: "Date", value: `${date.toLocaleString()}`, inline: true})
     .setFooter({ text: "Deny Logs - VitalList", iconURL: `${global.client.user.displayAvatarURL()}`})
-
     logs.send({ embeds: [denyEmbed] })
+    const channelName = `${BotRaw.username}-${BotRaw.discriminator}`;
     let guild = client.guilds.cache.get(global.config.guilds.testing);
-    let channel = await guild.channels.cache.find(c => c.name == `${LogRaw.username}-${LogRaw.discriminator}`)
-    channel.delete()
+    let channel = await guild.channels.cache.find(c => c.name == channelName.toLowerCase())
+    console.log(channelName.toLowerCase())
+    console.log(channel)
     return res.redirect("/queue?=successfully declined");
   });
 
