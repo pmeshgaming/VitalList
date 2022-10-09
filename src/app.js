@@ -116,13 +116,13 @@ app.use(passport.initialize());
 
 app.use(passport.session());
 
-app.get(
-    "/auth/login",
+app.get("/auth/login",
     passport.authenticate("discord", {
         scope: scopes,
         prompt: prompt
-    }),
-    function(_req) {}
+    }), (req, res) => {
+        if (req.query.from)  req.session.returnTo = req.query.from;
+    }
 );
 
 app.get(
@@ -146,8 +146,7 @@ app.get(
                 },
             });
         } catch {}
-
-        res.redirect(req.session.backURL || "/");
+        res.redirect(req.session.returnTo || "/");
     }
 );
 
@@ -160,6 +159,9 @@ app.get("/auth/logout", function(req, res) {
     req.logout(() => {
         res.redirect("/");
     });
+    if (req.session.returnTo) {
+        delete req.session.returnTo
+      }
 });
 
 /*app.get("/arc-sw.js", function(req, res) {
@@ -256,6 +258,7 @@ app.get("/bots", checkMaintenance, async(req, res) => {
 app.get("/bots/new", checkMaintenance, checkAuth, async(req, res) => {
     res.render("botlist/add.ejs", {
         bot: global.client,
+        tags: global.config.tags,
         user: req.user || null
     });
 })
@@ -391,6 +394,31 @@ app.post("/bots/:id/edit", checkMaintenance, checkAuth, async(req, res) => {
 
 })
 
+app.post('/bots/:id/vote', checkAuth, async(req, res) => {
+    let model = require("./models/bot.js");
+    let bot = await model.findOne({
+        id: req.params.id
+    });
+    let umodel = require("./models/user.js");
+    let user = await umodel.findOne({
+        id: req.user.id,
+    })
+    if (!user.voted) {
+        bot.votes += 1 
+        user.voted = new Date;
+    }
+    if (user.voted > (Date.now() - 24 * 60 * 60 * 1000) && user.voted <= (Date.now() - 24 * 60 * 60 * 1000)) {
+        user.voted = new Date;
+        bot.votes += 1;
+    }
+    await bot.save();
+    await user.save();
+    return res.redirect('/bot/:id/vote');
+})
+app.get('/bots/:id/vote', checkAuth, async(req, res) => {
+    
+})
+
 app.get("/bots/:id", checkMaintenance, async(req, res) => {
     let id = req.params.id;
     const client = global.client;
@@ -431,7 +459,7 @@ app.get("/bots/:id", checkMaintenance, async(req, res) => {
 
 
 //-TAG-//
-app.get('/tag', async(req, res) => {
+app.get('/tag/:tag', async(req, res) => {
     
 });
 
@@ -931,7 +959,7 @@ app.listen(config.port, () => {
 
 function checkAuth(req, res, next) {
     if (req.isAuthenticated()) return next();
-    res.status(401)
+    res.redirect( `/auth/login?from=${req.originalUrl}` )
 }
 
 function checkStaff(req, res, next) {

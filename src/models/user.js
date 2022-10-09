@@ -26,6 +26,11 @@ let app = mongoose.Schema({
   ApiKey: {
     type: String, 
     required: false,
+  },
+  voted: {
+    type: Date,
+    default: 0,
+    required: false,
   }
 });
 module.exports = mongoose.model("users", app);
