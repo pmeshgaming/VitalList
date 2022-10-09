@@ -54,8 +54,7 @@ article,aside,figcaption,figure,footer,header,hgroup,main,nav,section {
     display:block
 }
 body{
-    background: linear-gradient(59deg, rgba(12, 33, 90, 0.964) 0%, rgb(11, 41, 92) 35%, #274472 100%);
-    height: 100%;
+    background: linear-gradient(59deg, rgba(12, 33, 90, 0.964) 0%, rgb(11, 41, 92) 35%, #274472 100%) fixed;
     margin: 0;
     background-repeat: no-repeat;
     background-attachment: fixed;

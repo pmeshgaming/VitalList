@@ -47,7 +47,11 @@
             <div class="infoContainer">
                 <h2><i class="fa-solid fa-circle-info"></i> Information</h2>
                 <hr></hr>
-                <p style="color: white; font-size: 16px;"><i class="fa-solid fa-hashtag"></i> Tags: <strong><%= server.tags %></strong></p>
+                <p style="color: white; font-size: 16px;"><i class="fa-solid fa-user-group"></i> Members: <strong><%= server.memberCount %></strong></p>
+                <p style="color: white; font-size: 16px;"><i class="fa-solid fa-gem"></i> Boosts: <strong><%= server.boosts %></strong></p>
+                <p style="color: white; font-size: 16px;"><i class="fa-solid fa-face-smile"></i> Emojis: <strong><%= server.emojis %></strong></p>
+                <p style="color: white; font-size: 16px;"><i class="fa-solid fa-crown"></i> Owner:&nbsp;&nbsp;<img class="rounded-circle idk" src="https://cdn.discordapp.com/avatars/<%= server.owner %>/<%= server.ownerAvatar %>.png?size=1280">&nbsp;<strong><a style="color: white;" href="/users/<%- server.owner %>"><%= server.ownerTag %></a></strong></p>
+                <p style="color: white; font-size: 16px;"><i class="fa-solid fa-hashtag"></i> Tags: <strong><%= server.tags %></strong></p><br>
                 <h2><i class="fa-solid fa-chart-simple"></i> Statistics</h2>
                 <hr></hr>
                 <p style="color: white; font-size: 16px;"><i class="fa-solid fa-check-to-slot"></i> Votes: <strong><%= server.votes %></strong></p>
@@ -103,12 +107,24 @@
                         -webkit-backdrop-filter: blur( 20px );
                         width: 1000px;
                         border-radius: 10px;
-                        margin-top: -350px;
+                        margin-top: -550px;
                         margin-right: 250px;
                         margin-left: 250px;
                         border: 1px solid rgba( 255, 255, 255, 0.18 );
                       }
                     }
+                    .idk{
+                     width: 32px;
+                       height: 32px;
+                   }
+                   .owner{
+                     color: #D9E4EC;
+                     text-decoration: none;
+                   }
+                   .owner:hover{
+                      color: #D9E4EC;
+                     text-decoration: none;
+                 }
                 </style>
                 <script>
 $(document).ready(function () {

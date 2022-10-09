@@ -543,13 +543,17 @@ app.get("/servers/:id", checkMaintenance, async (req, res) => {
     const desc = marked.parse(server.desc);
 
  const ServerRaw = (await client.guilds.fetch(id)) || null;
+ const OwnerRaw = (await client.users.fetch(server.owner));
  (server.name = ServerRaw.name), (server.icon = ServerRaw.iconURL()), 
- (server.memberCount = ServerRaw.memberCount), (server.boosts = ServerRaw.premiumSubscriptionCount);
+ (server.memberCount = ServerRaw.memberCount.toLocaleString().replace(',', '.')), (server.boosts = ServerRaw.premiumSubscriptionCount);
  server.tags = server.tags.join(", ")
+ server.ownerTag = OwnerRaw.tag;
+ server.ownerAvatar = OwnerRaw.avatar;
  server.desc = desc;
+ server.emojis = ServerRaw.emojis.cache.size;
 
     res.render("servers/viewserver.ejs", {
-     bot: req.bot,
+     bot: global.client,
      server: server,
      user: req.user
    });
@@ -576,7 +580,7 @@ app.get("/servers/:id/edit", checkMaintenance, checkAuth, async (req, res) => {
     const server = await model.findOne({ id: id })
     if (!server) return res.redirect("/404");
   
-    if (!server.owner.includes(req.user.id)) return res.redirect("/");
+    if (req.user.id !== server.owner) return res.redirect("/404");
   
   const ServerRaw = (await client.guilds.fetch(id)) || null;
   
@@ -602,7 +606,7 @@ app.post("/servers/:id/edit", checkAuth, async (req, res) => {
     
     const logServer = await model.findOne({ id: id });
   
-    if (!server.owner.includes(req.user.id)) return res.redirect("/");
+    if (req.user.id !== server.owner) return res.redirect("/404");
   
     server.shortDesc = data.short_description;
     server.desc = data.long_description;

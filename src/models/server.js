@@ -19,7 +19,7 @@ let app = mongoose.Schema({
     required: false
   },
   owner: {
-    type: Array,
+    type: String,
     required: false
   },
   views: {

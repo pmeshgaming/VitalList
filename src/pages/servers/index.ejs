@@ -49,27 +49,50 @@ startDelay: 1000,
 <div class="serverContainer">
     <h3><i class="fa-solid fa-clock"></i> <b>Recently Bumped Servers</b></h3><p>These are the most recently bumped servers.</p>
     <% let allservers = servers %>
-    <% let voted = allservers.sort((a,b) => b.votes - a.votes) %>
-           <% for(let i = 0; i < voted.length; i++){ %>
+    <% let bumped = allservers.sort((a,b) => b.bumpdate - a.bumpdate) %>
+           <% for(let i = 0; i < bumped.length; i++){ %>
                                        <%  if (i === 6) break; %>
    <div class="card" style="border-radius:10px;">
-     <img src="<%= voted[i].icon %>" alt="<%= voted[i].name %>'s Icon" draggable="false" class="botimg_main">
-   <p class="botname_main"><%= voted[i].name %><br>
-    <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-bomb"></i> <%= voted[i].bumps %> • <i class="fa-solid fa-check-to-slot"></i> <%= voted[i].votes %></span></p>
+     <img src="<%= bumped[i].icon %>" alt="<%= bumped[i].name %>'s Icon" draggable="false" class="botimg_main">
+   <p class="botname_main"><%= bumped[i].name %><br>
+    <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-bomb"></i> <%= bumped[i].bumps %> • <i class="fa-solid fa-check-to-slot"></i> <%= bumped[i].votes %></span></p>
    <div class="botdesc_main">
-    <i class="fa-solid fa-file-lines"></i> <%= voted[i].shortDesc %>
+    <i class="fa-solid fa-file-lines"></i> <%= bumped[i].shortDesc %>
    </div>
    <div class="bottags_main">
-    <i class="fa-solid fa-hashtag"></i> <%= voted[i].tags %>
+    <i class="fa-solid fa-hashtag"></i> <%= bumped[i].tags %>
    </div>
    <div style="margin-left:20px;">
-    <a href="/servers/<%= voted[i].id %>">
+    <a href="/servers/<%= bumped[i].id %>">
    <button class="viewbtn">View</button>
    </div></a>
-   <a href="/servers/<%= voted[i].id %>/vote">
+   <a href="/servers/<%= bumped[i].id %>/vote">
    <button class="votebtn">Vote</button></a>
    </div></a>
-         <% } %>
+         <% } %><br><br><br><br><br>
+         <h3><i class="fa-solid fa-fire-flame-curved"></i> <b>Top Voted Servers</b></h3><p>These are the most voted servers this month.</p>
+         <% let votedservers = servers %>
+         <% let voted = allservers.sort((a,b) => b.votes - a.votes) %>
+                <% for(let i = 0; i < voted.length; i++){ %>
+                                            <%  if (i === 6) break; %>
+        <div class="card" style="border-radius:10px;">
+          <img src="<%= voted[i].icon %>" alt="<%= voted[i].name %>'s Icon" draggable="false" class="botimg_main">
+        <p class="botname_main"><%= voted[i].name %><br>
+         <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-bomb"></i> <%= voted[i].bumps %> • <i class="fa-solid fa-check-to-slot"></i> <%= voted[i].votes %></span></p>
+        <div class="botdesc_main">
+         <i class="fa-solid fa-file-lines"></i> <%= voted[i].shortDesc %>
+        </div>
+        <div class="bottags_main">
+         <i class="fa-solid fa-hashtag"></i> <%= voted[i].tags %>
+        </div>
+        <div style="margin-left:20px;">
+         <a href="/servers/<%= voted[i].id %>">
+        <button class="viewbtn">View</button>
+        </div></a>
+        <a href="/servers/<%= voted[i].id %>/vote">
+        <button class="votebtn">Vote</button></a>
+        </div></a>
+              <% } %>
 </div>
 
          <br><br><br><br>

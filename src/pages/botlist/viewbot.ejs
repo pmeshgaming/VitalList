@@ -49,7 +49,7 @@
                 <h2><i class="fa-solid fa-circle-info"></i> Information</h2>
                 <hr></hr>
                 <p style="color: white; font-size: 16px;"><i class="fa-solid fa-terminal"></i> Prefix: <code style="padding: 3px 8px; font-weight: bold;"><%= bot.prefix %></code></p>
-                <p style="color: white; font-size: 16px;"><i class="fa-solid fa-crown"></i> Owner: <strong><a style="color: white;" href="/users/<%- bot.owner %>"><%= bot.ownerTag %></a></strong></p>
+                <p style="color: white; font-size: 16px;"><i class="fa-solid fa-crown"></i> Owner:&nbsp;&nbsp;<img class="rounded-circle idk" src="https://cdn.discordapp.com/avatars/<%= bot.owner %>/<%= bot.ownerAvatar %>.png?size=1280">&nbsp;<strong><a style="color: white;" href="/users/<%- bot.owner %>"><%= bot.ownerTag %></a></strong></p>
                 <p style="color: white; font-size: 16px;"><i class="fa-solid fa-hashtag"></i> Tags: <strong><%= bot.tags %></strong></p>
                 <% if (bot.presence && bot.presence.status === "online") { %>
                     <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal"></i> Status: <strong>Online</strong></p>
@@ -121,7 +121,20 @@
                         border: 1px solid rgba( 255, 255, 255, 0.18 );
                       }
                     }
-                </style>
+                    .idk{
+                     width: 32px;
+                       height: 32px;
+                   }
+                   .owner{
+                     color: #D9E4EC;
+                     text-decoration: none;
+                   }
+                   .owner:hover{
+                      color: #D9E4EC;
+                     text-decoration: none;
+                 }
+
+                 </style>
                 <script>
 $(document).ready(function () {
     const descriptionBox = $("#bot-description");
