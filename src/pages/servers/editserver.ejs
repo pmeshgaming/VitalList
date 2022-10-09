@@ -35,65 +35,17 @@
                 </div>
                 <label for="botShortDesc">Server Website</label>
                     <input type="url" class="form-control" id="website" name="website" value="<%= server.website %>" placeholder="https://vitallist.xyz/servers" autocomplete="off"><br>
-                <div class="form-group" id="tags-box">
-                    <label class="mb-0">Server Tags</label>
-                    <small class="form-text text-muted mt-0 mb-2">Max. 4 tags</small>
-                    <div class="custom-control custom-checkbox">
-<<<<<<< HEAD
-                        <input type="checkbox" class="custom-control-input" id="tag-community" value="Community" name="tags">
-                        <label class="custom-control-label" for="tag-community">Community</label>
-                    </div>
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="tag-development" value="Development" name="tags">
-                        <label class="custom-control-label" for="tag-development">Development</label>
-                    </div>
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="tag-botlist" value="Bot List" name="tags">
-                        <label class="custom-control-label" for="tag-botlist">Bot List</label>
-                    </div>
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="tag-serverlist" value="Server List" name="tags">
-                        <label class="custom-control-label" for="tag-serverlist">Server List</label>
-                    </div>
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="tag-soical" value="Soical" name="tags">
-                        <label class="custom-control-label" for="tag-soical">Soical</label>
-                    </div>
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="tag-gaming" value="Gaming" name="tags">
-                        <label class="custom-control-label" for="tag-gaming">Gaming</label>
-                    </div>
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="tag-fun" value="Fun" name="tags">
-                        <label class="custom-control-label" for="tag-fun">Fun</label>
-                    </div>
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="tag-emotes" value="Emotes" name="tags">
-                        <label class="custom-control-label" for="tag-emotes">Emotes</label>
-                    </div>
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="tag-youtube" value="Youtube" name="tags">
-                        <label class="custom-control-label" for="tag-youtube">YouTube</label>
-                    </div>
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="tag-streaming" value="Streaming" name="tags">
-                        <label class="custom-control-label" for="tag-streaming">Streaming</label>
-                    </div>
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="tag-anime" value="Anime" name="tags">
-                        <label class="custom-control-label" for="tag-anime">Anime</label>
-                    </div>
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="tag-meme" value="Meme" name="tags">
-                        <label class="custom-control-label" for="tag-meme">Meme</label>
-=======
+
+                    <div class="form-group" id="tags-box">
+                        <label class="mb-0">Server Tags</label>
+                        <small class="form-text text-muted mt-0 mb-2">Max. 4 tags</small>
                         <% for(let i = 0; i < tags.servers.length; i++){ %>
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" class="custom-control-input" id="tag-<%= tags.servers[i].toLowerCase() %>" value="Moderation" name="tag">
                                 <label class="custom-control-label" for="tag-<%= tags.servers[i].toLowerCase() %>"><%= tags.servers[i]%></label>
                             </div>                                    
                          <% } %> 
->>>>>>> 817a5969294269dafedfb3d4838a92a033d51ebd
+
                     </div>
                 </div><br>
     
