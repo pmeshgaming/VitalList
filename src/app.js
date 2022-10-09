@@ -345,6 +345,7 @@ app.get("/bots/:id/edit", checkMaintenance, checkAuth, async(req, res) => {
 
     res.render("botlist/edit.ejs", {
         bot: bot,
+        tags: global.config.tags,
         user: req.user || null
     });
 })
@@ -413,10 +414,32 @@ app.post('/bots/:id/vote', checkAuth, async(req, res) => {
     }
     await bot.save();
     await user.save();
-    return res.redirect('/bot/:id/vote');
+    return res.redirect(`/bots//${req.params.id}`);
 })
+
 app.get('/bots/:id/vote', checkAuth, async(req, res) => {
+    let model = require("./models/bot.js");
+    let bot = await model.findOne({
+        id: req.params.id
+    });
+    if(!bot) return res.status(404).json({ message: "This bot was not found on our site."});
+    let umodel = require("./models/user.js");
+    let user = await umodel.findOne({
+        id: req.user.id,
+    })
+    if(!user) {
+       await umodel.create({ id: req.user.id })
+    }
     
+    const BotRaw = (await client.users.fetch(bot.id)) || null;
+    bot.name = BotRaw.username;
+    bot.discriminator = BotRaw.discriminator;
+    bot.avatar = BotRaw.avatar;
+
+    res.render("botlist/vote.ejs", {
+        bot: bot,
+        user: req.user || null
+    });
 })
 
 app.get("/bots/:id", checkMaintenance, async(req, res) => {
@@ -617,6 +640,7 @@ app.get("/servers/:id/edit", checkMaintenance, checkAuth, async (req, res) => {
     res.render("servers/editserver.ejs", {
      bot: req.bot,
      server: server,
+     tags: global.config.tags,
      user: req.user
    });
 });
