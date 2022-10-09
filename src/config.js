@@ -46,4 +46,4 @@ module.exports = {
       bots: ['Moderation', 'Fun', 'Economy', 'Leveling', 'Utilities', 'Logging', 'Music', 'Anime', 'Memes',]
     }
      
-}
+} 

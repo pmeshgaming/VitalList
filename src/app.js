@@ -416,7 +416,7 @@ app.post('/bots/:id/vote', checkAuth, async(req, res) => {
     }
     await bot.save();
     await user.save();
-    return res.redirect(`/bots//${req.params.id}`);
+    return res.redirect(`/bots/${req.params.id}`);
 })
 
 app.get('/bots/:id/vote', checkAuth, async(req, res) => {
@@ -464,10 +464,8 @@ app.get("/bots/:id", checkMaintenance, async(req, res) => {
     const BotRaw = (await client.users.fetch(id)) || null;
     const OwnerRaw = (await client.users.fetch(bot.owner));
     console.log(OwnerRaw)
-    const PresenceRaw = await guild.members.fetch(id) || null;
     bot.name = BotRaw.username;
     bot.avatar = BotRaw.avatar;
-    bot.presence = PresenceRaw.presence;
     bot.discriminator = BotRaw.discriminator;
     bot.tag = BotRaw.tag;
     bot.ownerTag = OwnerRaw.tag;
@@ -1010,7 +1008,7 @@ function checkMaintenance(req, res, next) {
     if (!config.betatesters.includes(req.user.id)) {  
         return res.render("errors/503.ejs", {
         user: req.user || null
-    })
+    }) 
 } 
     return next();
 }
