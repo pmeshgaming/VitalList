@@ -56,6 +56,8 @@ app.use((req, res, next) => {
 //-Alaways use protection!-//
 
 var minifyHTML = require("express-minify-html-terser");
+const { accessSync } = require('fs');
+const { assert } = require('console');
 app.use(
     minifyHTML({
         override: true,
@@ -978,6 +980,8 @@ app.all('*', (req, res) => {
 //-Other Pages-//
 
 app.get("/discord", (_req, res) => res.redirect("https://discord.gg/DWX3d5r2wW"))
+
+app.get("/terms", async (req, res) => {})
 
 app.listen(config.port, () => {
     logger.system(`Running on port ${config.port}.`);
