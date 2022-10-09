@@ -7,7 +7,7 @@ let app = mongoose.Schema({
   },
   username: {
     type: String,
-    required: true
+    required: false
   },
   bio: {
     type: String,

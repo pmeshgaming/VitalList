@@ -65,42 +65,12 @@
                 <div class="form-group" id="tags-box">
                     <label class="mb-0">Bot Tags</label>
                     <small class="form-text text-muted mt-0 mb-2">Max. 4 tags</small>
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="tag-moderation" value="Moderation" name="tag">
-                        <label class="custom-control-label" for="tag-moderation">Moderation</label>
-                    </div>
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="tag-fun" value="Fun" name="tag">
-                        <label class="custom-control-label" for="tag-fun">Fun</label>
-                    </div>
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="tag-economy" value="Economy" name="tag">
-                        <label class="custom-control-label" for="tag-economy">Economy</label>
-                    </div>
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="tag-leveling" value="Leveling" name="tag">
-                        <label class="custom-control-label" for="tag-leveling">Leveling</label>
-                    </div>
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="tag-utility" value="Utility" name="tag">
-                        <label class="custom-control-label" for="tag-utility">Utility</label>
-                    </div>
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="tag-logging" value="Logging" name="tag">
-                        <label class="custom-control-label" for="tag-logging">Logging</label>
-                    </div>
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="tag-anime" value="Anime" name="tag">
-                        <label class="custom-control-label" for="tag-anime">Anime</label>
-                    </div>
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="tag-meme" value="Meme" name="tag">
-                        <label class="custom-control-label" for="tag-meme">Meme</label>
-                    </div>
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="tag-music" value="Music" name="tag">
-                        <label class="custom-control-label" for="tag-music">Music</label>
-                    </div>
+                    <% for(let i = 0; i < tags.bots.length; i++){ %>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="tag-<%= tags.bots[i].toLowerCase() %>" value="Moderation" name="tag">
+                            <label class="custom-control-label" for="tag-<%= tags.bots[i].toLowerCase() %>"><%= tags.bots[i]%></label>
+                        </div>                                    
+                     <% } %> 
                 </div>
                 <div class="alert alert-dismissible alert-danger" id="form-error-popup" style="display: none;"></div>
                 <p style="color: #555;">By clicking submit, you agree to our's TOS and <a style="color: #094cdb" href="https://discord.com/developers/docs/policies-and-agreements/terms-of-service">Discord Developer TOS</a></p>

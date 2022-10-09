@@ -31,8 +31,7 @@
                         <% } else { %>
                             <a href="https://discordapp.com/oauth2/authorize?client_id=<%= bot.id %>&scope=bot&permissions=0" type="button" style="border-radius: 5px;" class="btn btn-primary pr-3 pl-3 mr-1">i class="fa-solid fa-plus"></i> Invite</a>
                         <% } %>
-                        <form id="votebutton" method="post" action="/bots/<%= bot.id %>/vote" style="display: none;"></form>
-                        <a href="/bots/<%= bot.id %>/vote" onclick="document.getElementById('votebutton').submit();" type="button" style="border-radius: 5px;" class="btn btn-info pr-3 pl-3 mr-1"><i class="fa-solid fa-check-to-slot"></i> Vote</a>
+                        <a href="/bots/<%= bot.id %>/vote" type="button" style="border-radius: 5px;" class="btn btn-info pr-3 pl-3 mr-1"><i class="fa-solid fa-check-to-slot"></i> Vote</a>
                         <% if (bot.website) { %>
                             <a href="<%= bot.website %>" type="button" style="border-radius: 5px;" class="btn btn-info pr-3 pl-3 mr-1"><i class="fa-solid fa-globe"></i> Website</a>
                         <% } %>
@@ -50,7 +49,7 @@
                 <h2><i class="fa-solid fa-circle-info"></i> Information</h2>
                 <hr></hr>
                 <p style="color: white; font-size: 16px;"><i class="fa-solid fa-terminal"></i> Prefix: <code style="padding: 3px 8px; font-weight: bold;"><%= bot.prefix %></code></p>
-                <p style="color: white; font-size: 16px;"><i class="fa-solid fa-crown"></i> Owner: <strong><a style="color: white;" href="/users/<%- bot.owner %>"><%= bot.ownerTag %></a></strong></p>
+                <p style="color: white; font-size: 16px;"><i class="fa-solid fa-crown"></i> Owner:&nbsp;&nbsp;<strong><a style="color: white;" href="/users/<%- bot.owner %>"><%= bot.ownerTag %></a></strong></p>
                 <p style="color: white; font-size: 16px;"><i class="fa-solid fa-hashtag"></i> Tags: <strong><%= bot.tags %></strong></p>
                 <!-- <% if (bot.presence && bot.presence.status === "online") { %>
                     <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal"></i> Status: <strong>Online</strong></p>
@@ -123,7 +122,20 @@
                         border: 1px solid rgba( 255, 255, 255, 0.18 );
                       }
                     }
-                </style>
+                    .idk{
+                     width: 32px;
+                       height: 32px;
+                   }
+                   .owner{
+                     color: #D9E4EC;
+                     text-decoration: none;
+                   }
+                   .owner:hover{
+                      color: #D9E4EC;
+                     text-decoration: none;
+                 }
+
+                 </style>
                 <script>
 $(document).ready(function () {
     const descriptionBox = $("#bot-description");

@@ -345,6 +345,7 @@ app.get("/bots/:id/edit", checkMaintenance, checkAuth, async(req, res) => {
 
     res.render("botlist/edit.ejs", {
         bot: bot,
+        tags: global.config.tags,
         user: req.user || null
     });
 })
@@ -413,10 +414,32 @@ app.post('/bots/:id/vote', checkAuth, async(req, res) => {
     }
     await bot.save();
     await user.save();
-    return res.redirect('/bots/:id/vote');
+    return res.redirect(`/bots/${req.params.id}`);
 })
+
 app.get('/bots/:id/vote', checkAuth, async(req, res) => {
+    let model = require("./models/bot.js");
+    let bot = await model.findOne({
+        id: req.params.id
+    });
+    if(!bot) return res.status(404).json({ message: "This bot was not found on our site."});
+    let umodel = require("./models/user.js");
+    let user = await umodel.findOne({
+        id: req.user.id,
+    })
+    if(!user) {
+       await umodel.create({ id: req.user.id })
+    }
     
+    const BotRaw = (await client.users.fetch(bot.id)) || null;
+    bot.name = BotRaw.username;
+    bot.discriminator = BotRaw.discriminator;
+    bot.avatar = BotRaw.avatar;
+
+    res.render("botlist/vote.ejs", {
+        bot: bot,
+        user: req.user || null
+    });
 })
 
 app.get("/bots/:id", checkMaintenance, async(req, res) => {
@@ -569,13 +592,17 @@ app.get("/servers/:id", checkMaintenance, async (req, res) => {
     const desc = marked.parse(server.desc);
 
  const ServerRaw = (await client.guilds.fetch(id)) || null;
+ const OwnerRaw = (await client.users.fetch(server.owner));
  (server.name = ServerRaw.name), (server.icon = ServerRaw.iconURL()), 
- (server.memberCount = ServerRaw.memberCount), (server.boosts = ServerRaw.premiumSubscriptionCount);
+ (server.memberCount = ServerRaw.memberCount.toLocaleString().replace(',', '.')), (server.boosts = ServerRaw.premiumSubscriptionCount);
  server.tags = server.tags.join(", ")
+ server.ownerTag = OwnerRaw.tag;
+ server.ownerAvatar = OwnerRaw.avatar;
  server.desc = desc;
+ server.emojis = ServerRaw.emojis.cache.size;
 
     res.render("servers/viewserver.ejs", {
-     bot: req.bot,
+     bot: global.client,
      server: server,
      user: req.user
    });
@@ -602,7 +629,7 @@ app.get("/servers/:id/edit", checkMaintenance, checkAuth, async (req, res) => {
     const server = await model.findOne({ id: id })
     if (!server) return res.redirect("/404");
   
-    if (!server.owner.includes(req.user.id)) return res.redirect("/");
+    if (req.user.id !== server.owner) return res.redirect("/404");
   
   const ServerRaw = (await client.guilds.fetch(id)) || null;
   
@@ -611,6 +638,7 @@ app.get("/servers/:id/edit", checkMaintenance, checkAuth, async (req, res) => {
     res.render("servers/editserver.ejs", {
      bot: req.bot,
      server: server,
+     tags: global.config.tags,
      user: req.user
    });
 });
@@ -628,7 +656,7 @@ app.post("/servers/:id/edit", checkAuth, async (req, res) => {
     
     const logServer = await model.findOne({ id: id });
   
-    if (!server.owner.includes(req.user.id)) return res.redirect("/");
+    if (req.user.id !== server.owner) return res.redirect("/404");
   
     server.shortDesc = data.short_description;
     server.desc = data.long_description;

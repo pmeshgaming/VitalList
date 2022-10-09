@@ -35,16 +35,17 @@
                 </div>
                 <label for="botShortDesc">Server Website</label>
                     <input type="url" class="form-control" id="website" name="website" value="<%= server.website %>" placeholder="https://vitallist.xyz/servers" autocomplete="off"><br>
-                <div class="form-group" id="tags-box">
-                    <label class="mb-0">Server Tags</label>
-                    <small class="form-text text-muted mt-0 mb-2">Max. 4 tags</small>
-                    <div class="custom-control custom-checkbox">
+
+                    <div class="form-group" id="tags-box">
+                        <label class="mb-0">Server Tags</label>
+                        <small class="form-text text-muted mt-0 mb-2">Max. 4 tags</small>
                         <% for(let i = 0; i < tags.servers.length; i++){ %>
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" class="custom-control-input" id="tag-<%= tags.servers[i].toLowerCase() %>" value="Moderation" name="tag">
                                 <label class="custom-control-label" for="tag-<%= tags.servers[i].toLowerCase() %>"><%= tags.servers[i]%></label>
                             </div>                                    
                          <% } %> 
+
                     </div>
                 </div><br>
     
