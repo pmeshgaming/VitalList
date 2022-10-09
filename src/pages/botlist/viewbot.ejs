@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/1.1.0/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sanitize-html/1.26.0/sanitize-html.min.js"></script>
     <title><%- bot.name %> - VitalList</title>
     <%- include("../parts/head.ejs") %>
@@ -53,7 +52,7 @@
                 <p style="color: white; font-size: 16px;"><i class="fa-solid fa-crown"></i> Owner: <strong><a style="color: white;" href="/users/<%- bot.owner %>"><%= bot.ownerTag %></a></strong></p>
                 <p style="color: white; font-size: 16px;"><i class="fa-solid fa-hashtag"></i> Tags: <strong><%= bot.tags %></strong></p>
                 <% if (bot.presence && bot.presence.status === "online") { %>
-                    <p style="color: white; font-size: 16px;"><i class="fa-solid fa-power-off"></i> Status: <strong>Online</strong></p>
+                    <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal"></i> Status: <strong>Online</strong></p>
                 <% } else if (bot.presence && bot.presence.status === "idle") { %>
                     <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal"></i> Status: <strong>Idle</strong></p>
                 <% } else if (bot.presence && bot.presence.status === "dnd") { %>
@@ -65,11 +64,12 @@
                 <hr></hr>
                 <p style="color: white; font-size: 16px;"><i class="fa-solid fa-check-to-slot"></i> Votes: <strong><%= bot.votes %></strong></p>
                 <p style="color: white; font-size: 16px;"><i  class="fa-solid fa-server"></i> Servers: <strong><%= bot.servers %></strong></p>
-                <p style="color: white; font-size: 16px;"> Shards: <strong><%= bot.shards %></strong></p>
+                <p style="color: white; font-size: 16px;"><i  class="fa-solid fa-diamond"></i> Shards: <strong><%= bot.shards %></strong></p>
                 </div>
                     </div>
                     </div>
                     </div>
+                    <br><br>
                     <div class="container">
                     <div class="desccard">
                         <div class="card-body">
@@ -81,9 +81,9 @@
                     <style>
                     @media only screen and (max-width: 600px) {
                         .infoContainer{
-                        width:100%;
-                        padding-right:35px;
-                        padding-left:35px;
+                        width:300px;
+                        padding-right:15px;
+                        padding-left:15px;
                         margin-right:auto;
                         margin-left:auto
                     }
@@ -91,7 +91,7 @@
                     
                     @media only screen and (min-width: 1080px) {
                         .infoContainer{
-                        width: 250px;
+                        width: 300px;
                         margin-right: 200px;
                         margin-left: 200px;
                     }
@@ -105,8 +105,9 @@
                         -webkit-backdrop-filter: blur( 20px );
                         border-radius: 10px;
                         border: 1px solid rgba( 255, 255, 255, 0.18 );
-                      }
+                      } 
                }
+               @media only screen and (min-width: 1080px) {
                         .desccard{
                         background: rgba( 255, 255, 255, 0.15 );
                         box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
@@ -114,17 +115,17 @@
                         -webkit-backdrop-filter: blur( 20px );
                         width: 1000px;
                         border-radius: 10px;
-                        margin-top: -460px;
+                        margin-top: -500px;
                         margin-right: 250px;
                         margin-left: 250px;
                         border: 1px solid rgba( 255, 255, 255, 0.18 );
                       }
+                    }
                 </style>
                 <script>
 $(document).ready(function () {
     const descriptionBox = $("#bot-description");
     const descriptionBoxText = descriptionBox.text() || descriptionBox.val();
-    const markdownRender = marked(descriptionBoxText);
     const allowedTags = sanitizeHtml.defaults.allowedTags.concat(["address", "article", "aside", "footer", "header", "h1", "h2", "h3", "h4",
   "h5", "h6", "hgroup", "main", "nav", "section", "blockquote", "dd", "div",
   "dl", "dt", "figcaption", "figure", "hr", "li", "main", "ol", "p", "pre",
@@ -132,7 +133,7 @@ $(document).ready(function () {
   "em", "i", "kbd", "mark", "q", "rb", "rp", "rt", "rtc", "ruby", "s", "samp",
   "small", "span", "strong", "sub", "sup", "time", "u", "var", "wbr", "caption",
   "col", "colgroup", "table", "tbody", "td", "tfoot", "th", "thead", "tr"]);
-    const sanitizedRender = sanitizeHtml(markdownRender, { allowedTags });
+    const sanitizedRender = sanitizeHtml(descriptionBoxText, { allowedTags });
     descriptionBox.html(sanitizedRender);
 });
 </script>

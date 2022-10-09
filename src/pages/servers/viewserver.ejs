@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sanitize-html/1.26.0/sanitize-html.min.js"></script>
     <title><%- server.name %> - VitalList</title>
     <%- include("../parts/head.ejs") %>
 </head>
@@ -20,16 +21,18 @@
                     <div class="col-sm">
                         <h3><%= server.name %></h3>
                         <%- server.shortDesc %><br>
+                        <!--
                         <span style="border-radius: 5px;" class="badge badge-primary" style="font-size: 20px;"><i class="fa-solid fa-bomb"></i> Bumps: <%= server.bumps %></span>
                         <span style="border-radius: 5px;" class="badge badge-danger" style="font-size: 20px;"><i class="fa-solid fa-check-to-slot"></i> Votes: <%= server.votes %></span>
                         <span style="border-radius: 5px;" class="badge badge-danger" style="font-size: 20px;"><i class="fa-solid fa-eye"></i> Views: <%= server.views %></span>
+                         -->
                         <hr></hr>
                         <% if (server.invite) { %>
-                            <a href="/servers/<%= server.id %>/join" type="button" style="border-radius: 5px;" class="btn btn-primary pr-3 pl-3 mr-1"><i class="fa-brands fa-discord"></i> Join</a>
+                            <a href="/servers/<%= server.id %>/join" type="button" style="border-radius: 5px;" class="btn btn-info pr-3 pl-3 mr-1"><i class="fa-brands fa-discord"></i> Join</a>
                         <% } %>
                         <a href="/server/<%= server.id %>/vote" type="button" style="border-radius: 5px;" class="btn btn-info pr-3 pl-3 mr-1"><i class="fa-solid fa-check-to-slot"></i> Vote</a>
                         <% if (server.website) { %>
-                            <a href="<%= server.website %>" type="button" style="border-radius: 5px;" class="btn btn-success pr-3 pl-3 mr-1"><i class="fa-solid fa-globe"></i> Website</a>
+                            <a href="<%= server.website %>" type="button" style="border-radius: 5px;" class="btn btn-info pr-3 pl-3 mr-1"><i class="fa-solid fa-globe"></i> Website</a>
                         <% } %>
                         <% if (server.support) { %>
                             <a href="https://discord.gg/<%= bot.support %>" type="button" style="border-radius: 5px;" class="btn btn-info pr-3 pl-3 mr-1"><i class="fa-brands fa-discord"></i> Support</a>
@@ -41,6 +44,84 @@
                     </div>
                 </div>
             </div>
+            <div class="infoContainer">
+                <h2><i class="fa-solid fa-circle-info"></i> Information</h2>
+                <hr></hr>
+                <p style="color: white; font-size: 16px;"><i class="fa-solid fa-hashtag"></i> Tags: <strong><%= server.tags %></strong></p>
+                <h2><i class="fa-solid fa-chart-simple"></i> Statistics</h2>
+                <hr></hr>
+                <p style="color: white; font-size: 16px;"><i class="fa-solid fa-check-to-slot"></i> Votes: <strong><%= server.votes %></strong></p>
+                <p style="color: white; font-size: 16px;"><i  class="fa-solid fa-bomb"></i> Bumps: <strong><%= server.bumps %></strong></p>
+                <p style="color: white; font-size: 16px;"><i  class="fa-solid fa-eye"></i> Views: <strong><%= server.views %></strong></p>
+                </div>
                     </div>
                     </div>
                     </div>
+                    <br><br>
+                    <div class="container">
+                    <div class="desccard">
+                        <div class="card-body">
+                            <div id="bot-description"><%= server.desc %></div>
+                        </div>
+                    </div>
+                </div>
+
+                    <style>
+                    @media only screen and (max-width: 600px) {
+                        .infoContainer{
+                        width:300px;
+                        padding-right:15px;
+                        padding-left:15px;
+                        margin-right:auto;
+                        margin-left:auto
+                    }
+                    }
+                    
+                    @media only screen and (min-width: 1080px) {
+                        .infoContainer{
+                        width: 300px;
+                        margin-right: -175px;
+                        margin-left: -175px;
+                    }
+                    }
+
+                    @media only screen and (max-width: 600px) {
+                        .desccard{
+                        background: rgba( 255, 255, 255, 0.15 );
+                        box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+                        backdrop-filter: blur( 20px );
+                        -webkit-backdrop-filter: blur( 20px );
+                        border-radius: 10px;
+                        border: 1px solid rgba( 255, 255, 255, 0.18 );
+                      } 
+               }
+               @media only screen and (min-width: 1080px) {
+                        .desccard{
+                        background: rgba( 255, 255, 255, 0.15 );
+                        box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+                        backdrop-filter: blur( 20px );
+                        -webkit-backdrop-filter: blur( 20px );
+                        width: 1000px;
+                        border-radius: 10px;
+                        margin-top: -350px;
+                        margin-right: 250px;
+                        margin-left: 250px;
+                        border: 1px solid rgba( 255, 255, 255, 0.18 );
+                      }
+                    }
+                </style>
+                <script>
+$(document).ready(function () {
+    const descriptionBox = $("#bot-description");
+    const descriptionBoxText = descriptionBox.text() || descriptionBox.val();
+    const allowedTags = sanitizeHtml.defaults.allowedTags.concat(["address", "article", "aside", "footer", "header", "h1", "h2", "h3", "h4",
+  "h5", "h6", "hgroup", "main", "nav", "section", "blockquote", "dd", "div",
+  "dl", "dt", "figcaption", "figure", "hr", "li", "main", "ol", "p", "pre",
+  "ul", "a", "abbr", "b", "bdi", "bdo", "br", "cite", "code", "data", "dfn",
+  "em", "i", "kbd", "mark", "q", "rb", "rp", "rt", "rtc", "ruby", "s", "samp",
+  "small", "span", "strong", "sub", "sup", "time", "u", "var", "wbr", "caption",
+  "col", "colgroup", "table", "tbody", "td", "tfoot", "th", "thead", "tr"]);
+    const sanitizedRender = sanitizeHtml(descriptionBoxText, { allowedTags });
+    descriptionBox.html(sanitizedRender);
+});
+</script>

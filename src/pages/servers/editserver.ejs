@@ -15,17 +15,14 @@
                 <div class="form-group">
                     <label for="invite">Server Invite</label>
                     <input type="text" class="form-control" id="invite" value="<%= server.invite %>" aria-describedby="inviteHelp" name="invite" autocomplete="off" ar readonly disabled>
-                    <small id="inviteHelp" class="form-text text-muted">Invite can be created by running the /invite command in your server.</small>
-                </div>
+                    <small id="inviteHelp" class="form-text text-muted">Invite can be created by running the /invite command in your server.</small><br>
+
                     <label for="botShortDesc">Short Description</label>
-                    <input type="text" class="form-control" id="botShortDesc" aria-describedby="botShortDeschelp" name="short_description" value="<%= server.shortDesc %>" placeholder="Revolutionary server with..." autocomplete="off">
-                    <small id="botShortDeschelp" class="form-text text-muted">Short Description about the bot (Min. 50 & Max. 100 characters)</small>
-                </div>
-                <div class="form-group">
+                    <input type="text" class="form-control" id="botShortDesc" aria-describedby="botShortDeschelp" name="short_description" value="<%= server.shortDesc %>" placeholder="Revolutionary server with..." autocomplete="off" required>
+                    <small id="botShortDeschelp" class="form-text text-muted">Short Description about the bot (Min. 50 & Max. 100 characters)</small><br>
                     <label for="botLongDesc">Long Description</label>
                     <textarea class="form-control" id="botLongDesc" rows="3" value="<%= server.desc %>" name="long_description" placeholder="More about the Revolution..." autocomplete="off" required>
-<%= server.desc %>
-                    </textarea>
+<%= server.desc %></textarea>
                     <small id="botLongDeschelp" class="form-text text-muted">HTML & Markdown can be used (Min. 300 characters)</small>
                 </div>
                 <div class="botLongDescPreviewBox">
@@ -36,13 +33,58 @@
                         </div>
                     </div>
                 </div>
+                <label for="botShortDesc">Server Website</label>
+                    <input type="url" class="form-control" id="website" name="website" value="<%= server.website %>" placeholder="https://vitallist.xyz/servers" autocomplete="off"><br>
+                <div class="form-group" id="tags-box">
+                    <label class="mb-0">Server Tags</label>
+                    <small class="form-text text-muted mt-0 mb-2">Max. 4 tags</small>
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="tag-community" value="Community" name="tags">
+                        <label class="custom-control-label" for="tag-community">Community</label>
+                    </div>
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="tag-development" value="Development" name="tags">
+                        <label class="custom-control-label" for="tag-development">Development</label>
+                    </div>
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="tag-soical" value="Soical" name="tags">
+                        <label class="custom-control-label" for="tag-soical">Soical</label>
+                    </div>
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="tag-gaming" value="Gaming" name="tags">
+                        <label class="custom-control-label" for="tag-gaming">Gaming</label>
+                    </div>
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="tag-fun" value="Fun" name="tags">
+                        <label class="custom-control-label" for="tag-fun">Fun</label>
+                    </div>
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="tag-emotes" value="Emotes" name="tags">
+                        <label class="custom-control-label" for="tag-emotes">Emotes</label>
+                    </div>
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="tag-youtube" value="Youtube" name="tags">
+                        <label class="custom-control-label" for="tag-youtube">YouTube</label>
+                    </div>
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="tag-streaming" value="Streaming" name="tags">
+                        <label class="custom-control-label" for="tag-streaming">Streaming</label>
+                    </div>
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="tag-anime" value="Anime" name="tags">
+                        <label class="custom-control-label" for="tag-anime">Anime</label>
+                    </div>
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="tag-meme" value="Meme" name="tags">
+                        <label class="custom-control-label" for="tag-meme">Meme</label>
+                    </div>
+                </div><br>
     
-                <input type="submit" value="Submit" class="bluebtn">
+                <button type="submit" class="bluebtn"><i class="fa-solid fa-paper-plane"></i>&nbsp&nbspSubmit</button>
             </form>
         </div>
         <br><br>
     </div>
-        <br><br><br><br><br>
      </div>
 
      <script>

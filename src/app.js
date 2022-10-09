@@ -299,6 +299,17 @@ app.post("/bots/new", checkMaintenance, checkAuth, async(req, res) => {
         });
     logs.send("<:VD_add:1006511788155752558> <@" + req.user.id + "> has submitted **" + bot.tag + "** to Vital List.")
 
+    const date = new Date();
+    const addEmbed = new EmbedBuilder()
+    .setTitle("Bot Added")
+    .setDescription("<:VD_add:1006511788155752558> " + bot.tag + " has been submitted to Vital List.")
+    .setColor("Blue")
+    .addFields({ name: "Bot", value: `[${bot.tag}](https://vitallist.xyz/bots/${bot.id})`, inline: true})
+    .addFields({ name: "Owner", value: `[${req.user.username}#${req.user.discriminator}](https://vitallist.xyz/users/${req.user.id})`, inline: true})
+    .addFields({ name: "Date", value: `${date.toLocaleString()}`, inline: true})
+    .setFooter({ text: "Add Logs - VitalList", iconURL: `${global.client.user.displayAvatarURL()}`})
+    logs.send({ content: `<@${req.user.id}>`, embeds: [addEmbed] })
+
     return res.redirect("/?=success");
 
 })
@@ -316,6 +327,70 @@ app.get("/bots/:id/invite", async (req, res) => {
     return await res.redirect(bot.invite);
 })
 
+app.get("/bots/:id/edit", checkMaintenance, checkAuth, async(req, res) => {
+    const client = global.client;
+    const model = require("./models/bot.js")
+    const id = req.params.id;
+  
+    const bot = await model.findOne({ id: id })
+    if (!bot) return res.redirect("/404");
+    if (req.user.id !== bot.owner) return res.redirect("/404");
+  
+  const BotRaw = (await client.users.fetch(id)) || null;
+    bot.name = BotRaw.username;
+    bot.avatar = BotRaw.avatar;
+
+    res.render("botlist/edit.ejs", {
+        bot: bot,
+        user: req.user || null
+    });
+})
+
+app.post("/bots/:id/edit", checkMaintenance, checkAuth, async(req, res) => {
+    const client = global.client;
+    const logs = client.channels.cache.get(config.channels.weblogs);
+    let model = require("./models/bot.js");
+    const botm = await model.findOne({ id: req.params.id});
+    let data = req.body;
+
+    if (!data) {
+       return res.redirect('/');
+    }
+    if (req.user.id !== botm.owner) return res.redirect("/404");
+
+    const bot = await client.users.fetch(data.id);
+    if(!bot) { 
+        return res.status(400).json({
+            message: "This is not a real application on Discord."
+        });
+    }
+            botm.id = data.id;
+            botm.prefix = data.prefix;
+            botm.owner = req.user.id;
+            botm.desc = data.description.long;
+            botm.shortDesc = data.description.short;
+            botm.tags = data.tags;
+            botm.invite = data.invite;
+            botm.support = data.support || null;
+            botm.github = data.github || null;
+            botm.website = data.website || null;
+            await botm.save();
+
+    const date = new Date();
+    const editEmbed = new EmbedBuilder()
+    .setTitle("Bot Edited")
+    .setDescription(":pencil: " + bot.tag + " has been edited on Vital List.")
+    .setColor("Yellow")
+    .addFields({ name: "Bot", value: `[${bot.tag}](https://vitallist.xyz/bots/${bot.id})`, inline: true})
+    .addFields({ name: "Owner", value: `[${req.user.username}#${req.user.discriminator}](https://vitallist.xyz/users/${req.user.id})`, inline: true})
+    .addFields({ name: "Date", value: `${date.toLocaleString()}`, inline: true})
+    .setFooter({ text: "Edit Logs - VitalList", iconURL: `${global.client.user.displayAvatarURL()}`})
+    logs.send({ content: `<@${req.user.id}>`, embeds: [editEmbed] })
+
+    return res.redirect(`/bots/${req.params.id}`);
+
+})
+
 app.get("/bots/:id", checkMaintenance, async(req, res) => {
     let id = req.params.id;
     const client = global.client;
@@ -330,6 +405,9 @@ app.get("/bots/:id", checkMaintenance, async(req, res) => {
              return res.status(404).send("This bot is not in our Discord server, so we could not fetch it's data. Error: "+ err);
      }
 
+    const marked = require("marked");
+    const desc = marked.parse(bot.desc);
+
     const BotRaw = (await client.users.fetch(id)) || null;
     const OwnerRaw = (await client.users.fetch(bot.owner));
     console.log(OwnerRaw)
@@ -341,20 +419,21 @@ app.get("/bots/:id", checkMaintenance, async(req, res) => {
     bot.tag = BotRaw.tag;
     bot.ownerTag = OwnerRaw.tag;
     bot.ownerAvatar = OwnerRaw.avatar;
-    bot.tags = bot.tags.join(", ")
+    bot.tags = bot.tags.join(", ");
+    bot.desc = desc;
 
     res.render("botlist/viewbot.ejs", {
         bot2: req.bot,
         bot: bot,
         user: req.user || null
     });
+});
 
 
 //-TAG-//
 app.get('/tag', async(req, res) => {
     
-})
-})
+});
 
 //-API-//
 
@@ -441,6 +520,8 @@ app.get("/servers", checkMaintenance, checkStaff, async(req, res) => {
     });
 });
 
+app.get("/servers/new", checkAuth, async (req, res) => await res.redirect("https://discord.com/api/oauth2/authorize?client_id=1004264023111507979&permissions=313409&scope=applications.commands%20bot"))
+
 app.get("/servers/:id", checkMaintenance, async (req, res) => {
     const client = global.sclient;
     const model = require("./models/server.js")
@@ -458,12 +539,14 @@ app.get("/servers/:id", checkMaintenance, async (req, res) => {
     await server.save();
 
     //-Cleaning Server Desc-//
- const { marked } = require("marked");
- server.desc = marked.parse(server.desc);
+    const marked = require("marked");
+    const desc = marked.parse(server.desc);
 
  const ServerRaw = (await client.guilds.fetch(id)) || null;
  (server.name = ServerRaw.name), (server.icon = ServerRaw.iconURL()), 
  (server.memberCount = ServerRaw.memberCount), (server.boosts = ServerRaw.premiumSubscriptionCount);
+ server.tags = server.tags.join(", ")
+ server.desc = desc;
 
     res.render("servers/viewserver.ejs", {
      bot: req.bot,
@@ -511,6 +594,8 @@ app.post("/servers/:id/edit", checkAuth, async (req, res) => {
     const model = require("./models/server.js");
     const id = req.params.id;
     const data = req.body;
+
+    console.log(data)
   
     const server = await model.findOne({ id: id });
     if (!server) return res.redirect("/404");
@@ -521,20 +606,41 @@ app.post("/servers/:id/edit", checkAuth, async (req, res) => {
   
     server.shortDesc = data.short_description;
     server.desc = data.long_description;
+    server.tags = data.tags;
+    server.website = data.website || null;
     server.published = true;
     await server.save();
   
     const ServerRaw = (await sclient.guilds.fetch(server.id)) || null;
-    (server.name = ServerRaw.name)
+
+    server.name = ServerRaw.name;
   
     if(logServer.published === false) {
       const logs = sclient.channels.cache.get(global.config.channels.weblogs);
-      logs.send({ content: `<@${req.user.id}> published **${server.name}**.`});
-      return res.redirect(`https://servers.ofdiscord.com/server/${id}`);
+      const date = new Date();
+      const publishEmbed = new EmbedBuilder()
+      .setTitle("Server Published")
+      .setDescription("<:VD_add:1006511788155752558> " + server.name + " has been published to Vital Servers.")
+      .setColor("Blue")
+      .addFields({ name: "Server", value: `[${server.name}](https://vitallist.xyz/servers/${server.id})`, inline: true})
+      .addFields({ name: "Owner", value: `[${req.user.username}#${req.user.discriminator}](https://vitallist.xyz/users/${req.user.id})`, inline: true})
+      .addFields({ name: "Date", value: `${date.toLocaleString()}`, inline: true})
+      .setFooter({ text: "Publish Logs - VitalServers", iconURL: `${global.sclient.user.displayAvatarURL()}`})
+      logs.send({ content: `<@${req.user.id}>`, embeds: [publishEmbed] })
+      return res.redirect(`https://vitallist.xyz/servers/${id}`);
     } else {
       const logs = sclient.channels.cache.get(global.config.channels.weblogs);
-      logs.send({ content: `<@${req.user.id}> edited **${server.name}**.`});
-      return res.redirect(`https://servers.ofdiscord.com/server/${id}`);
+      const date = new Date();
+      const editEmbed = new EmbedBuilder()
+      .setTitle("Server Edited")
+      .setDescription(":pencil: " + server.name + " has been edited on Vital Servers.")
+      .setColor("Yellow")
+      .addFields({ name: "Server", value: `[${server.name}](https://vitallist.xyz/servers/${server.id})`, inline: true})
+      .addFields({ name: "Owner", value: `[${req.user.username}#${req.user.discriminator}](https://vitallist.xyz/users/${req.user.id})`, inline: true})
+      .addFields({ name: "Date", value: `${date.toLocaleString()}`, inline: true})
+      .setFooter({ text: "Edit Logs - VitalServers", iconURL: `${global.sclient.user.displayAvatarURL()}`})
+      logs.send({ content: `<@${req.user.id}>`, embeds: [editEmbed] })
+      return res.redirect(`https://vitallist.xyz/servers/${id}`);
     }
 })
 
@@ -703,12 +809,12 @@ app.post("/bots/:id/deny", checkAuth, checkStaff, async(req, res) => {
     .setDescription("<:redcross:1020135034075746404> " + bot.tag + " has been denied on Vital List.")
     .setColor("Red")
     .addFields({ name: "Bot", value: `[${bot.tag}](https://vitallist.xyz/bots/${bot.id})`, inline: true})
-    .addFields({ name: "Owner", value: `[${bot.ownerName}](https://vitallist.xyz/usesr/${bot.owner})`, inline: true})
+    .addFields({ name: "Owner", value: `[${bot.ownerName}](https://vitallist.xyz/users/${bot.owner})`, inline: true})
     .addFields({ name: "Reviewer", value: `[${req.user.username}#${req.user.discriminator}](https://vitallist.xyz/users/${req.user.id})`, inline: true})
     .addFields({ name: "Reason", value: `${bot.reason}`, inline: true})
     .addFields({ name: "Date", value: `${date.toLocaleString()}`, inline: true})
     .setFooter({ text: "Deny Logs - VitalList", iconURL: `${global.client.user.displayAvatarURL()}`})
-    logs.send({ embeds: [denyEmbed] })
+    logs.send({ content: `<@${bot.owner}>`, embeds: [denyEmbed] })
     const channelName = `${BotRaw.username}-${BotRaw.discriminator}`;
     let guild = client.guilds.cache.get(global.config.guilds.testing);
     let channel = await guild.channels.cache.find(c => c.name == channelName.toLowerCase())
@@ -779,7 +885,7 @@ app.use('/bots/:id/status', checkAuth, checkStaff, async(req, res) => {
     .addFields({ name: "Date", value: `${date.toLocaleString()}`, inline: true})
     .setFooter({ text: "Approve Logs - VitalList", iconURL: `${global.client.user.displayAvatarURL()}`})
 
-    logs.send({ embeds: [approveEmbed] })
+    logs.send({ content: `<@${bot.owner}>`, embeds: [approveEmbed] })
         return res.redirect("/queue?=successfully approved");
     }
 })
