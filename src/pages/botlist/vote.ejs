@@ -32,10 +32,12 @@
                             <a href="/bots/<%= bot.id %>" class="badge badge-success" style="font-size: 16px;">Bot Info</a>
                         </div>
                     </div>
-                    <form action="/bots/<%- bot.id %>/vote" method="POST">
+                   
                    <hr class="my-4">
+                   <form action="/bots/<%- bot.id %>/vote" method="POST">
+                   <input type="submit" value="Sumbit">
+                   </form>
                     <button type="submit" style="border-radius: 7px;background-color: #480ddd;" class="btn btn-primary btn-lg btn-block" id="upvote">Click to vote</button>
-                </form>
                 </div>
             </div>
         </div>

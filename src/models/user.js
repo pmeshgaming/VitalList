@@ -28,9 +28,8 @@ let app = mongoose.Schema({
     required: false,
   },
   voted: {
-    type: Date,
-    default: 0,
-    required: false,
+    type: Array,
+    required: false
   }
 });
 module.exports = mongoose.model("users", app);

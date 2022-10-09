@@ -15,7 +15,7 @@ module.exports = {
 
     const embed = new EmbedBuilder()
     .setTitle('Successful Vote')
-    .setDescription('You have successfully voted for this server on [servers.ofdiscord.com](https://vitallist.xyz/servers).')
+    .setDescription('You have successfully voted for this server on [VitalServers](https://vitallist.xyz/servers).')
 	.setFooter({ text: `VitalServers - Vote Command`, iconURL: `${global.sclient.user.displayAvatarURL()}`})
 
     const row = new ActionRowBuilder()

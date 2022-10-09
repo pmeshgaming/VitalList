@@ -402,20 +402,24 @@ app.post('/bots/:id/vote', checkAuth, async(req, res) => {
     let bot = await model.findOne({
         id: req.params.id
     });
+    console.log(bot)
     let umodel = require("./models/user.js");
     let user = await umodel.findOne({
         id: req.user.id,
     })
-    if (!user.voted) {
-        bot.votes += 1 
-        user.voted = new Date;
+
+    if (user.voted instanceof Date == false) {
+        bot.votes = bot.votes + 1;
+        user.voted = Date.now();
+        await bot.save();
+        await user.save();
     }
     if (user.voted > (Date.now() - 24 * 60 * 60 * 1000) && user.voted <= (Date.now() - 24 * 60 * 60 * 1000)) {
-        user.voted = new Date;
-        bot.votes += 1;
+        user.voted = Date.now();
+        bot.votes = bot.votes + 1;
+        await bot.save()
+        await user.save();
     }
-    await bot.save();
-    await user.save();
     return res.redirect(`/bots/${req.params.id}`);
 })
 
@@ -463,7 +467,6 @@ app.get("/bots/:id", checkMaintenance, async(req, res) => {
 
     const BotRaw = (await client.users.fetch(id)) || null;
     const OwnerRaw = (await client.users.fetch(bot.owner));
-    console.log(OwnerRaw)
     bot.name = BotRaw.username;
     bot.avatar = BotRaw.avatar;
     bot.discriminator = BotRaw.discriminator;
@@ -650,8 +653,6 @@ app.post("/servers/:id/edit", checkAuth, async (req, res) => {
     const model = require("./models/server.js");
     const id = req.params.id;
     const data = req.body;
-
-    console.log(data)
   
     const server = await model.findOne({ id: id });
     if (!server) return res.redirect("/404");
