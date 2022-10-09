@@ -39,6 +39,7 @@
                     <label class="mb-0">Server Tags</label>
                     <small class="form-text text-muted mt-0 mb-2">Max. 4 tags</small>
                     <div class="custom-control custom-checkbox">
+<<<<<<< HEAD
                         <input type="checkbox" class="custom-control-input" id="tag-community" value="Community" name="tags">
                         <label class="custom-control-label" for="tag-community">Community</label>
                     </div>
@@ -85,6 +86,14 @@
                     <div class="custom-control custom-checkbox">
                         <input type="checkbox" class="custom-control-input" id="tag-meme" value="Meme" name="tags">
                         <label class="custom-control-label" for="tag-meme">Meme</label>
+=======
+                        <% for(let i = 0; i < tags.servers.length; i++){ %>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="tag-<%= tags.servers[i].toLowerCase() %>" value="Moderation" name="tag">
+                                <label class="custom-control-label" for="tag-<%= tags.servers[i].toLowerCase() %>"><%= tags.servers[i]%></label>
+                            </div>                                    
+                         <% } %> 
+>>>>>>> 817a5969294269dafedfb3d4838a92a033d51ebd
                     </div>
                 </div><br>
     

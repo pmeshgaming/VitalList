@@ -32,14 +32,18 @@ module.exports = {
       members: '1006067703238369291',
     },
     levels: {
-    five: "1007058570879180851",
+      five: "1007058570879180851",
     },
     channels: {
-     weblogs: '1006247458906591372',
-     levelup: '1007055641199779910',
-     modlogs: '1006247811613982791',
-     leaderboard: '1008533581238374430',
-     testingcategory: "1006664887084273685"
-     }
+      weblogs: '1006247458906591372',
+      levelup: '1007055641199779910',
+      modlogs: '1006247811613982791',
+      leaderboard: '1008533581238374430',
+      testingcategory: "1006664887084273685"
+    },
+    tags: {
+      servers: ['Community', 'Development', 'Soical', 'Gaming', 'Fun', 'Emotes', 'Streaming', 'Anime', 'Memes'],
+      bots: ['Moderation', 'Fun', 'Economy', 'Leveling', 'Utilities', 'Logging', 'Music', 'Anime', 'Memes',]
+    }
      
 }
