@@ -27,6 +27,10 @@ let app = mongoose.Schema({
     type: String,
     required: false
   },
+  coowners: {
+    type: String, 
+    required: false
+  },
   prefix: {
     type: String,
     required: false
@@ -108,6 +112,14 @@ submittedOn: {
     type: Boolean,
     required: false,
     default: false
+  },
+  webhook: {
+    type: String,
+    required: false,
+  },
+  banner: {
+    type: String,
+    required: false,
   }
 });
 module.exports = mongoose.model("bots", app);
