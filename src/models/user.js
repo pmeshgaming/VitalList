@@ -28,7 +28,7 @@ let app = mongoose.Schema({
     required: false,
   },
   voted: {
-    type: Array,
+    type: Object,
     required: false
   }
 });

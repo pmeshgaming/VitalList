@@ -402,20 +402,20 @@ app.post('/bots/:id/vote', checkAuth, async(req, res) => {
     let bot = await model.findOne({
         id: req.params.id
     });
-    console.log(bot)
     let umodel = require("./models/user.js");
     let user = await umodel.findOne({
         id: req.user.id,
     })
+    voted = user.voted[req.params.id];
 
-    if (user.voted instanceof Date == false) {
+    if (voted instanceof Date == false) {
         bot.votes = bot.votes + 1;
-        user.voted = Date.now();
+        voted = Date.now();
         await bot.save();
         await user.save();
     }
-    if (user.voted > (Date.now() - 24 * 60 * 60 * 1000) && user.voted <= (Date.now() - 24 * 60 * 60 * 1000)) {
-        user.voted = Date.now();
+    if (voted > (Date.now() - 24 * 60 * 60 * 1000) && voted <= (Date.now() - 24 * 60 * 60 * 1000)) {
+        voted = Date.now();
         bot.votes = bot.votes + 1;
         await bot.save()
         await user.save();
