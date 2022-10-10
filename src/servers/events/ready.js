@@ -1,4 +1,5 @@
 const { ActivityType } = require("discord.js");
+const votes = require('../../models/server')
 
 module.exports = {
     name: 'ready',
@@ -7,6 +8,17 @@ module.exports = {
 
         global.logger.system(sclient.user.tag+` is online and ready.`)
         sclient.user.setActivity('vitallist.xyz/servers', { type: ActivityType.Watching})
+
+        setInterval(async () => {
+            let voteModels = await votes.find()
+            if(voteModels.length > 0) {
+                voteModels.forEach(async a => {
+                let time = a.time - (Date.now() - a.date)
+                if(time > 0) return
+                await votes.findOneAndDelete({ server: a.server, user: a.user })
+            })
+            }
+        }, 300000)
 
     }
 }

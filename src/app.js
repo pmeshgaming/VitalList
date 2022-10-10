@@ -292,8 +292,8 @@ app.post("/bots/new", checkMaintenance, checkAuth, async(req, res) => {
             id: data.id,
             prefix: data.prefix,
             owner: req.user.id,
-            desc: data.description.long,
-            shortDesc: data.description.short,
+            desc: data.desc,
+            shortDesc: data.shortDesc,
             submitedOn: Date.now(),
             views: 0,
             tags: data.tags,
@@ -302,7 +302,6 @@ app.post("/bots/new", checkMaintenance, checkAuth, async(req, res) => {
             github: data.github || null,
             website: data.website || null
         });
-    logs.send("<:VD_add:1006511788155752558> <@" + req.user.id + "> has submitted **" + bot.tag + "** to Vital List.")
 
     const date = new Date();
     const addEmbed = new EmbedBuilder()
@@ -315,7 +314,7 @@ app.post("/bots/new", checkMaintenance, checkAuth, async(req, res) => {
     .setFooter({ text: "Add Logs - VitalList", iconURL: `${global.client.user.displayAvatarURL()}`})
     logs.send({ content: `<@${req.user.id}>`, embeds: [addEmbed] })
 
-    return res.redirect("/?=success");
+    return res.redirect(`/bots/${data.id}?success=true&body=Your bot was added successfully.`);
 
 })
 
@@ -678,7 +677,6 @@ app.post("/servers/:id/edit", checkAuth, async (req, res) => {
     const model = require("./models/server.js");
     const id = req.params.id;
     const data = req.body;
-  
     const server = await model.findOne({ id: id });
     if (!server) return res.redirect("/404");
     
@@ -709,7 +707,7 @@ app.post("/servers/:id/edit", checkAuth, async (req, res) => {
       .addFields({ name: "Date", value: `${date.toLocaleString()}`, inline: true})
       .setFooter({ text: "Publish Logs - VitalServers", iconURL: `${global.sclient.user.displayAvatarURL()}`})
       logs.send({ content: `<@${req.user.id}>`, embeds: [publishEmbed] })
-      return res.redirect(`https://vitallist.xyz/servers/${id}`);
+      return res.redirect(`/servers/${req.params.id}?success=true&body=Your server was successfully published.`);
     } else {
       const logs = sclient.channels.cache.get(global.config.channels.weblogs);
       const date = new Date();
@@ -722,8 +720,82 @@ app.post("/servers/:id/edit", checkAuth, async (req, res) => {
       .addFields({ name: "Date", value: `${date.toLocaleString()}`, inline: true})
       .setFooter({ text: "Edit Logs - VitalServers", iconURL: `${global.sclient.user.displayAvatarURL()}`})
       logs.send({ content: `<@${req.user.id}>`, embeds: [editEmbed] })
-      return res.redirect(`https://vitallist.xyz/servers/${id}`);
+      return res.redirect(`/servers/${req.params.id}?success=true&body=Your server was successfully edited.`);
     }
+})
+
+app.post('/servers/:id/vote', checkAuth, async(req, res) => {
+    let model = require("./models/server.js");
+    let voteModel = require("./models/serverVote.js")
+    let server = await model.findOne({
+        id: req.params.id
+    });
+    if(!server) return res.status(404).json({ message: "This server was not found on our site."});
+
+    let x = await voteModel.findOne({
+        user: req.user.id,
+        bot: req.params.id
+    })
+    if(x) return res.status(400).json({ message: "You can vote every hour."});
+
+    await voteModel.create({
+        bot: req.params.id,
+        user: req.user.id,
+        date: Date.now(),
+        time: 3600000  
+    })
+
+    await model.findOneAndUpdate({
+        id: req.params.id
+    }, {
+        $inc: {
+            votes: 1
+        }
+    })
+
+    const ServerRaw = (await global.sclient.guilds.fetch(server.id)) || null;
+    server.name = ServerRaw.name;
+    server.icon = ServerRaw.iconURL();
+
+    const logs = global.sclient.channels.cache.get(global.config.channels.weblogs);
+      const date = new Date();
+      const votedEmbed = new EmbedBuilder()
+      .setTitle("Server Voted")
+      .setDescription("<:vote:1028862219313762304> " + server.name + " has been voted on VitalServers.")
+      .setColor("Purple")
+      .addFields({ name: "Server", value: `[${server.name}](https://vitallist.xyz/servers/${server.id})`, inline: true})
+      .addFields({ name: "Voter", value: `[${req.user.username}#${req.user.discriminator}](https://vitallist.xyz/users/${req.user.id})`, inline: true})
+      .addFields({ name: "Date", value: `${date.toLocaleString()}`, inline: true})
+      .setFooter({ text: "Vote Logs - VitalServers", iconURL: `${global.sclient.user.displayAvatarURL()}`})
+      logs.send({ content: `<@${req.user.id}>`, embeds: [votedEmbed] })
+
+
+    return res.redirect(`/servers/${req.params.id}?success=true&body=You voted successfully. You can vote again after 12 hours.`);
+})
+
+app.get('/servers/:id/vote', checkAuth, async(req, res) => {
+    let model = require("./models/server.js");
+    let server = await model.findOne({
+        id: req.params.id
+    });
+    if(!server) return res.status(404).json({ message: "This server was not found on our site."});
+    let umodel = require("./models/user.js");
+    let user = await umodel.findOne({
+        id: req.user.id,
+    });
+
+    if(!user) {
+       await umodel.create({ id: req.user.id })
+    }
+    
+    const ServerRaw = (await global.sclient.guilds.fetch(server.id)) || null;
+    server.name = ServerRaw.name;
+    server.icon = ServerRaw.iconURL();
+
+    res.render("servers/vote.ejs", {
+        server: server,
+        user: req.user || null
+    });
 })
 
 //-User Pages-//
@@ -901,7 +973,7 @@ app.post("/bots/:id/deny", checkAuth, checkStaff, async(req, res) => {
     let guild = client.guilds.cache.get(global.config.guilds.testing);
     let channel = await guild.channels.cache.find(c => c.name == channelName.toLowerCase())
     if(channel) channel.delete();
-    return res.redirect("/queue?=successfully declined");
+    return res.redirect(`/queue?success=true&body=The bot was successfully denied.`);
   });
 
 app.post('/bots/:id/testing', checkAuth, checkStaff, async(req, res) => {
@@ -968,7 +1040,7 @@ app.use('/bots/:id/status', checkAuth, checkStaff, async(req, res) => {
     .setFooter({ text: "Approve Logs - VitalList", iconURL: `${global.client.user.displayAvatarURL()}`})
 
     logs.send({ content: `<@${bot.owner}>`, embeds: [approveEmbed] })
-        return res.redirect("/queue?=successfully approved");
+    return res.redirect(`/queue?success=true&body=The bot was successfully approved.`);
     }
 })
 

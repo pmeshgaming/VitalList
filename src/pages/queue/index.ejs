@@ -118,3 +118,36 @@
         </div>
     </div>
 </body>
+
+<script>
+  var toastMixin = Swal.mixin({
+    toast: true,
+    icon: 'success',
+    animation: false,
+    position: 'top-right',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  });
+
+    var urlParams = new URLSearchParams(window.location.search);
+    if(urlParams.has('success') && urlParams.get('success')){
+        toastMixin.fire({
+    timer: 3000,
+    icon: 'success',
+    background: '#274472',
+    html: `<p style='color:white; margin-top: 12px'>${urlParams.get('body')}</p>`
+  });
+}
+    if(urlParams.has('error') && urlParams.get('error')){
+    Swal.fire({
+     icon: 'error',
+     title: 'Oops...',
+     text: urlParams.get('body'),
+    })   
+    }
+</script>

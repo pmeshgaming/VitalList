@@ -39,24 +39,46 @@
                     <div class="form-group" id="tags-box">
                         <label class="mb-0">Server Tags</label>
                         <small class="form-text text-muted mt-0 mb-2">Max. 4 tags</small>
-                        <% for(let i = 0; i < tags.servers.length; i++){ %>
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="tag-<%= tags.servers[i].toLowerCase() %>" value="Moderation" name="tag">
-                                <label class="custom-control-label" for="tag-<%= tags.servers[i].toLowerCase() %>"><%= tags.servers[i]%></label>
-                            </div>                                    
-                         <% } %> 
-
+                        <select name="tags" id="tags" class="form-control" id="tags" placeholder="Max. 4 tags" multiple required>   
+                            <% tags.servers.map(tag => {%>
+                                <% if(tags.servers.includes(tag)) {%>
+                                    <option value="<%= tag %>" selected><%= tag %></option>
+                                <% } else { %>
+                                <option value="<%= tag %>"><%= tag %></option>
+                                <% } %>
+                             <% }); %>
+                            </select>  
                     </div>
-                </div><br>
-    
+            <div class="alert alert-dismissible alert-danger" id="form-error-popup" style="display: none;"></div>
+                <p style="color: #555;">By clicking submit, you agree to our's TOS and <a style="color: #094cdb" href="https://discord.com/developers/docs/policies-and-agreements/terms-of-service">Discord Developer TOS</a></p>
                 <button type="submit" class="bluebtn"><i class="fa-solid fa-paper-plane"></i>&nbsp&nbspSubmit</button>
             </form>
+                </div>
+                </div>
+            </div>
         </div>
         <br><br>
     </div>
      </div>
 
      <script>
+
+const tags = [];
+         $.each($("input[name='tag']:checked"), function() {
+             tags.push($(this).val());
+         });
+
+            
+        $(".custom-control-input").on('change', function() {
+            const tags = [];
+            $.each($("input[name='tag']:checked"), function() {
+                tags.push($(this).val());
+            });
+            if(tags.length > 4) {
+                this.checked = false;
+            }
+        });
+
           const longDesc = $('#botLongDesc');
         const longDescPreview = $('#botLongDescPreview');
         

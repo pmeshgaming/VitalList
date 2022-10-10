@@ -42,7 +42,7 @@ module.exports = {
       testingcategory: "1006664887084273685"
     },
     tags: {
-      servers: ['Community', 'Development', 'botlist/', "ServerList", 'Soical', 'Gaming', 'Fun', 'Emotes', 'Streaming', 'Anime', 'Memes'],
+      servers: ['Community', 'Development', 'BotList', "ServerList", 'Soical', 'Gaming', 'Fun', 'Emotes', 'Streaming', 'Anime', 'Memes'],
       bots: ['Moderation', 'Fun', 'Economy', 'Leveling', 'Utilities', 'Logging', 'Music', 'Anime', 'Memes',]
     }
      
