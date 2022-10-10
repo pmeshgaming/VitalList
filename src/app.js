@@ -358,23 +358,24 @@ app.post("/bots/:id/edit", checkMaintenance, checkAuth, async(req, res) => {
     let model = require("./models/bot.js");
     const botm = await model.findOne({ id: req.params.id});
     let data = req.body;
+    console.log(data)
 
     if (!data) {
        return res.redirect('/');
     }
     if (req.user.id !== botm.owner) return res.redirect("/404");
 
-    const bot = await client.users.fetch(data.id);
+    const bot = await client.users.fetch(req.params.id);
     if(!bot) { 
         return res.status(400).json({
             message: "This is not a real application on Discord."
         });
     }
-            botm.id = data.id;
+            botm.id = req.params.id;
             botm.prefix = data.prefix;
             botm.owner = req.user.id;
-            botm.desc = data.description.long;
-            botm.shortDesc = data.description.short;
+            botm.desc = data.desc;
+            botm.shortDesc = data.shortDesc;
             botm.tags = data.tags;
             botm.invite = data.invite;
             botm.support = data.support || null;
@@ -393,8 +394,7 @@ app.post("/bots/:id/edit", checkMaintenance, checkAuth, async(req, res) => {
     .setFooter({ text: "Edit Logs - VitalList", iconURL: `${global.client.user.displayAvatarURL()}`})
     logs.send({ content: `<@${req.user.id}>`, embeds: [editEmbed] })
 
-    return res.redirect(`/bots/${req.params.id}`);
-
+    return res.redirect(`/bots/${req.params.id}?success=true&body=You have successfully edited your bot.`);
 })
 
 app.post('/bots/:id/vote', checkAuth, async(req, res) => {
@@ -443,7 +443,7 @@ app.post('/bots/:id/vote', checkAuth, async(req, res) => {
       .setFooter({ text: "Vote Logs - VitalList", iconURL: `${global.client.user.displayAvatarURL()}`})
       logs.send({ content: `<@${req.user.id}>`, embeds: [votedEmbed] })
 
-    return res.redirect(`/bots/${req.params.id}/?success=true&message=You voted successfully. You can vote again after 12 hours.`);
+    return res.redirect(`/bots/${req.params.id}?success=true&body=You voted successfully. You can vote again after 12 hours.`);
 })
 
 app.get('/bots/:id/vote', checkAuth, async(req, res) => {
