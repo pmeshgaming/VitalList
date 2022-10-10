@@ -27,17 +27,15 @@
                             <h3><%= bot.name %><small class="text-muted">#<%= bot.discriminator %></small></h3>
                             <p class="text-muted">You can upvote every 12-hours</p>
                         </div>
-                        <div class="col-sm-3">
-                            <span class="badge badge-danger mb-2" style="font-size: 16px;">Votes: <%= bot.votes %></span><br>
-                            <a href="/bots/<%= bot.id %>" class="badge badge-success" style="font-size: 16px;">Bot Info</a>
+                        <div class="col-sm-3"><br>
+                            <span class="btn btn-info" style="font-size: 16px;border-radius: 5px;"><i class="fa-solid fa-check-to-slot"></i> Votes: <%= bot.votes %></span><br>
                         </div>
                     </div>
                    
                    <hr class="my-4">
                    <form action="/bots/<%- bot.id %>/vote" method="POST">
-                   <input type="submit" value="Sumbit">
-                   </form>
                     <button type="submit" style="border-radius: 7px;background-color: #480ddd;" class="btn btn-primary btn-lg btn-block" id="upvote">Click to vote</button>
+                   </form>
                 </div>
             </div>
         </div>

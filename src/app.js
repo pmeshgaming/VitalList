@@ -399,28 +399,51 @@ app.post("/bots/:id/edit", checkMaintenance, checkAuth, async(req, res) => {
 
 app.post('/bots/:id/vote', checkAuth, async(req, res) => {
     let model = require("./models/bot.js");
+    let voteModel = require("./models/vote.js")
     let bot = await model.findOne({
         id: req.params.id
     });
-    let umodel = require("./models/user.js");
-    let user = await umodel.findOne({
-        id: req.user.id,
-    })
-    voted = user.voted[req.params.id];
+    if(!bot) return res.status(404).json({ message: "This bot was not found on our site."});
 
-    if (voted instanceof Date == false) {
-        bot.votes = bot.votes + 1;
-        voted = Date.now();
-        await bot.save();
-        await user.save();
-    }
-    if (voted > (Date.now() - 24 * 60 * 60 * 1000) && voted <= (Date.now() - 24 * 60 * 60 * 1000)) {
-        voted = Date.now();
-        bot.votes = bot.votes + 1;
-        await bot.save()
-        await user.save();
-    }
-    return res.redirect(`/bots/${req.params.id}`);
+    let x = await voteModel.findOne({
+        user: req.user.id,
+        bot: req.params.id
+    })
+    if(x) return res.status(400).json({ message: "You can vote every 12 hours."});
+
+    await voteModel.create({
+        bot: req.params.id,
+        user: req.user.id,
+        date: Date.now(),
+        time: 43200000 
+    })
+
+    await model.findOneAndUpdate({
+        id: req.params.id
+    }, {
+        $inc: {
+            votes: 1
+        }
+    })
+
+    const BotRaw = (await client.users.fetch(bot.id)) || null;
+    bot.name = BotRaw.username;
+    bot.discriminator = BotRaw.discriminator;
+    bot.avatar = BotRaw.avatar;
+
+    const logs = client.channels.cache.get(global.config.channels.weblogs);
+      const date = new Date();
+      const votedEmbed = new EmbedBuilder()
+      .setTitle("Bot Voted")
+      .setDescription("<:vote:1028862219313762304> " + bot.name + "#" + bot.discriminator + " has been voted on Vital List.")
+      .setColor("Purple")
+      .addFields({ name: "Bot", value: `[${bot.name}#${bot.discriminator}](https://vitallist.xyz/bots/${bot.id})`, inline: true})
+      .addFields({ name: "Voter", value: `[${req.user.username}#${req.user.discriminator}](https://vitallist.xyz/users/${req.user.id})`, inline: true})
+      .addFields({ name: "Date", value: `${date.toLocaleString()}`, inline: true})
+      .setFooter({ text: "Vote Logs - VitalList", iconURL: `${global.client.user.displayAvatarURL()}`})
+      logs.send({ content: `<@${req.user.id}>`, embeds: [votedEmbed] })
+
+    return res.redirect(`/bots/${req.params.id}/?success=true&message=You voted successfully. You can vote again after 12 hours.`);
 })
 
 app.get('/bots/:id/vote', checkAuth, async(req, res) => {
