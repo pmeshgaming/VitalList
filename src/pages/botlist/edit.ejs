@@ -4,6 +4,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/1.1.0/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sanitize-html/1.26.0/sanitize-html.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script> 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.all.min.js"></script>
     <title>Editing <%- bot.name %> - Vital List</title>
     <%- include("../parts/head.ejs") %>
 </head>
@@ -15,21 +17,21 @@
             <form action="/bots/<%= bot.id %>/edit" method="POST" onsubmit="return validateForm()">
                 <div class="form-group required">
                     <label for="botID">Your Bot ID</label>
-                    <input type="number" class="form-control" value="<%= bot.id %>" id="botID" placeholder="1026362109287739423" aria-describedby="botIDhelp" onkeyup="setValidation($(this), checkValid($(this)))" autocomplete="off" readonly disabled>
+                    <input type="number" class="form-control" value="<%= bot.id %>" name="id" placeholder="1026362109287739423" aria-describedby="botIDhelp" autocomplete="off" readonly disabled>
                     <small id="botIDhelp" class="form-text text-muted">This field is read only</small>
                 </div>
                 <div class="form-group required">
                     <label for="botPrefix">Prefix</label>
-                    <input type="text" class="form-control" value="<%= bot.prefix %>" id="botPrefix" placeholder="vl!" onkeyup="setValidation($(this), checkValid($(this)))" autocomplete="off">
+                    <input type="text" class="form-control" value="<%= bot.prefix %>" name="prefix" id="botPrefix" placeholder="vl!" autocomplete="off" required>
                 </div>
                 <div class="form-group required">
                     <label for="botShortDesc">Short Description</label>
-                    <input type="text" class="form-control" value="<%= bot.shortDesc %>" id="botShortDesc" aria-describedby="botShortDeschelp" placeholder="Revolutionary bot with..." onkeyup="setValidation($(this), checkValid($(this), 'char_100'))" autocomplete="off">
+                    <input type="text" class="form-control" value="<%= bot.shortDesc %>" name="shortDesc" aria-describedby="botShortDeschelp" placeholder="Revolutionary bot with..." minlength="50" maxlength="100" autocomplete="off" required>
                     <small id="botShortDeschelp" class="form-text text-muted">Short Description about the bot (Min. 50 & Max. 100 characters)</small>
                 </div>
                 <div class="form-group required">
                     <label for="botLongDesc">Long Description</label>
-                    <textarea class="form-control" id="botLongDesc" value="<%= bot.desc %>" rows="3" placeholder="More about the Revolution..." onkeyup="setValidation($(this), checkValid($(this), 'char_300'))" autocomplete="off"><%= bot.desc %></textarea>
+                    <textarea class="form-control" id="botLongDesc" value="<%= bot.desc %>" name="desc" rows="3" placeholder="More about the Revolution..." minlength="300" autocomplete="off" required><%= bot.desc %></textarea>
                     <small id="botLongDeschelp" class="form-text text-muted">HTML & Markdown can be used (Min. 300 characters)</small>
                 </div>
                 <div class="botLongDescPreviewBox">
@@ -42,16 +44,16 @@
                 </div>
                 <div class="form-group required">
                     <label for="botInvite">Invite URL</label>
-                    <input type="url" class="form-control" value="<%= bot.invite %>" id="botInvite" aria-describedby="botInvitehelp" placeholder="https://discordapp.com/oauth2/authorize?client_id=<%= bot.id %>&scope=bot&permissions=8" autocomplete="off" required>
+                    <input type="url" class="form-control" value="<%= bot.invite %>" name="invite" aria-describedby="botInvitehelp" placeholder="https://discordapp.com/oauth2/authorize?client_id=<%= bot.id %>&scope=bot&permissions=8" autocomplete="off" required>
                     <small id="botInvitehelp" class="form-text text-muted">Can be generated at <a style="color: #094cdb" target="__blank" href="https://discordapi.com/permissions.html">Discord API Permissions</a></small>
                 </div>
                 <div class="form-group">
                     <label for="botWebsite">Website</label>
-                    <input type="url" class="form-control" value="<%= bot.website %>" id="botWebsite" placeholder="https://vitallist.xyz" autocomplete="off">
+                    <input type="url" class="form-control" value="<%= bot.website %>" name="website" placeholder="https://vitallist.xyz" autocomplete="off">
                 </div>
                 <div class="form-group">
                     <label for="botGitHub">GitHub</label>
-                    <input type="url" class="form-control" value="<%= bot.github %>" id="botWebsite" placeholder="https://github.com/vitaldevelopment" autocomplete="off">
+                    <input type="url" class="form-control" value="<%= bot.github %>" name="github" id="botWebsite" placeholder="https://github.com/vitaldevelopment" autocomplete="off">
                 </div>
                 <div class="form-group">
                     <label for="botWebhook">Webhook</label>
@@ -63,7 +65,7 @@
                         <div class="input-group-prepend">
                           <span style="border-radius: 4px;" class="input-group-text">https://discord.gg/</span>
                         </div>
-                        <input type="text" value="<%= bot.support %>" class="form-control" id="botSupport" placeholder="HrWe2BwVbd" autocomplete="off">
+                        <input type="text" value="<%= bot.support %>" name="support" class="form-control" id="botSupport" placeholder="HrWe2BwVbd" autocomplete="off">
                     </div>
                 </div>
                 <div class="form-group" id="tags-box">
@@ -90,114 +92,12 @@
      </div>
 
      <script>
-        $(function() {
-            $("form").submit(function (event) {
-                event.preventDefault();
-        
-                const validated = validateForm();
-                if(!validated) return
-            
-                const form = $(this);
-        
-                const tags = [];
+
+               const tags = [];
                 $.each($("input[name='tag']:checked"), function() {
                     tags.push($(this).val());
                 });
-        
-                const data = {
-                    id: $("#botID").val().toString() || null,
-                    prefix: $("#botPrefix").val() || null,
-                    description: {
-                        short: $("#botShortDesc").val() || null,
-                        long: $("#botLongDesc").val() || null
-                    },
-                    website: $("#botWebsite").val() || null,
-                    support: $("#botSupport").val() || null,
-                    invite: $("#botInvite").val() || null,
-                    tags
-                };
-        
-                $.ajax({
-                    type: form.attr("method"),
-                    url: form.attr("action"),
-                    dataType: "json",
-                    contentType: 'application/json',
-                    data: JSON.stringify(data),
-                    success: function () {
-                        window.location.replace("https://vitallist.xyz");
-                    },
-                    error: function (resp) {
-                        if(resp.responseJSON.code === "INVALID_BOT") {
-                            setValidation($("#botID"), false);
-                        }
-                        $("#form-error-popup").html(`<strong>${resp.responseJSON.message}</strong>`).css("display", "block");
-                    }
-                });
-            });
-        });
-        
-        function validateForm() {
-            let INVALID_STUFFS = 0;
-        
-            /* ID */
-            const botID = $("#botID");
-            if(botID) {
-                const isValid = checkValid(botID);
-                setValidation(botID, isValid);
-                if(!isValid) INVALID_STUFFS += 1;
-            }
-        
-            /* Prefix */
-            const botPrefix = $("#botPrefix");
-            if(botPrefix) {
-                const isValid = checkValid(botPrefix);
-                setValidation(botPrefix, isValid);
-                if(!isValid) INVALID_STUFFS += 1;
-            }
-        
-            /* Short Desc */
-            const botShortDesc = $("#botShortDesc");
-            if(botShortDesc) {
-                const isValid = checkValid(botShortDesc);
-                setValidation(botShortDesc, isValid, "char_100");
-                if(!isValid) INVALID_STUFFS += 1;
-            }
-        
-            /* Long Desc */
-            const botLongDesc = $("#botLongDesc");
-            if(botLongDesc) {
-                const isValid = checkValid(botLongDesc);
-                setValidation(botLongDesc, isValid, "char_300");
-                if(!isValid) INVALID_STUFFS += 1;
-            }
-        
-            const isValid = INVALID_STUFFS === 0;
-        
-            if(!isValid) $("#form-error-popup").text(`Oh snap! ${INVALID_STUFFS} invalid inputs were found! Click submit after fixing them.`).css("display", "block");
-        
-            return isValid;
-        }
-        
-        function checkValid(div, key) {
-            if(!div.val()) return false;
-            if(key === "char_100" && !(div.val().length >= 50 && div.val().length <= 100)) return false;
-            if(key === "char_300" && div.val().length <= 300) return false;
-            return true;
-        }
-        
-        function setValidation(div, valid) {
-            const INVALID_CLASS = "is-invalid";
-            const VALID_CLASS = "is-valid";
-        
-            if(valid) {
-                if(div.hasClass(INVALID_CLASS)) div.removeClass(INVALID_CLASS);
-                div.addClass(VALID_CLASS);
-            } else {
-                if(div.hasClass(VALID_CLASS)) div.removeClass(VALID_CLASS);
-                div.addClass(INVALID_CLASS);
-            }
-        }
-        
+
         const longDesc = $('#botLongDesc');
         const longDescPreview = $('#botLongDescPreview');
         
