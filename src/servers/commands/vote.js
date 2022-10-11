@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle } = require('discord.js');
 const model = require("../../models/server.js")
+const ms = require("ms")
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -19,7 +20,10 @@ module.exports = {
 			user: interaction.user.id,
 			server:  interaction.guild.id
 		})
-		if(x) return interaction.reply("You can only vote once per hour.\nPlease come back when an hour is up.")
+		if(x) {
+			let timeObj = ms(x.time - (Date.now() - x.date), { long: true }); 
+			 return interaction.reply(`You can only vote once per hour.\nPlease come back in ${timeObj}.`)
+		}
 	
 		await voteModel.create({
 			user: interaction.user.id,

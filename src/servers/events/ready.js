@@ -1,5 +1,5 @@
 const { ActivityType } = require("discord.js");
-const votes = require('../../models/server')
+const votes = require('../../models/serverVote')
 
 module.exports = {
     name: 'ready',

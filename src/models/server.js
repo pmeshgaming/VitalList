@@ -22,6 +22,10 @@ let app = mongoose.Schema({
     type: String,
     required: false
   },
+  bump: {
+    type: Date, 
+    default: null
+  },
   views: {
     type: Number,
     required: false,

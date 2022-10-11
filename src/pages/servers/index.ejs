@@ -49,7 +49,7 @@ startDelay: 1000,
 <div class="serverContainer">
     <h3><i class="fa-solid fa-clock"></i> <b>Recently Bumped Servers</b></h3><p>These are the most recently bumped servers.</p>
     <% let allservers = servers %>
-    <% let bumped = allservers.sort((a,b) => b.bumpdate - a.bumpdate) %>
+    <% let bumped = allservers.sort((a,b) => b.bump - a.bump) %>
            <% for(let i = 0; i < bumped.length; i++){ %>
                                        <%  if (i === 6) break; %>
    <div class="card" style="border-radius:10px;">

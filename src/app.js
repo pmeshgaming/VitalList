@@ -1,5 +1,6 @@
 const logger = require('../functions/logger');
 const { EmbedBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle } = require('discord.js');
+const ms = require("ms");
 const fetch = (...args) =>
     import ("node-fetch").then(({
         default: fetch
@@ -409,7 +410,11 @@ app.post('/bots/:id/vote', checkAuth, async(req, res) => {
         user: req.user.id,
         bot: req.params.id
     })
-    if(x) return res.status(400).json({ message: "You can vote every 12 hours."});
+    
+    if(x) { 
+        let timeObj = ms(x.time - (Date.now() - x.date), { long: true }); 
+        return res.status(400).json({ message: `You can vote again in ${timeObj}.`});
+     }
 
     await voteModel.create({
         bot: req.params.id,
@@ -736,10 +741,13 @@ app.post('/servers/:id/vote', checkAuth, async(req, res) => {
         user: req.user.id,
         bot: req.params.id
     })
-    if(x) return res.status(400).json({ message: "You can vote every hour."});
+    if(x) { 
+        let timeObj = ms(x.time - (Date.now() - x.date), { long: true }); 
+        return res.status(400).json({ message: `You can vote again in ${timeObj}.`});
+     }
 
     await voteModel.create({
-        bot: req.params.id,
+        server: req.params.id,
         user: req.user.id,
         date: Date.now(),
         time: 3600000  
