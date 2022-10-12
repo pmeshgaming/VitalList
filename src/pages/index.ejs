@@ -9,6 +9,8 @@
 <body>
     <%- include("./parts/navbar.ejs", { bot, user }) %>
 <br><br><br><br>
+<div class="page-container">
+  <div class="content-wrap">
             <center>
             <img class="titlelogo" src="/img/icon.png" alt="VitalList Logo" width="150" height="150">
             <h2 class="title"><b>Vital List</b></h2><p><span class="typing_desc" style="font-size:18px;"></span></p>
@@ -48,8 +50,11 @@
                                                <%  if (i === 8) break; %>
                                                <div class="card" style="border-radius:10px;">
                                                 <img src="https://cdn.discordapp.com/avatars/<%= voted[i].id %>/<%= voted[i].avatar %>.png" alt="<%= voted[i].name %>'s Avatar" draggable="false" class="botimg_main">
-                                              <p class="botname_main"><%= voted[i].name %><br>
-                                               <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-server"></i> <%= voted[i].servers %> • <i class="fa-solid fa-check-to-slot"></i> <%= voted[i].votes %></span></p>
+                                              <p class="botname_main"><%= voted[i].name %> <br>
+                                               <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-server"></i> <%= voted[i].servers %> • <i class="fa-solid fa-check-to-slot"></i> <%= voted[i].votes %>
+                                                <% if (voted[i].id === "1004264023111507979") { %>
+                                                  • <span title="Official Bot"><i class="fa-solid fa-circle-check"></i></span>
+                                            <%  } %></span></p>
                                               <div class="botdesc_main">
                                                <i class="fa-solid fa-file-lines"></i> <%= voted[i].shortDesc %>
                                               </div>
@@ -72,7 +77,10 @@
                                                          <div class="card" style="border-radius:10px;">
                                                           <img src="https://cdn.discordapp.com/avatars/<%= added[i].id %>/<%= added[i].avatar %>.png" alt="<%= added[i].name %>'s Avatar" draggable="false" class="botimg_main">
                                                         <p class="botname_main"><%= added[i].name %><br>
-                                                         <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-server"></i> <%= added[i].servers %> • <i class="fa-solid fa-check-to-slot"></i> <%= added[i].votes %></span></p>
+                                                         <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-server"></i> <%= added[i].servers %> • <i class="fa-solid fa-check-to-slot"></i> <%= added[i].votes %>
+                                                          <% if (voted[i].id === "1004264023111507979") { %>
+                                                            • <span title="Official Bot"><i class="fa-solid fa-circle-check"></i></span>
+                                                      <%  } %></span></p>
                                                         <div class="botdesc_main">
                                                          <i class="fa-solid fa-file-lines"></i> <%= added[i].shortDesc %>
                                                         </div>
@@ -88,9 +96,11 @@
                                                         </div></a>                                           
                               <% } %>
               </div>
-            </div>
+              </div>
+              </div>
+            </div><br><br><br><br><br><br><br><br><br><br><br>
 </body>
-
+<%- include("./parts/footer.ejs") %>
 <style>
 @media screen and (max-width: 757px) {
     .bot-card-col {

@@ -91,7 +91,7 @@ startDelay: 1000,
         </div></a>
         <a href="/servers/<%= voted[i].id %>/vote">
         <button class="votebtn">Vote</button></a>
-        </div></a>
+</a></div>
               <% } %>
 </div>
 
@@ -104,37 +104,40 @@ startDelay: 1000,
             }
               .card {
                 height: 400px;
+                max-height:400px;
                 width: 400px;
                 backdrop-filter: blur(16px) saturate(180%);
                 -webkit-backdrop-filter: blur(16px) saturate(180%);
                 background-color: rgba(17, 25, 40, 0.75);
                 border-radius: 10px;
-                margin-top: 15px;
-                margin-left: auto;
+                margin-top: 25px;
+                margin-left: center;
                 transition: all 0.2s;
                 margin-right: 10px;
                 position: relative;
                 display:inline-block;
                 box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+                
               }
-            
+
               @media only screen and (max-width: 600px) {
                 .serverContainer{
                 width:100%;
                 padding-right:15px;
                 padding-left:15px;
                 margin-right:auto;
-                margin-left:auto
+                margin-left:auto;
+                align-items: stretch
             }
             }
             
             @media only screen and (min-width: 1080px) {
                 .serverContainer{
                 width:100%;
-                padding-right:15px;
+                padding-right:150px;
                 padding-left:150px;
                 margin-right:auto;
-                margin-left:auto
+                margin-left:auto;
             }
             }
             
@@ -176,6 +179,7 @@ startDelay: 1000,
                 display:inline-block;
                 height:300px;
                 margin-left:305px;
+                position: static;
                 margin-top:10px;
               }
                 .card:hover{

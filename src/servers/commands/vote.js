@@ -54,7 +54,7 @@ module.exports = {
 		  .addFields({ name: "Voter", value: `[${interaction.user.username}#${interaction.user.discriminator}](https://vitallist.xyz/users/${interaction.user.id})`, inline: true})
 		  .addFields({ name: "Date", value: `${date.toLocaleString()}`, inline: true})
 		  .setFooter({ text: "Vote Logs - VitalServers", iconURL: `${global.sclient.user.displayAvatarURL()}`})
-		  logs.send({ content: `<@${interaction.user.id}>`, embeds: [votedEmbed] })
+		  logs.send({ embeds: [votedEmbed] })
 
            const embed = new EmbedBuilder()
            .setTitle('Successful Vote')

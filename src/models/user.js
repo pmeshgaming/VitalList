@@ -27,8 +27,12 @@ let app = mongoose.Schema({
     type: String, 
     required: false,
   },
-  voted: {
-    type: Object,
+  website: {
+    type: String,
+    required: false
+  }, 
+  github: {
+    type: String,
     required: false
   }
 });

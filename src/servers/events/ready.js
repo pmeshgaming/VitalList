@@ -1,4 +1,8 @@
 const { ActivityType } = require("discord.js");
+const fetch = (...args) =>
+    import ("node-fetch").then(({
+        default: fetch
+    }) => fetch(...args));
 const votes = require('../../models/serverVote')
 
 module.exports = {
@@ -20,5 +24,13 @@ module.exports = {
             }
         }, 300000)
 
+        await fetch('https://vitallist.xyz/api/bots/1004264023111507979', {
+            method: 'POST',
+            headers: {
+                'server_count': sclient.guilds.cache.size,
+                'shard_count': '1',
+              'Content-Type': 'application/json'
+            },
+          }).then(response => { console.log(response.json()) })
     }
 }

@@ -410,7 +410,7 @@ app.post('/bots/:id/vote', checkAuth, async(req, res) => {
         user: req.user.id,
         bot: req.params.id
     })
-    
+
     if(x) { 
         let timeObj = ms(x.time - (Date.now() - x.date), { long: true }); 
         return res.status(400).json({ message: `You can vote again in ${timeObj}.`});
@@ -543,7 +543,7 @@ app.get('/api/bots/:id', async(req, res) => {
     res.end(inspect(data));
 })
 
-app.post('/api/bots/:id/', checkKey, async(req, res) => {
+app.post('/api/bots/:id/', async(req, res) => {
     const client = global.client;
     let model = require("./models/bot.js");
     let bot = await model.findOne({
@@ -553,15 +553,15 @@ app.post('/api/bots/:id/', checkKey, async(req, res) => {
         message: "This bot is not on our list."
     });
 
-    if (!req.body.server_count) return res.status(400).json({
+    if (!req.header('server_count')) return res.status(400).json({
         message: "Please provide a server count."
     });
-    if (!req.body.shard_count) return res.status(400).json({
+    if (!req.header('shard_count')) return res.status(400).json({
         message: "Please provide a shard count."
     });
-    bot.servers = req.body.server_count;
+    bot.servers = req.header('server_count');
     bot.servers = bot.servers.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    bot.shards = req.body.shard_count;
+    bot.shards = req.header('shard_count');
     bot.shards = bot.shards.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     bot.save();
     res.json({
@@ -627,7 +627,7 @@ app.get("/servers/:id", checkMaintenance, async (req, res) => {
 
  const ServerRaw = (await client.guilds.fetch(id)) || null;
  const OwnerRaw = (await client.users.fetch(server.owner));
- (server.name = ServerRaw.name), (server.icon = ServerRaw.iconURL()), 
+ (server.name = ServerRaw.name), (server.icon = ServerRaw.iconURL({ dynamic: true })), 
  (server.memberCount = ServerRaw.memberCount.toLocaleString().replace(',', '.')), (server.boosts = ServerRaw.premiumSubscriptionCount);
  server.tags = server.tags.join(", ")
  server.ownerTag = OwnerRaw.tag;
@@ -739,7 +739,7 @@ app.post('/servers/:id/vote', checkAuth, async(req, res) => {
 
     let x = await voteModel.findOne({
         user: req.user.id,
-        bot: req.params.id
+        server: req.params.id
     })
     if(x) { 
         let timeObj = ms(x.time - (Date.now() - x.date), { long: true }); 
@@ -775,7 +775,7 @@ app.post('/servers/:id/vote', checkAuth, async(req, res) => {
       .addFields({ name: "Voter", value: `[${req.user.username}#${req.user.discriminator}](https://vitallist.xyz/users/${req.user.id})`, inline: true})
       .addFields({ name: "Date", value: `${date.toLocaleString()}`, inline: true})
       .setFooter({ text: "Vote Logs - VitalServers", iconURL: `${global.sclient.user.displayAvatarURL()}`})
-      logs.send({ content: `<@${req.user.id}>`, embeds: [votedEmbed] })
+      logs.send({ embeds: [votedEmbed] })
 
 
     return res.redirect(`/servers/${req.params.id}?success=true&body=You voted successfully. You can vote again after 12 hours.`);
@@ -842,7 +842,9 @@ app.get("/users/:id", checkAuth, async(req, res) => {
     let userm = await umodel.findOne({
         id: req.params.id,
     })
-    user.bio = userm?.bio || "This user has no bio set."
+    user.bio = userm?.bio || "This user has no bio set.";
+    user.website = userm?.website;
+    user.github = userm?.github;
 
 
     let bmodel = require("./models/bot.js");
@@ -850,10 +852,32 @@ app.get("/users/:id", checkAuth, async(req, res) => {
         tested: true,
         owner: req.params.id
     });
+    for (let i = 0; i < bots.length; i++) {
+        const BotRaw = await client.users.fetch(bots[i].id);
+        bots[i].name = BotRaw.username;
+        bots[i].avatar = BotRaw.avatar;
+        bots[i].tags = bots[i].tags.join(", ")
+      }
+
+    let smodel = require("./models/server.js");
+    let servers = await smodel.find({
+        published: true,
+        owner: req.params.id
+    });
+    for (let i = 0; i < servers.length; i++) {
+        const ServerRaw = await global.sclient.guilds.fetch(servers[i].id);
+        servers[i].name = ServerRaw.name;
+        servers[i].icon = ServerRaw.iconURL({ dynamic: true });
+        servers[i].memberCount = ServerRaw.memberCount;
+        servers[i].boosts = ServerRaw.premiumSubscriptionCount;
+        servers[i].tags = servers[i].tags.join(", ")
+      }
     
     res.render("user.ejs", {
         bot: req.bot,
         fetched_user: user,
+        bots: bots,
+        servers: servers,
         user: req.user || null
     });
 })
