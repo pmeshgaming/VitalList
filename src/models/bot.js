@@ -3,115 +3,115 @@ const mongoose = require("mongoose");
 let app = mongoose.Schema({
   id: {
     type: String,
-    required: true
+    required: true,
   },
   invite: {
     type: String,
-    required: false
-  }, 
+    required: false,
+  },
   servers: {
     type: String,
     required: false,
-    default: 0
+    default: 0,
   },
   shards: {
     type: String,
     required: false,
-    default: 0
+    default: 0,
   },
   website: {
     type: String,
-    required: false
+    required: false,
   },
   owner: {
     type: String,
-    required: false
+    required: false,
   },
   coowners: {
-    type: String, 
-    required: false
+    type: String,
+    required: false,
   },
   prefix: {
     type: String,
-    required: false
+    required: false,
   },
   github: {
     type: String,
-    required: false
+    required: false,
   },
   views: {
     type: Number,
-    required: false
+    required: false,
   },
   votes: {
     type: Number,
     required: false,
-    default: 0
+    default: 0,
   },
   votedate: {
-  type: Number,
-    required: false
+    type: Number,
+    required: false,
   },
   approvedOn: {
     type: String,
-    required: false
+    required: false,
   },
   deniedOn: {
     type: String,
-    required: false
+    required: false,
   },
-submittedOn: {
+  submittedOn: {
     type: String,
-    required: false
+    required: false,
   },
   uniqueViews: {
     type: Number,
-    required: false
+    required: false,
   },
   tags: {
     type: Array,
-    required: false
+    required: false,
   },
   shortDesc: {
     type: String,
-    required: false
+    required: false,
   },
   desc: {
     type: String,
-    required: false
+    required: false,
   },
   support: {
     type: String,
-    required: false
+    required: false,
   },
   reviewer: {
     type: String,
-    required: false
+    required: false,
   },
   approved: {
     type: Boolean,
     required: false,
-    default: false
+    default: false,
   },
   denied: {
-    type: Boolean, 
+    type: Boolean,
     required: false,
-    default: false
+    default: false,
   },
   tested: {
-    type: Boolean, 
+    type: Boolean,
     required: false,
-    default: false
+    default: false,
   },
   inprogress: {
     type: Boolean,
-    required: false, 
-    default: false
+    required: false,
+    default: false,
   },
   certified: {
     type: Boolean,
     required: false,
-    default: false
+    default: false,
   },
   webhook: {
     type: String,
@@ -120,6 +120,6 @@ submittedOn: {
   banner: {
     type: String,
     required: false,
-  }
+  },
 });
 module.exports = mongoose.model("bots", app);

@@ -3,20 +3,20 @@ const mongoose = require("mongoose");
 let app = mongoose.Schema({
   bot: {
     type: String,
-    required: true
+    required: true,
   },
   user: {
     type: String,
-    required: false
+    required: false,
   },
   time: {
     type: String,
-    required: false
-  }, 
+    required: false,
+  },
   date: {
     type: String,
     required: false,
-  }
+  },
 });
 
 module.exports = mongoose.model("votes", app);

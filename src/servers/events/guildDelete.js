@@ -1,11 +1,9 @@
-const model = require("../../models/server.js")
+const model = require("../../models/server.js");
 module.exports = {
-    name: 'guildDelete',
-    async run(sclient, guild) {
+  name: "guildDelete",
+  async run(sclient, guild) {
+    if (!(await model.findOne({ id: guild.id }))) return;
 
-        if(!await model.findOne({ id: guild.id})) return;
-
-       await model.findOneAndDelete({ id: guild.id });
-       
-    }
-}
+    await model.findOneAndDelete({ id: guild.id });
+  },
+};

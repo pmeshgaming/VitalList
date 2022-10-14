@@ -3,37 +3,37 @@ const mongoose = require("mongoose");
 let app = mongoose.Schema({
   id: {
     type: String,
-    required: true
+    required: true,
   },
   username: {
     type: String,
-    required: false
+    required: false,
   },
   bio: {
     type: String,
-    required: false
-  }, 
+    required: false,
+  },
   xp: {
     type: Number,
     required: false,
-    default: 0
+    default: 0,
   },
   level: {
     type: Number,
     required: false,
-    default: 0
+    default: 0,
   },
   ApiKey: {
-    type: String, 
+    type: String,
     required: false,
   },
   website: {
     type: String,
-    required: false
-  }, 
+    required: false,
+  },
   github: {
     type: String,
-    required: false
-  }
+    required: false,
+  },
 });
 module.exports = mongoose.model("users", app);
