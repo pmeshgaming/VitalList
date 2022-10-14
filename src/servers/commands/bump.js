@@ -13,6 +13,10 @@ module.exports = {
                     id: interaction.guild.id
                 });
                 if(!server) return interaction.repy("This server was not found on VitalServers.");
+
+                if(server.published === false) {
+                  return interaction.repy("This server is not published yet.\nFor more information please run the /help command.");
+                }
             
                 let cooldown = 1800000;
                 let lastDaily = server.bump;
