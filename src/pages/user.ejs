@@ -15,6 +15,19 @@
       </div>
       <div class="col-sm">
         <h3><%= fetched_user.username %><small class="text-muted">#<%= fetched_user.discriminator %></small></h3>
+        <% if (config.owners.includes(fetched_user.id)) { %>
+          <i class="fa fa-crown" style="bottom: -5px; font-size: 20px;" title="VitalList Owner"></i>
+         <% } %>
+        <% if (config.developers.includes(fetched_user.id)) { %>
+           <i class="fa fa-code" style="bottom: -5px; font-size: 20px;" title="VitalList Developer"></i>
+          <% } %>
+          <% if (config.staff.includes(fetched_user.id)) { %>
+           <i class="fa fa-screwdriver-wrench" style="bottom: -5px; font-size: 20px;" title="VitalList Staff"></i>
+            <% } %>
+            <% if (config.betatesters.includes(fetched_user.id)) { %>
+              <i class="fa fa-vial" style="bottom: -5px; font-size: 20px;" title="VitalList Beta Tester"></i>
+               <% } %>
+            <br>
         <%- fetched_user.bio %>
         <hr>
         </hr>

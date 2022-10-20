@@ -57,7 +57,16 @@
   <%  if (i === 6) break; %>
   <div class="card" style="border-radius:10px;">
     <img src="<%= bumped[i].icon %>" alt="<%= bumped[i].name %>'s Icon" draggable="false" class="botimg_main">
-    <p class="botname_main"><%= bumped[i].name %><br>
+    <% if (bumped[i].name.length < 17) { %>
+      <p class="botname_main" style="font-size: 21px"> 
+      <%= bumped[i].name %><br>
+  <% } else if (bumped[i].name.length < 25) { %>
+    <p class="botname_main" style="font-size: 20px"> 
+    <%= bumped[i].name %><br>
+      <% } else  { %>
+    <p class="botname_main"> 
+    <%= bumped[i].name %><br>
+    <% } %>
       <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-bomb"></i> <%= bumped[i].bumps %> • <i class="fa-solid fa-check-to-slot"></i> <%= bumped[i].votes %></span>
     </p>
     <div class="botdesc_main">
@@ -82,7 +91,19 @@
   <%  if (i === 6) break; %>
   <div class="card" style="border-radius:10px;">
     <img src="<%= voted[i].icon %>" alt="<%= voted[i].name %>'s Icon" draggable="false" class="botimg_main">
-    <p class="botname_main"><%= voted[i].name %><br>
+      <% if (voted[i].name.length < 17) { %>
+        <p class="botname_main" style="font-size: 25px"> 
+          <% console.log("peepee") %>
+        <%= voted[i].name %><br>
+    <% } else if (voted[i].name.length < 25) { %>
+      <p class="botname_main" style="font-size: 18px"> 
+        <% console.log("peepee") %>
+      <%= voted[i].name %><br>
+        <% } else  { %>
+      <p class="botname_main"> 
+      <%= voted[i].name %><br>
+      <% console.log("poopoo") %>
+      <% } %>
       <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-bomb"></i> <%= voted[i].bumps %> • <i class="fa-solid fa-check-to-slot"></i> <%= voted[i].votes %></span>
     </p>
     <div class="botdesc_main">
@@ -142,8 +163,8 @@
   @media only screen and (min-width: 1080px) {
     .serverContainer {
       width: 100%;
-      padding-right: 150px;
-      padding-left: 150px;
+      padding-right: 125px;
+      padding-left: 125px;
       margin-right: auto;
       margin-left: auto;
     }

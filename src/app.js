@@ -114,6 +114,7 @@ app.use(
     secret: "SupersercetratioskklnkWiOndy",
     resave: false,
     saveUninitialized: false,
+    
   })
 );
 
@@ -1057,6 +1058,7 @@ app.get("/users/:id", checkAuth, async (req, res) => {
     fetched_user: user,
     bots: bots,
     servers: servers,
+    config: global.config,
     user: req.user || null,
   });
 });
@@ -1305,6 +1307,7 @@ app.post("/bots/:id/testing", checkAuth, checkStaff, async (req, res) => {
     .setDescription(
       `Welcome to your new testing session for ${LogRaw}.\nYou may now begin testing this bot. Any questions? View the queue page or ask a admin.`
     )
+    .addFields({ name: "Bot Prefix", value: `${bot.prefix}`})
     .setFooter({
       text: "Testing Session - VitalList",
       iconURL: `${global.client.user.displayAvatarURL()}`,
@@ -1379,6 +1382,12 @@ app.use("/bots/:id/status", checkAuth, checkStaff, async (req, res) => {
       });
 
     logs.send({ content: `<@${bot.owner}>`, embeds: [approveEmbed] });
+    const channelName = `${BotRaw.username}-${BotRaw.discriminator}`;
+    let guild = client.guilds.cache.get(global.config.guilds.testing);
+    let channel = await guild.channels.cache.find(
+      (c) => c.name == channelName.toLowerCase()
+    );
+    if (channel) channel.delete("This bot was approved on VitalList.");
     return res.redirect(
       `/queue?success=true&body=The bot was successfully approved.`
     );

@@ -19,7 +19,10 @@ module.exports = {
       id: interaction.guild.id,
     });
     if (!server)
-      return interaction.repl("This server was not found on VitalServers.");
+      return interaction.reply("This server was not found on VitalServers.");
+
+      if (server.published === false)
+      return interaction.reply("This server is not published on VitalServers yet.\nRun the /help command for more info.");
 
     let x = await voteModel.findOne({
       user: interaction.user.id,

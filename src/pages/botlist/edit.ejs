@@ -86,7 +86,7 @@
       <p style="color: #555;">By clicking edit , you agree to our's TOS and <a style="color: #094cdb" href="https://discord.com/developers/docs/policies-and-agreements/terms-of-service">Discord Developer TOS</a></p>
       <button type="submit" class="bluebtn"><i class="fa-solid fa-paper-plane"></i>&nbsp&nbspEdit</button>
     </form>
-      <form class="deleteForm" method="POST" action="/<%= bot.id %>/delete">
+      <form class="deleteForm" method="POST" action="/bots/<%= bot.id %>/delete">
         <input type="hidden" name="_method" value="delete" />
         <button type="submit" style="border-radius: 5px;" class="btn btn-danger pr-3 pl-3 mr-1" onclick="return confirm('Are you sure you want to delete <%= bot.name %>?');"><i class="fa-solid fa-trash"></i>&nbsp&nbspDelete</a>
       </form>
