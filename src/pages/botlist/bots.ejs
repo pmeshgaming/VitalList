@@ -54,14 +54,14 @@
       <p class="botname_main"><%= voted[i].name %><br>
         <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-server"></i> <%= voted[i].servers %> • <i class="fa-solid fa-check-to-slot"></i> <%= voted[i].votes %></span>
       </p>
-      <div class="botdesc_main">
+      <div class="botdesc_main" style="height:75px;width:100%;overflow:auto;padding:10px;">
         <i class="fa-solid fa-file-lines"></i> <%= voted[i].shortDesc %>
-      </div>
-      <div class="bottags_main">
+        </div>
+      <div class="bottags_main" style="height:75px;width:100%;overflow:auto;padding:10px;">
         <i class="fa-solid fa-hashtag"></i> <%= voted[i].tags %>
       </div>
-      <div style="margin-left:20px;">
-        <a href="/bots/<%= voted[i].id %>">
+      <div style="margin-left:20px;margin-top:-30px">
+        <a href="/bots/<%= voted[i].id %>/">
           <button class="viewbtn">View</button>
       </div></a>
       <a href="/bots/<%= voted[i].id %>/vote">

@@ -12,7 +12,7 @@
   <%- include("./parts/navbar.ejs") %>
   <div class="container">
     <% console.log(user) %>
-    <h2 style="color:white;margin-top: 175px;"><b>Edit User</b></h2>
+    <h2 style="color:white;margin-top: 175px;"><b>Edit Profile</b></h2>
     <p style="color:white;font-size: 20">Fill out the below form in order to edit your profile.</p><br><br>
     <div class="form">
       <form action="/users/<%= fetched_user.id %>/edit" method="POST">

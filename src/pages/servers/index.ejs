@@ -57,26 +57,18 @@
   <%  if (i === 6) break; %>
   <div class="card" style="border-radius:10px;">
     <img src="<%= bumped[i].icon %>" alt="<%= bumped[i].name %>'s Icon" draggable="false" class="botimg_main">
-    <% if (bumped[i].name.length < 17) { %>
-      <p class="botname_main" style="font-size: 21px"> 
-      <%= bumped[i].name %><br>
-  <% } else if (bumped[i].name.length < 25) { %>
-    <p class="botname_main" style="font-size: 20px"> 
-    <%= bumped[i].name %><br>
-      <% } else  { %>
     <p class="botname_main"> 
     <%= bumped[i].name %><br>
-    <% } %>
       <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-bomb"></i> <%= bumped[i].bumps %> • <i class="fa-solid fa-check-to-slot"></i> <%= bumped[i].votes %></span>
     </p>
-    <div class="botdesc_main">
+    <div class="botdesc_main" style="height:75px;width:100%;overflow:auto;padding:10px;">
       <i class="fa-solid fa-file-lines"></i> <%= bumped[i].shortDesc %>
-    </div>
-    <div class="bottags_main">
+      </div>
+    <div class="bottags_main" style="height:75px;width:100%;overflow:auto;padding:10px;">
       <i class="fa-solid fa-hashtag"></i> <%= bumped[i].tags %>
     </div>
-    <div style="margin-left:20px;">
-      <a href="/servers/<%= bumped[i].id %>">
+    <div style="margin-left:20px;margin-top:-30px">
+      <a href="/servers/<%= bumped[i].id %>/">
         <button class="viewbtn">View</button>
     </div></a>
     <a href="/servers/<%= bumped[i].id %>/vote">
@@ -91,35 +83,23 @@
   <%  if (i === 6) break; %>
   <div class="card" style="border-radius:10px;">
     <img src="<%= voted[i].icon %>" alt="<%= voted[i].name %>'s Icon" draggable="false" class="botimg_main">
-      <% if (voted[i].name.length < 17) { %>
-        <p class="botname_main" style="font-size: 25px"> 
-          <% console.log("peepee") %>
-        <%= voted[i].name %><br>
-    <% } else if (voted[i].name.length < 25) { %>
-      <p class="botname_main" style="font-size: 18px"> 
-        <% console.log("peepee") %>
-      <%= voted[i].name %><br>
-        <% } else  { %>
       <p class="botname_main"> 
       <%= voted[i].name %><br>
-      <% console.log("poopoo") %>
-      <% } %>
       <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-bomb"></i> <%= voted[i].bumps %> • <i class="fa-solid fa-check-to-slot"></i> <%= voted[i].votes %></span>
     </p>
-    <div class="botdesc_main">
-      <i class="fa-solid fa-file-lines"></i> <%= voted[i].shortDesc %>
+    <div class="botdesc_main" style="height:75px;width:100%;overflow:auto;padding:10px;">
+      <i class="fa-solid fa-file-lines"></i> <%= bumped[i].shortDesc %>
+      </div>
+    <div class="bottags_main" style="height:75px;width:100%;overflow:auto;padding:10px;">
+      <i class="fa-solid fa-hashtag"></i> <%= bumped[i].tags %>
     </div>
-    <div class="bottags_main">
-      <i class="fa-solid fa-hashtag"></i> <%= voted[i].tags %>
-    </div>
-    <div style="margin-left:20px;">
-      <a href="/servers/<%= voted[i].id %>">
+    <div style="margin-left:20px;margin-top:-30px">
+      <a href="/servers/<%= bumped[i].id %>/">
         <button class="viewbtn">View</button>
     </div></a>
-    <a href="/servers/<%= voted[i].id %>/vote">
+    <a href="/servers/<%= bumped[i].id %>/vote">
       <button class="votebtn">Vote</button></a>
-    </a>
-  </div>
+  </div></a>
   <% } %>
 </div>
 

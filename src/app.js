@@ -1220,6 +1220,14 @@ app.post("/bots/:id/deny", checkAuth, checkStaff, async (req, res) => {
       message: "This application could not be found in our site.",
     });
 
+    if(bot.approved === true) {
+      return res.status(400).json({ message: "This bot is already approved on VitalList."})
+    }
+
+    if(bot.denied === true) {
+      return res.status(400).json({ message: "This bot is already denied. on VitalList."})
+    }
+
   const OwnerRaw = await client.users.fetch(bot.owner);
 
   bot.tag = BotRaw.tag;
@@ -1269,6 +1277,8 @@ app.post("/bots/:id/deny", checkAuth, checkStaff, async (req, res) => {
   logs.send({ content: `<@${bot.owner}>`, embeds: [denyEmbed] });
   const channelName = `${BotRaw.username}-${BotRaw.discriminator}`;
   let guild = client.guilds.cache.get(global.config.guilds.testing);
+  const kickBot = guild.members.cache.get(bot.id)
+  kickBot.kick({ reason: "Denied on VitalList."})
   let channel = await guild.channels.cache.find(
     (c) => c.name == channelName.toLowerCase()
   );
@@ -1336,6 +1346,14 @@ app.use("/bots/:id/status", checkAuth, checkStaff, async (req, res) => {
       message: "This application could not be found in our site.",
     });
 
+    if(bot.approved === true) {
+      return res.status(400).json({ message: "This bot is already approved on VitalList."})
+    }
+
+    if(bot.denied === true) {
+      return res.status(400).json({ message: "This bot is already denied. on VitalList."})
+    }
+
   const OwnerRaw = await client.users.fetch(bot.owner);
 
   if (req.method === "POST") {
@@ -1382,17 +1400,30 @@ app.use("/bots/:id/status", checkAuth, checkStaff, async (req, res) => {
       });
 
     logs.send({ content: `<@${bot.owner}>`, embeds: [approveEmbed] });
+    const mainGuild = client.guilds.cache.get(global.config.guilds.main)
+    const ownerRaw = mainGuild.members.cache.get(bot.owner)
+    ownerRaw.roles.add(global.config.roles.developer);
     const channelName = `${BotRaw.username}-${BotRaw.discriminator}`;
     let guild = client.guilds.cache.get(global.config.guilds.testing);
+    const kickBot = guild.members.cache.get(bot.id)
+    kickBot.kick("Approved on VitalList.")
     let channel = await guild.channels.cache.find(
       (c) => c.name == channelName.toLowerCase()
-    );
+    );  
     if (channel) channel.delete("This bot was approved on VitalList.");
     return res.redirect(
       `/queue?success=true&body=The bot was successfully approved.`
     );
   }
 });
+
+//-Other Pages-//
+
+app.get("/discord", (_req, res) =>
+  res.redirect("https://discord.gg/DWX3d5r2wW")
+);
+
+app.get("/terms", async (req, res) => {});
 
 //-Error Pages-//
 app.all("*", (req, res) => {
@@ -1418,14 +1449,6 @@ app.all("*", (req, res) => {
     user: req.user || null,
   });
 });
-
-//-Other Pages-//
-
-app.get("/discord", (_req, res) =>
-  res.redirect("https://discord.gg/DWX3d5r2wW")
-);
-
-app.get("/terms", async (req, res) => {});
 
 app.listen(config.port, () => {
   logger.system(`Running on port ${config.port}.`);
