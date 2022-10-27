@@ -602,8 +602,42 @@ app.get("/bots/:id", checkMaintenance, async (req, res) => {
   });
 });
 
-//-TAG-//
-app.get("/tag/:tag", async (req, res) => {});
+//-TAGS-//
+
+app.get("/tags", async (req, res) => {
+  const tags = global.config.tags;
+
+  res.render("botlist/tags.ejs", {
+   tags: tags,
+   user: req.user || null
+  })
+});
+
+app.get("/bots/tags/:tag", async (req, res) => {
+  const tag = req.params.tag;
+
+ if(!global.config.tags.bots.includes(tag)) return res.status(404).json({ message: "This tag was not found in our database."});
+
+ let model = require("./models/bot")
+ let data = await model.find()
+ let bots = data.filter(a => a.approved === true && a.tags.includes(tag))
+
+ return res.send(bots);
+
+});
+
+app.get("/servers/tags/:tag", async (req, res) => {
+  const tag = req.params.tag;
+
+ if(!global.config.tags.servers.includes(tag)) return res.status(404).json({ message: "This tag was not found in our database."});
+
+ let model = require("./models/server")
+ let data = await model.find()
+ let servers = data.filter(a => a.published === true && a.tags.includes(tag))
+
+ return res.send(servers);
+
+});
 
 //-API-//
 
@@ -675,7 +709,9 @@ app.get("/servers", checkMaintenance, checkStaff, async (req, res) => {
     const ServerRaw = await client.guilds.fetch(servers[i].id);
     servers[i].name = ServerRaw.name;
     servers[i].icon = ServerRaw.iconURL({ dynamic: true });
-    servers[i].memberCount = ServerRaw.memberCount;
+    servers[i].memberCount = ServerRaw.memberCount
+    .toLocaleString()
+    .replace(",", ",");
     servers[i].boosts = ServerRaw.premiumSubscriptionCount;
     servers[i].tags = servers[i].tags.join(", ");
   }
@@ -732,7 +768,7 @@ app.get("/servers/:id", checkMaintenance, async (req, res) => {
     (server.icon = ServerRaw.iconURL({ dynamic: true })),
     (server.memberCount = ServerRaw.memberCount
       .toLocaleString()
-      .replace(",", ".")),
+      .replace(",", ",")),
     (server.boosts = ServerRaw.premiumSubscriptionCount);
   server.tags = server.tags.join(", ");
   server.ownerTag = OwnerRaw.tag;
@@ -1420,7 +1456,7 @@ app.use("/bots/:id/status", checkAuth, checkStaff, async (req, res) => {
 //-Other Pages-//
 
 app.get("/discord", (_req, res) =>
-  res.redirect("https://discord.gg/DWX3d5r2wW")
+  res.redirect("https://discord.gg/HrWe2BwVbd")
 );
 
 app.get("/terms", async (req, res) => {});

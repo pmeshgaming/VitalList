@@ -4344,6 +4344,7 @@ input[type="button"].btn-block {
 }
 .footer {
 background-color: #003060;
+box-shadow: 0px 0px 0px 4px #274472;
 margin-top: auto;
   position: absolute;
   width: 100%;
