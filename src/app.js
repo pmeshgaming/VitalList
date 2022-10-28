@@ -114,7 +114,6 @@ app.use(
     secret: "SupersercetratioskklnkWiOndy",
     resave: false,
     saveUninitialized: false,
-    
   })
 );
 
@@ -173,10 +172,6 @@ app.get("/auth/logout", function (req, res) {
     delete req.session.returnTo;
   }
 });
-
-/*app.get("/arc-sw.js", function(req, res) {
-    res.send('!function(t){var e={};function n(r){if(e[r])return e[r].exports;var o=e[r]={i:r,l:!1,exports:{}};return t[r].call(o.exports,o,o.exports,n),o.l=!0,o.exports}n.m=t,n.c=e,n.d=function(t,e,r){n.o(t,e)||Object.defineProperty(t,e,{enumerable:!0,get:r})},n.r=function(t){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})},n.t=function(t,e){if(1&e&&(t=n(t)),8&e)return t;if(4&e&&"object"==typeof t&&t&&t.__esModule)return t;var r=Object.create(null);if(n.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:t}),2&e&&"string"!=typeof t)for(var o in t)n.d(r,o,function(e){return t[e]}.bind(null,o));return r},n.n=function(t){var e=t&&t.__esModule?function(){return t.default}:function(){return t};return n.d(e,"a",e),e},n.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},n.p="",n(n.s=93)}({3:function(t,e,n){"use strict";n.d(e,"a",(function(){return r})),n.d(e,"c",(function(){return o})),n.d(e,"g",(function(){return i})),n.d(e,"j",(function(){return a})),n.d(e,"i",(function(){return d})),n.d(e,"b",(function(){return f})),n.d(e,"k",(function(){return u})),n.d(e,"d",(function(){return p})),n.d(e,"e",(function(){return l})),n.d(e,"f",(function(){return m})),n.d(e,"h",(function(){return v}));var r={images:["bmp","jpeg","jpg","ttf","pict","svg","webp","eps","svgz","gif","png","ico","tif","tiff","bpg","avif","jxl"],video:["mp4","3gp","webm","mkv","flv","f4v","f4p","f4bogv","drc","avi","mov","qt","wmv","amv","mpg","mp2","mpeg","mpe","m2v","m4v","3g2","gifv","mpv","av1","ts","tsv","tsa","m2t","m3u8"],audio:["mid","midi","aac","aiff","flac","m4a","m4p","mp3","ogg","oga","mogg","opus","ra","rm","wav","webm","f4a","pat"],interchange:["json","yaml","xml","csv","toml","ini","bson","asn1","ubj"],archives:["jar","iso","tar","tgz","tbz2","tlz","gz","bz2","xz","lz","z","7z","apk","dmg","rar","lzma","txz","zip","zipx"],documents:["pdf","ps","doc","docx","ppt","pptx","xls","otf","xlsx"],other:["srt","swf"]},o=["js","cjs","mjs","css"],c="arc:",i={COMLINK_INIT:"".concat(c,"comlink:init"),NODE_ID:"".concat(c,":nodeId"),CLIENT_TEARDOWN:"".concat(c,"client:teardown"),CLIENT_TAB_ID:"".concat(c,"client:tabId"),CDN_CONFIG:"".concat(c,"cdn:config"),P2P_CLIENT_READY:"".concat(c,"cdn:ready"),STORED_FIDS:"".concat(c,"cdn:storedFids"),SW_HEALTH_CHECK:"".concat(c,"cdn:healthCheck"),WIDGET_CONFIG:"".concat(c,"widget:config"),WIDGET_INIT:"".concat(c,"widget:init"),WIDGET_UI_LOAD:"".concat(c,"widget:load"),BROKER_LOAD:"".concat(c,"broker:load"),RENDER_FILE:"".concat(c,"inlay:renderFile"),FILE_RENDERED:"".concat(c,"inlay:fileRendered")},a="serviceWorker",d="/".concat("shared-worker",".js"),f="/".concat("dedicated-worker",".js"),u="/".concat("arc-sw-core",".js"),s="".concat("arc-sw",".js"),p=("/".concat(s),"/".concat("arc-sw"),"arc-db"),l="key-val-store",m=2**17,v="".concat("https://warden.arc.io","/mailbox/propertySession");"".concat("https://warden.arc.io","/mailbox/transfers")},93:function(t,e,n){"use strict";n.r(e);var r=n(3);if("undefined"!=typeof ServiceWorkerGlobalScope){var o="https://arc.io"+r.k;importScripts(o)}else if("undefined"!=typeof SharedWorkerGlobalScope){var c="https://arc.io"+r.i;importScripts(c)}else if("undefined"!=typeof DedicatedWorkerGlobalScope){var i="https://arc.io"+r.b;importScripts(i)}}});', type = 'application/javascript');
-  });*/
 
 //-bot-//
 
@@ -568,7 +563,10 @@ app.get("/bots/:id", checkMaintenance, async (req, res) => {
   const model = require("./models/bot.js");
   const bot = await model.findOne({ id: id });
   const guild = await client.guilds.fetch(global.config.guilds.main);
-  if (!bot) return res.status(404).json({ message: "This bot was not found on our list."});
+  if (!bot)
+    return res
+      .status(404)
+      .json({ message: "This bot was not found on our list." });
 
   try {
     guild.members.fetch(id) || null;
@@ -608,35 +606,41 @@ app.get("/tags", async (req, res) => {
   const tags = global.config.tags;
 
   res.render("botlist/tags.ejs", {
-   tags: tags,
-   user: req.user || null
-  })
+    tags: tags,
+    user: req.user || null,
+  });
 });
 
 app.get("/bots/tags/:tag", async (req, res) => {
   const tag = req.params.tag;
 
- if(!global.config.tags.bots.includes(tag)) return res.status(404).json({ message: "This tag was not found in our database."});
+  if (!global.config.tags.bots.includes(tag))
+    return res
+      .status(404)
+      .json({ message: "This tag was not found in our database." });
 
- let model = require("./models/bot")
- let data = await model.find()
- let bots = data.filter(a => a.approved === true && a.tags.includes(tag))
+  let model = require("./models/bot");
+  let data = await model.find();
+  let bots = data.filter((a) => a.approved === true && a.tags.includes(tag));
 
- return res.send(bots);
-
+  return res.send(bots);
 });
 
 app.get("/servers/tags/:tag", async (req, res) => {
   const tag = req.params.tag;
 
- if(!global.config.tags.servers.includes(tag)) return res.status(404).json({ message: "This tag was not found in our database."});
+  if (!global.config.tags.servers.includes(tag))
+    return res
+      .status(404)
+      .json({ message: "This tag was not found in our database." });
 
- let model = require("./models/server")
- let data = await model.find()
- let servers = data.filter(a => a.published === true && a.tags.includes(tag))
+  let model = require("./models/server");
+  let data = await model.find();
+  let servers = data.filter(
+    (a) => a.published === true && a.tags.includes(tag)
+  );
 
- return res.send(servers);
-
+  return res.send(servers);
 });
 
 //-API-//
@@ -710,8 +714,8 @@ app.get("/servers", checkMaintenance, checkStaff, async (req, res) => {
     servers[i].name = ServerRaw.name;
     servers[i].icon = ServerRaw.iconURL({ dynamic: true });
     servers[i].memberCount = ServerRaw.memberCount
-    .toLocaleString()
-    .replace(",", ",");
+      .toLocaleString()
+      .replace(",", ",");
     servers[i].boosts = ServerRaw.premiumSubscriptionCount;
     servers[i].tags = servers[i].tags.join(", ");
   }
@@ -1039,9 +1043,34 @@ app.get("/me", checkAuth, async (req, res) => {
     tested: true,
     owner: user.id,
   });
-  res.render("me.ejs", {
+
+  let smodel = require("./models/server.js");
+  let servers = await smodel.find({
+    published: true,
+    owner: req.params.id,
+  });
+  for (let i = 0; i < servers.length; i++) {
+    const ServerRaw = await global.sclient.guilds.fetch(servers[i].id);
+    servers[i].name = ServerRaw.name;
+    servers[i].icon = ServerRaw.iconURL({ dynamic: true });
+    servers[i].memberCount = ServerRaw.memberCount;
+    servers[i].boosts = ServerRaw.premiumSubscriptionCount;
+    servers[i].tags = servers[i].tags.join(", ");
+  }
+
+  for (let i = 0; i < bots.length; i++) {
+    const BotRaw = await client.users.fetch(bots[i].id);
+    bots[i].name = BotRaw.username;
+    bots[i].avatar = BotRaw.avatar;
+    bots[i].tags = bots[i].tags.join(", ");
+  }
+  res.render("user.ejs", {
     bot: req.bot,
+    fetched_user: user,
     bots: bots,
+    servers: servers,
+    config: global.config,
+    fetched_user: user || null,
     user: user || null,
   });
 });
@@ -1256,13 +1285,17 @@ app.post("/bots/:id/deny", checkAuth, checkStaff, async (req, res) => {
       message: "This application could not be found in our site.",
     });
 
-    if(bot.approved === true) {
-      return res.status(400).json({ message: "This bot is already approved on VitalList."})
-    }
+  if (bot.approved === true) {
+    return res
+      .status(400)
+      .json({ message: "This bot is already approved on VitalList." });
+  }
 
-    if(bot.denied === true) {
-      return res.status(400).json({ message: "This bot is already denied. on VitalList."})
-    }
+  if (bot.denied === true) {
+    return res
+      .status(400)
+      .json({ message: "This bot is already denied. on VitalList." });
+  }
 
   const OwnerRaw = await client.users.fetch(bot.owner);
 
@@ -1313,8 +1346,8 @@ app.post("/bots/:id/deny", checkAuth, checkStaff, async (req, res) => {
   logs.send({ content: `<@${bot.owner}>`, embeds: [denyEmbed] });
   const channelName = `${BotRaw.username}-${BotRaw.discriminator}`;
   let guild = client.guilds.cache.get(global.config.guilds.testing);
-  const kickBot = guild.members.cache.get(bot.id)
-  kickBot.kick({ reason: "Denied on VitalList."})
+  const kickBot = guild.members.cache.get(bot.id);
+  kickBot.kick({ reason: "Denied on VitalList." });
   let channel = await guild.channels.cache.find(
     (c) => c.name == channelName.toLowerCase()
   );
@@ -1353,7 +1386,7 @@ app.post("/bots/:id/testing", checkAuth, checkStaff, async (req, res) => {
     .setDescription(
       `Welcome to your new testing session for ${LogRaw}.\nYou may now begin testing this bot. Any questions? View the queue page or ask a admin.`
     )
-    .addFields({ name: "Bot Prefix", value: `${bot.prefix}`})
+    .addFields({ name: "Bot Prefix", value: `${bot.prefix}` })
     .setFooter({
       text: "Testing Session - VitalList",
       iconURL: `${global.client.user.displayAvatarURL()}`,
@@ -1382,13 +1415,17 @@ app.use("/bots/:id/status", checkAuth, checkStaff, async (req, res) => {
       message: "This application could not be found in our site.",
     });
 
-    if(bot.approved === true) {
-      return res.status(400).json({ message: "This bot is already approved on VitalList."})
-    }
+  if (bot.approved === true) {
+    return res
+      .status(400)
+      .json({ message: "This bot is already approved on VitalList." });
+  }
 
-    if(bot.denied === true) {
-      return res.status(400).json({ message: "This bot is already denied. on VitalList."})
-    }
+  if (bot.denied === true) {
+    return res
+      .status(400)
+      .json({ message: "This bot is already denied. on VitalList." });
+  }
 
   const OwnerRaw = await client.users.fetch(bot.owner);
 
@@ -1436,16 +1473,16 @@ app.use("/bots/:id/status", checkAuth, checkStaff, async (req, res) => {
       });
 
     logs.send({ content: `<@${bot.owner}>`, embeds: [approveEmbed] });
-    const mainGuild = client.guilds.cache.get(global.config.guilds.main)
-    const ownerRaw = mainGuild.members.cache.get(bot.owner)
+    const mainGuild = client.guilds.cache.get(global.config.guilds.main);
+    const ownerRaw = mainGuild.members.cache.get(bot.owner);
     ownerRaw.roles.add(global.config.roles.developer);
     const channelName = `${BotRaw.username}-${BotRaw.discriminator}`;
     let guild = client.guilds.cache.get(global.config.guilds.testing);
-    const kickBot = guild.members.cache.get(bot.id)
-    kickBot.kick("Approved on VitalList.")
+    const kickBot = guild.members.cache.get(bot.id);
+    kickBot.kick("Approved on VitalList.");
     let channel = await guild.channels.cache.find(
       (c) => c.name == channelName.toLowerCase()
-    );  
+    );
     if (channel) channel.delete("This bot was approved on VitalList.");
     return res.redirect(
       `/queue?success=true&body=The bot was successfully approved.`

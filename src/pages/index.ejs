@@ -54,15 +54,15 @@
         <%  if (i === 8) break; %>
         <div class="card" style="border-radius:10px;">
           <img src="https://cdn.discordapp.com/avatars/<%= voted[i].id %>/<%= voted[i].avatar %>.png" alt="<%= voted[i].name %>'s Avatar" draggable="false" class="botimg_main">
-          <p class="botname_main"><%= voted[i].name %>              
+          <p class="botname_main"><%= voted[i].name %>
             <% if (voted[i].id === "1004264023111507979") { %>
             <span title="Official Bot"><i class="fas fa-badge-check"></i></span>
-           <%  } %> <br>
+            <%  } %> <br>
             <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-server"></i> <%= voted[i].servers %> • <i class="fa-solid fa-check-to-slot"></i> <%= voted[i].votes %></span>
           </p>
-          <div class="botdesc_main" style="height:75px;width:100%;overflow:auto;padding:10px;">
+          <div class="botdesc_main" style="height:auto;width:auto;overflow:auto;padding:10px;">
             <i class="fa-solid fa-file-lines"></i> <%= voted[i].shortDesc %>
-            </div>
+          </div>
           <div class="bottags_main" style="height:75px;width:100%;overflow:auto;padding:10px;">
             <i class="fa-solid fa-hashtag"></i> <%= voted[i].tags %>
           </div>
@@ -90,19 +90,20 @@
                 • <span title="Official Bot"><i class="fa-solid fa-circle-check"></i></span>
                 <%  } %></span>
             </p>
-            <div class="botdesc_main" style="height:75px;width:100%;overflow:auto;padding:10px;">
+            <div class="botdesc_main" style="height:auto;width:auto;overflow:auto;padding:10px;">
               <i class="fa-solid fa-file-lines"></i> <%= added[i].shortDesc %>
-              </div>
+            </div>
             <div class="bottags_main" style="height:75px;width:100%;overflow:auto;padding:10px;">
               <i class="fa-solid fa-hashtag"></i> <%= added[i].tags %>
             </div>
             <div style="margin-left:20px;margin-top:-30px">
               <a href="/bots/<%= added[i].id %>/">
                 <button class="viewbtn">View</button>
-            </div></a>
-            <a href="/bots/<%= added[i].id %>/vote">
-              <button class="votebtn">Vote</button></a>
-          </div></a>
+            </div>
+          </a>
+          <a href="/bots/<%= added[i].id %>/vote">
+            <button class="votebtn">Vote</button></a>
+        </div></a>
         <% } %>
       </div>
     </div>
@@ -111,6 +112,9 @@
 </body>
 <%- include("./parts/footer.ejs") %>
 <style>
+  body {
+    overflow: overlay;
+}
   @media screen and (max-width: 757px) {
     .bot-card-col {
       margin: 0 30px;
