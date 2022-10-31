@@ -54,7 +54,7 @@ app.use((req, res, next) => {
     next();
   }
 });
-
+app.use('/', express.static(path.join(__dirname, 'arc')))
 //-Alaways use protection!-//
 
 var minifyHTML = require("express-minify-html-terser");
