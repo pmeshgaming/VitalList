@@ -60,7 +60,7 @@
       <div class="bottags_main" style="height:75px;width:100%;overflow:auto;padding:10px;">
         <i class="fa-solid fa-hashtag"></i> <%= voted[i].tags %>
       </div>
-      <div style="margin-left:20px;margin-top:-30px">
+      <div style="margin-left:20px;margin-top:-40px">
         <a href="/bots/<%= voted[i].id %>/">
           <button class="viewbtn">View</button>
       </div></a>
@@ -71,7 +71,8 @@
   </div>
   </div>
 </body>
-
+<br><br><br><br>
+<%- include("../parts/footer.ejs") %>
 <style>
   body {
     overflow: overlay;

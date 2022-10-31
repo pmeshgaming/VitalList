@@ -27,8 +27,8 @@
       </div>
       <div class="form-group required">
         <label for="botShortDesc">Short Description</label>
-        <input type="text" class="form-control" value="<%= bot.shortDesc %>" name="shortDesc" aria-describedby="botShortDeschelp" placeholder="Revolutionary bot with..." minlength="50" maxlength="100" autocomplete="off" required>
-        <small id="botShortDeschelp" class="form-text text-muted">Short Description about the bot (Min. 50 & Max. 100 characters)</small>
+        <input type="text" class="form-control" value="<%= bot.shortDesc %>" name="shortDesc" aria-describedby="botShortDeschelp" placeholder="Revolutionary bot with..." minlength="50" maxlength="150" autocomplete="off" required>
+        <small id="botShortDeschelp" class="form-text text-muted">Short Description about the bot (Min. 50 & Max. 150 characters)</small>
       </div>
       <div class="form-group required">
         <label for="botLongDesc">Long Description</label>
@@ -72,7 +72,7 @@
       <div class="form-group" id="tags-box">
         <label class="mb-0">Bot Tags</label>
         <small class="form-text text-muted mt-0 mb-2">Max. 4 tags</small>
-        <select name="tags" id="tags" class="form-control" id="tags" placeholder="Max. 4 tags" multiple required>
+        <select name="tags" id="tags" value="<%= bot.tags %>" class="form-control" placeholder="Max. 4 tags" multiple size="4" required>
           <% tags.bots.map(tag => {%>
           <% if(tags.bots.includes(tag)) {%>
           <option value="<%= tag %>" selected><%= tag %></option>
@@ -97,9 +97,6 @@
 </div>
 
 <script>
-  $(".delete").restintag(optionsObj, function(data) {
-    console.log(data);
-  })
   const tags = [];
   $.each($("input[name='tag']:checked"), function() {
     tags.push($(this).val());

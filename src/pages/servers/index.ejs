@@ -68,7 +68,7 @@
       <i class="fa-solid fa-hashtag"></i> <%= bumped[i].tags %>
     </div>
   
-    <div style="margin-left:20px;margin-top:-30px">
+    <div style="margin-left:20px;margin-top:-50px">
       <a href="/servers/<%= bumped[i].id %>/">
         <button class="viewbtn">View</button>
     </div></a>
@@ -84,27 +84,28 @@
   <%  if (i === 6) break; %>
   <div class="card" style="border-radius:10px;">
     <img src="<%= voted[i].icon %>" alt="<%= voted[i].name %>'s Icon" draggable="false" class="botimg_main">
-      <p class="botname_main"> 
-      <%= voted[i].name %><br>
-      <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-bomb"></i> <%= voted[i].bumps %> • <i class="fa-solid fa-check-to-slot"></i> <%= voted[i].votes %></span>
+    <p class="botname_main" style="height:75px;width:250px;padding:10px;"> 
+    <%= bumped[i].name %><br>
+      <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-user-group"></i> <%= voted[i].memberCount %> • <i class="fa-solid fa-bomb"></i> <%= voted[i].bumps %> • <i class="fa-solid fa-check-to-slot"></i> <%= voted[i].votes %></span>
     </p>
     <div class="botdesc_main" style="height:auto;width:auto;overflow:auto;padding:10px;">
-      <i class="fa-solid fa-file-lines"></i> <%= bumped[i].shortDesc %>
+      <i class="fa-solid fa-file-lines"></i> <%= voted[i].shortDesc %>
       </div>
     <div class="bottags_main" style="height:75px;width:100%;overflow:auto;padding:10px;">
-      <i class="fa-solid fa-hashtag"></i> <%= bumped[i].tags %>
+      <i class="fa-solid fa-hashtag"></i> <%= voted[i].tags %>
     </div>
-    <div style="margin-left:20px;margin-top:-30px">
-      <a href="/servers/<%= bumped[i].id %>/">
+  
+    <div style="margin-left:20px;margin-top:-50px">
+      <a href="/servers/<%= voted[i].id %>/">
         <button class="viewbtn">View</button>
     </div></a>
-    <a href="/servers/<%= bumped[i].id %>/vote">
+    <a href="/servers/<%= voted[i].id %>/vote">
       <button class="votebtn">Vote</button></a>
   </div></a>
   <% } %>
 </div>
-
 <br><br><br><br>
+<%- include("../parts/footer.ejs") %>
 <style>
   @media screen and (max-width: 757px) {
     .bot-card-col {

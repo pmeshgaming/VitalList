@@ -603,10 +603,12 @@ app.get("/bots/:id", checkMaintenance, async (req, res) => {
 //-TAGS-//
 
 app.get("/tags", async (req, res) => {
-  const tags = global.config.tags;
+  const bottags = global.config.tags.bots;
+  const servertags = global.config.tags.servers;
 
-  res.render("botlist/tags.ejs", {
-    tags: tags,
+  res.render("tags.ejs", {
+    bottags: bottags,
+    servertags: servertags,
     user: req.user || null,
   });
 });
@@ -622,8 +624,32 @@ app.get("/bots/tags/:tag", async (req, res) => {
   let model = require("./models/bot");
   let data = await model.find();
   let bots = data.filter((a) => a.approved === true && a.tags.includes(tag));
+  if (bots.length <= 0) return res.redirect("/");
 
-  return res.send(bots);
+  for (let i = 0; i < bots.length; i++) {
+    const BotRaw = await client.users.fetch(bots[i].id);
+    bots[i].name = BotRaw.username;
+    bots[i].avatar = BotRaw.avatar;
+    bots[i].name = bots[i].name.replace(
+      /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
+      ""
+    );
+    bots[i].tags = bots[i].tags.join(", ");
+  }
+  Array.prototype.shuffle = function () {
+    let a = this;
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+
+  res.render("botlist/tags.ejs", {
+    bots: bots.shuffle(),
+    tag: tag,
+    user: req.user
+  })
 });
 
 app.get("/servers/tags/:tag", async (req, res) => {
@@ -639,8 +665,33 @@ app.get("/servers/tags/:tag", async (req, res) => {
   let servers = data.filter(
     (a) => a.published === true && a.tags.includes(tag)
   );
+  if (servers.length <= 0) return res.redirect("/");
+  for (let i = 0; i < servers.length; i++) {
+    const ServerRaw = await global.sclient.guilds.fetch(servers[i].id);
+    servers[i].name = ServerRaw.name;
+    servers[i].icon = ServerRaw.iconURL({ dynamic: true });
+    servers[i].memberCount = ServerRaw.memberCount
+      .toLocaleString()
+      .replace(",", ",");
+    servers[i].boosts = ServerRaw.premiumSubscriptionCount;
+    servers[i].tags = servers[i].tags.join(", ");
+  }
 
-  return res.send(servers);
+  Array.prototype.shuffle = function () {
+    let a = this;
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+
+  res.render("servers/tags.ejs", {
+    tag: tag,
+    user: req.user || null,
+    servers: servers.shuffle(),
+  });
+  
 });
 
 //-API-//

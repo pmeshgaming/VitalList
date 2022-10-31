@@ -16,7 +16,15 @@
         <a class="nav-link" href="/servers"><i class="fa-solid fa-server"></i>&nbsp;Servers</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/partners"><i class="fa-solid fa-handshake"></i>&nbsp;Partners</a>
+        <a class="nav-link" href="/tags"><i class="fa-solid fa-hashtag"></i>&nbsp;Tags</a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa-solid fa-ellipsis"></i>&nbsp;More</a>
+          <div class="dropdown-menu" style="border-radius: 5px;background-color: #003060">
+            <div class="btn-group-vertical">
+              <a class="dropdown-item" href="/partners"><i class="fa-solid fa-handshake"></i>&nbsp;&nbsp;Partners</a>
+            </div>
+            </div>
       </li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
@@ -28,7 +36,7 @@
         <% } %>
           <div class="dropdown-menu" style="border-radius: 5px;background-color: #003060">
             <center class="btn-group-vertical" style="width: calc(100% - 20px); margin: 0 10px;">
-              <p>Comming Soon</p>
+              <p>Coming Soon</p>
               <!--
                 <button type="button" onclick="toggleTheme('white')" class="btn btn-primary" style="background-color: white; color: black; border: 1px solid white;">White</button>
                 <button type="button" onclick="toggleTheme('dark')" class="btn btn-secondary">Dark</button>
@@ -41,7 +49,7 @@
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle pl-3 pr-3 mr-3" style="border-radius: 8px;margin-top:4px;background-color: transparent" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" style="color: white !important;"><img class="right" draggable="false" src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png?" width="35" height="35" style="border-radius:100%;" />&nbsp;&nbsp;<%= user.username %>#<%= user.discriminator %></a>
         <div style="background-color: #003060" class="dropdown-menu">
-          <a class="dropdown-item" href="/me"><i class="fa-solid fa-address-card"></i>&nbsp;&nbsp;Profile</a>
+          <a class="dropdown-item" href="/users/<%= user.id %>"><i class="fa-solid fa-address-card"></i>&nbsp;&nbsp;Profile</a>
           <a class="dropdown-item" href="/bots/new"><i class="fa-solid fa-plus"></i>&nbsp;&nbsp;Add Bot</a>
           <a class="dropdown-item" href="/servers/new"><i class="fa-solid fa-plus"></i>&nbsp;&nbsp;Add Server</a>
           <a class="dropdown-item" href="/auth/logout"><i class="fa-solid fa-right-from-bracket"></i>&nbsp;&nbsp;Logout</a>
