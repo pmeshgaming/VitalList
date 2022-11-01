@@ -557,7 +557,7 @@ app.get("/bots/:id/vote", checkAuth, async (req, res) => {
   });
 });
 
-app.get("/bots/:id", checkMaintenance, async (req, res) => {
+app.get("/bots/:id", async (req, res) => {
   let id = req.params.id;
   const client = global.client;
   const model = require("./models/bot.js");
@@ -581,18 +581,18 @@ app.get("/bots/:id", checkMaintenance, async (req, res) => {
 
   const marked = require("marked");
   const desc = marked.parse(bot.desc);
-
   const BotRaw = (await client.users.fetch(id)) || null;
+  const BotPresence = (await guild.members.cache.get(id))
   const OwnerRaw = await client.users.fetch(bot.owner);
   bot.name = BotRaw.username;
   bot.avatar = BotRaw.avatar;
+  bot.presence = BotPresence.presence;
   bot.discriminator = BotRaw.discriminator;
   bot.tag = BotRaw.tag;
   bot.ownerTag = OwnerRaw.tag;
   bot.ownerAvatar = OwnerRaw.avatar;
   bot.tags = bot.tags.join(", ");
   bot.desc = desc;
-
   res.render("botlist/viewbot.ejs", {
     bot2: req.bot,
     bot: bot,
@@ -768,7 +768,7 @@ app.get("/servers", checkMaintenance, checkStaff, async (req, res) => {
       .toLocaleString()
       .replace(",", ",");
     servers[i].boosts = ServerRaw.premiumSubscriptionCount;
-    servers[i].tags = servers[i].tags.join(", ");
+    servers[i].tags = servers[i].tags.join(`, `);
   }
 
   Array.prototype.shuffle = function () {

@@ -4,6 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta property="og:title" content="<%= bot.name %>">
+  <meta property="og:description" content="<%= bot.shortDesc %>">
+  <meta property="og:image" content="<%= bot.avatar %>">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sanitize-html/1.26.0/sanitize-html.min.js"></script>
   <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css'>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.all.min.js"></script>
@@ -57,6 +60,15 @@
     </hr>
     <p style="color: white; font-size: 16px;"><i class="fa-solid fa-terminal"></i> Prefix: <code style="padding: 3px 8px; font-weight: bold;"><%= bot.prefix %></code></p>
     <p style="color: white; font-size: 16px;"><i class="fa-solid fa-crown"></i> Owner:&nbsp;&nbsp;<strong><a style="color: white;" href="/users/<%- bot.owner %>"><%= bot.ownerTag %></a></strong></p>
+    <% if (bot.presence && bot.presence.status === "online") { %>
+    <p style="color: white; font-size: 16px;"><i class="mt-1 fad mt-1-online %>"></i> Status: <strong>Online</strong></p>
+  <% } else if (bot && bot.presence && bot.presence.status === "idle") { %>
+    <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal"></i> Status: <strong>Idle</strong></p>
+  <% } else if (bot && bot.presence && bot.presence.status === "dnd") { %>
+      <p style="color: white; font-size: 16px;"><i class="mt-1 fad mt-1-dnd %>"></i> Status: <strong>DND</strong></p>
+  <% } else { %>
+      <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal"></i> Status: <strong>Offline</strong></p>
+  <% } %>
     <p style="color: white; font-size: 16px;"><i class="fa-solid fa-hashtag"></i> Tags: <strong><%= bot.tags %></strong></p>
     <!-- <% if (bot.presence && bot.presence.status === "online") { %>
                     <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal"></i> Status: <strong>Online</strong></p>
