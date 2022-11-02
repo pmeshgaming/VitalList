@@ -11,7 +11,7 @@
 <%- include("../parts/navbar.ejs") %>
 <br><br><br><br>
 <center>
-  <img class="titlelogo" src="/img/icon.png" alt="VitalList Logo" width="150" height="150">
+  <img class="titlelogo" src="/img/icon.webp" alt="VitalList Logo" width="150" height="150">
   <h2 class="title"><b>Vital Servers</b></h2>
   <p><span class="typing_desc" style="font-size:18px;"></span></p>
   <script>
@@ -61,10 +61,10 @@
     <%= bumped[i].name %><br>
       <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-user-group"></i> <%= bumped[i].memberCount %> • <i class="fa-solid fa-bomb"></i> <%= bumped[i].bumps %> • <i class="fa-solid fa-check-to-slot"></i> <%= bumped[i].votes %></span>
     </p>
-    <div class="botdesc_main" style="height:75px;width:100%;overflow:auto;padding:10px;">
+    <div class="botdesc_main" style="height:auto;width:auto;overflow:auto;padding:10px;">
       <i class="fa-solid fa-file-lines"></i> <%= bumped[i].shortDesc %>
       </div>
-    <div class="bottags_main" style="height:75px;width:100%;overflow:auto;padding:10px;">
+    <div class="bottags_main" style="height:auto;width:auto;overflow:auto;padding:10px;">
       <i class="fa-solid fa-hashtag"></i> <%= bumped[i].tags %>
     </div>
   
@@ -88,10 +88,10 @@
     <%= bumped[i].name %><br>
       <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-user-group"></i> <%= voted[i].memberCount %> • <i class="fa-solid fa-bomb"></i> <%= voted[i].bumps %> • <i class="fa-solid fa-check-to-slot"></i> <%= voted[i].votes %></span>
     </p>
-    <div class="botdesc_main" style="height:75px;width:100%;overflow:auto;padding:10px;">
+    <div class="botdesc_main" style="height:auto;width:auto;overflow:auto;padding:10px;">
       <i class="fa-solid fa-file-lines"></i> <%= voted[i].shortDesc %>
       </div>
-    <div class="bottags_main" style="height:75px;width:100%;overflow:auto;padding:10px;">
+    <div class="bottags_main" style="height:auto;width:auto;overflow:auto;padding:10px;">
       <i class="fa-solid fa-hashtag"></i> <%= voted[i].tags %>
     </div>
   

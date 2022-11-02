@@ -1,5 +1,7 @@
+<!DOCTYPE html>
+<html lang="en">
 <nav class="navbar navbar-expand-lg navbar-dark dark">
-  <a class="navbar-brand" href="/"><img draggable="false" src="/img/icon.png" style="height: 50px; width: 50px;"></a>
+  <a class="navbar-brand" href="/"><img draggable="false" src="/img/icon.webp" style="height: 50px; width: 50px;"></a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -8,9 +10,6 @@
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
         <a class="nav-link" href="/"><i class="fa-solid fa-house-chimney"></i>&nbsp;Home<span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/bots"><i class="fa-solid fa-robot"></i>&nbsp;Bots</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="/servers"><i class="fa-solid fa-server"></i>&nbsp;Servers</a>
@@ -28,23 +27,6 @@
       </li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
-      <li class="nav-item dropdown mr-2">
-        <% if (user) { %>
-        <a class="nav-link dropdown-toggle" style="margin-top:10px " data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa-solid fa-paint-roller"></i>&nbsp;Themes</a>
-        <% } else { %>
-        <a class="nav-link dropdown-toggle" style="margin-top:4px" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa-solid fa-paint-roller"></i>&nbsp;Themes</a>
-        <% } %>
-          <div class="dropdown-menu" style="border-radius: 5px;background-color: #003060">
-            <center class="btn-group-vertical" style="width: calc(100% - 20px); margin: 0 10px;">
-              <p>Coming Soon</p>
-              <!--
-                <button type="button" onclick="toggleTheme('white')" class="btn btn-primary" style="background-color: white; color: black; border: 1px solid white;">White</button>
-                <button type="button" onclick="toggleTheme('dark')" class="btn btn-secondary">Dark</button>
-                <button type="button" onclick="toggleTheme('ocean')" class="btn btn-primary">Ocean</button>
-                -->
-            </center>
-            </div>
-      </li>
       <% if (user) { %>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle pl-3 pr-3 mr-3" style="border-radius: 8px;margin-top:4px;background-color: transparent" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" style="color: white !important;"><img class="right" draggable="false" src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png?" width="35" height="35" style="border-radius:100%;" />&nbsp;&nbsp;<%= user.username %>#<%= user.discriminator %></a>
