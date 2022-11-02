@@ -1547,7 +1547,13 @@ app.get("/discord", (_req, res) =>
   res.redirect("https://discord.gg/HrWe2BwVbd")
 );
 
-app.get("/terms", async (req, res) => {});
+app.get("/terms", async (req, res) => {
+  res.render("legal/terms.ejs", { user: req.user })
+});
+
+app.get("/policy", async (req, res) => {
+  res.render("legal/policy.ejs", { user: req.user })
+});
 
 //-Error Pages-//
 app.all("*", (req, res) => {
