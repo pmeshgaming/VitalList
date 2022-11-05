@@ -24,15 +24,16 @@ module.exports = {
       }
     }, 300000);
 
-    await fetch("https://vitallist.xyz/api/bots/1004264023111507979", {
-      method: "POST",
-      headers: {
-        server_count: sclient.guilds.cache.size,
-        shard_count: "1",
-        "Content-Type": "application/json",
-      },
-    }).then((response) => {
-      console.log(response.json());
-    });
-  },
+    //await fetch("https://vitallist.xyz/api/bots/1004264023111507979", {
+     // method: "POST",
+    //  headers: {
+    //    server_count: sclient.guilds.cache.size,
+ //       shard_count: "1",
+//        "Content-Type": "application/json",
+//      },
+ //   }).then((response) => {
+   //   console.log(response.json());
+  //  });
+ },
 };
+ 
