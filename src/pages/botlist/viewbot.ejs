@@ -47,9 +47,11 @@
           <% if (bot.support) { %>
           <a href="https://discord.gg/<%= bot.support %>" type="button" style="border-radius: 5px;" class="btn btn-info pr-3 pl-3 mr-1"><i class="fa-brands fa-discord"></i> Support</a>
           <% } %>
+          <% if (user) { %>
           <% if (bot.owner.includes(user.id)) { %>
           <a href="/bots/<%= bot.id %>/edit" type="button" style="border-radius: 5px;" class="btn btn-warning pr-3 pl-3 mr-1"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
           <% } %>
+         <% } %>
         </div>
       </div>
     </div>
@@ -61,13 +63,13 @@
     <p style="color: white; font-size: 16px;"><i class="fa-solid fa-terminal"></i> Prefix: <code style="padding: 3px 8px; font-weight: bold;"><%= bot.prefix %></code></p>
     <p style="color: white; font-size: 16px;"><i class="fa-solid fa-crown"></i> Owner:&nbsp;&nbsp;<strong><a style="color: white;" href="/users/<%- bot.owner %>"><%= bot.ownerTag %></a></strong></p>
     <% if (bot.presence && bot.presence.status === "online") { %>
-    <p style="color: white; font-size: 16px;"><i class="mt-1 fad mt-1-online %>"></i> Status: <strong>Online</strong></p>
+    <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal %>"></i> Status: <strong>🟢Online</strong></p>
   <% } else if (bot && bot.presence && bot.presence.status === "idle") { %>
-    <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal"></i> Status: <strong>Idle</strong></p>
+    <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal"></i> Status: <strong>🟡Idle</strong></p>
   <% } else if (bot && bot.presence && bot.presence.status === "dnd") { %>
-      <p style="color: white; font-size: 16px;"><i class="mt-1 fad mt-1-dnd %>"></i> Status: <strong>DND</strong></p>
+      <p style="color: white; font-size: 16px;"><i class="a-solid fa-signal %>"></i> Status: <strong>🔴DND</strong></p>
   <% } else { %>
-      <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal"></i> Status: <strong>Offline</strong></p>
+      <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal"></i> Status: <strong>⚫Offline</strong></p>
   <% } %>
     <p style="color: white; font-size: 16px;"><i class="fa-solid fa-hashtag"></i> Tags: <strong><%= bot.tags %></strong></p>
     <!-- <% if (bot.presence && bot.presence.status === "online") { %>

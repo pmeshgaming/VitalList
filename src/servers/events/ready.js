@@ -24,7 +24,7 @@ module.exports = {
       }
     }, 300000);
 
-    await fetch("https://vitallist.xyz/api/bots/1004264023111507979", {
+    /* await fetch("https://vitallist.xyz/api/bots/1004264023111507979", {
       method: "POST",
       headers: {
         server_count: sclient.guilds.cache.size,
@@ -33,6 +33,6 @@ module.exports = {
       },
     }).then((response) => {
       console.log(response.json());
-    });
+    }); */
   },
 };

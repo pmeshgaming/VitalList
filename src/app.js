@@ -291,12 +291,16 @@ app.post("/bots/new", checkMaintenance, checkAuth, async (req, res) => {
       message: "This application has already been added to our site.",
     });
 
-  const bot = await client.users.fetch(data.id);
-  if (!bot) {
-    return res.status(400).json({
+  try {
+    await client.users.fetch(data.id);
+  } catch(err) {
+ return res.status(400).json({
       message: "This is not a real application on Discord.",
     });
   }
+
+  const bot = await client.users.fetch(data.id);
+
   await model.create({
     id: data.id,
     prefix: data.prefix,
@@ -355,7 +359,7 @@ app.get("/bots/:id/invite", async (req, res) => {
 
   if (!bot.invite) {
     return await res.redirect(
-      `https://discord.com/oauth2/authorize?client_id=${id}&scope=bot%20applications.commands&permissions=8&response_type=code`
+      `https://discord.com/oauth2/authorize?client_id=${id}&scope=bot%20applications.commands&permissions=0&response_type=code`
     );
   }
 
@@ -582,8 +586,8 @@ app.get("/bots/:id", async (req, res) => {
   const marked = require("marked");
   const desc = marked.parse(bot.desc);
   const BotRaw = (await client.users.fetch(id)) || null;
-  const BotPresence = (await guild.members.cache.get(id))
-  const OwnerRaw = await client.users.fetch(bot.owner);
+  const BotPresence = (await guild.members.cache.get(id) || null)
+  const OwnerRaw = await client.users.fetch(bot.owner)|| null;
   bot.name = BotRaw.username;
   bot.avatar = BotRaw.avatar;
   bot.presence = BotPresence.presence;
@@ -1348,7 +1352,7 @@ app.post("/bots/:id/deny", checkAuth, checkStaff, async (req, res) => {
       .json({ message: "This bot is already denied. on VitalList." });
   }
 
-  const OwnerRaw = await client.users.fetch(bot.owner);
+  const OwnerRaw = await client.users.fetch(bot.owner) || null;
 
   bot.tag = BotRaw.tag;
   bot.denied = true;
