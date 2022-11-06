@@ -791,8 +791,7 @@ app.get("/servers/:id", checkMaintenance, async (req, res) => {
   (server.name = ServerRaw.name),
     (server.icon = ServerRaw.iconURL({ dynamic: true })),
     (server.memberCount = ServerRaw.memberCount
-      .toLocaleString()
-      .replace(",", ",")),
+      .toLocaleString()),
     (server.boosts = ServerRaw.premiumSubscriptionCount);
   server.tags = server.tags.join(", ");
   server.ownerTag = OwnerRaw.tag;
