@@ -18,8 +18,9 @@ const express = require("express"),
   Strategy = require("passport-discord").Strategy;
 app = express();
 const SQLiteStore = require("connect-sqlite3")(session);
-
+const helmet = require("helmet");
 const { inspect } = require("util");
+const rateLimit = require('express-rate-limit')
 
 //-Database Login-//
 
@@ -33,16 +34,29 @@ try {
 
 app = express();
 
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000, 
+	max: 100,
+	standardHeaders: true, 
+})
+
+// Apply the rate limiting middleware to all requests
+app.use(limiter)
 app.use(require("express").json());
 app.use(
   require("express").urlencoded({
     extended: false,
   })
 );
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+  })
+);
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/static"));
 app.set("views", path.join(__dirname, "pages"));
-app.disable("x-powered-by");
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "https://localhost");
@@ -54,7 +68,7 @@ app.use((req, res, next) => {
     next();
   }
 });
-app.use('/', express.static(path.join(__dirname, 'arc')))
+
 //-Alaways use protection!-//
 
 var minifyHTML = require("express-minify-html-terser");
@@ -214,50 +228,6 @@ app.get("/", checkMaintenance, async (req, res) => {
   };
 
   res.render("index.ejs", {
-    bot: req.bot,
-    bots: bots.shuffle(),
-    user: req.user || null,
-  });
-});
-app.get("/bots", checkMaintenance, async (req, res) => {
-  const client = global.client;
-
-  let model = require("./models/bot.js");
-  let bots = await model.find({
-    approved: true,
-  });
-  let dbots = await model.find({
-    denied: false,
-  });
-
-  for (dbot of dbots) {
-    const tendaysago = new Date().getTime() - 10 * 24 * 60 * 60 * 1000;
-    if (dbot.deniedOn < tendaysago) {
-      dbot.deleteOne();
-      dbot.save();
-    }
-  }
-
-  for (let i = 0; i < bots.length; i++) {
-    const BotRaw = await client.users.fetch(bots[i].id);
-    bots[i].name = BotRaw.username;
-    bots[i].avatar = BotRaw.avatar;
-    bots[i].name = bots[i].name.replace(
-      /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
-      ""
-    );
-    bots[i].tags = bots[i].tags.join(", ");
-  }
-  Array.prototype.shuffle = function () {
-    let a = this;
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  };
-
-  res.render("botlist/bots.ejs", {
     bot: req.bot,
     bots: bots.shuffle(),
     user: req.user || null,
@@ -586,6 +556,7 @@ app.get("/bots/:id", async (req, res) => {
   const marked = require("marked");
   const desc = marked.parse(bot.desc);
   const BotRaw = (await client.users.fetch(id)) || null;
+
   const BotPresence = (await guild.members.cache.get(id) || null)
   const OwnerRaw = await client.users.fetch(bot.owner)|| null;
   bot.name = BotRaw.username;
@@ -652,8 +623,8 @@ app.get("/bots/tags/:tag", async (req, res) => {
   res.render("botlist/tags.ejs", {
     bots: bots.shuffle(),
     tag: tag,
-    user: req.user
-  })
+    user: req.user,
+  });
 });
 
 app.get("/servers/tags/:tag", async (req, res) => {
@@ -695,7 +666,6 @@ app.get("/servers/tags/:tag", async (req, res) => {
     user: req.user || null,
     servers: servers.shuffle(),
   });
-  
 });
 
 //-API-//
@@ -826,8 +796,7 @@ app.get("/servers/:id", checkMaintenance, async (req, res) => {
   (server.name = ServerRaw.name),
     (server.icon = ServerRaw.iconURL({ dynamic: true })),
     (server.memberCount = ServerRaw.memberCount
-      .toLocaleString()
-      .replace(",", ",")),
+      .toLocaleString()),
     (server.boosts = ServerRaw.premiumSubscriptionCount);
   server.tags = server.tags.join(", ");
   server.ownerTag = OwnerRaw.tag;
@@ -1552,11 +1521,11 @@ app.get("/discord", (_req, res) =>
 );
 
 app.get("/terms", async (req, res) => {
-  res.render("legal/terms.ejs", { user: req.user })
+  res.render("legal/terms.ejs", { user: req.user });
 });
 
 app.get("/policy", async (req, res) => {
-  res.render("legal/policy.ejs", { user: req.user })
+  res.render("legal/policy.ejs", { user: req.user });
 });
 
 //-Error Pages-//

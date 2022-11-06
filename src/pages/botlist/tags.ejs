@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,7 @@
   <%- include ("../parts/navbar.ejs") %>
   <br><br><br><br>
   <center>
-    <img class="titlelogo" src="/img/icon.png" alt="VitalList Logo" width="150" height="150">
+    <img class="titlelogo" src="/img/icon.webp" alt="VitalList Logo" width="150" height="150">
     <h2 class="title"><b>Vital List</b></h2>
     <p><span class="typing_desc" style="font-size:18px;"></span></p>
     <script>
@@ -49,10 +50,10 @@
       <p class="botname_main"><%= voted[i].name %><br>
         <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-server"></i> <%= voted[i].servers %> • <i class="fa-solid fa-check-to-slot"></i> <%= voted[i].votes %></span>
       </p>
-      <div class="botdesc_main" style="height:75px;width:100%;overflow:auto;padding:10px;">
+      <div class="botdesc_main" style="height:auto;width:auto;overflow:auto;padding:10px;">
         <i class="fa-solid fa-file-lines"></i> <%= voted[i].shortDesc %>
         </div>
-      <div class="bottags_main" style="height:75px;width:100%;overflow:auto;padding:10px;">
+      <div class="bottags_main" style="height:auto;width:auto;overflow:auto;padding:10px;">
         <i class="fa-solid fa-hashtag"></i> <%= voted[i].tags %>
       </div>
       <div style="margin-left:20px;margin-top:-40px">
