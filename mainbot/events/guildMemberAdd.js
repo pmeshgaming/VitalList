@@ -11,7 +11,7 @@ module.exports = {
       } 
       if(!member.user.bot) {
         if(member.guild.id === global.config.guilds.main) {
-        client.channels.cache.get("1017613906107175002").send("<:VD_add:1006511788155752558> `"+member.user.username+"` has joined the server.")
+        client.channels.resolve("1017613906107175002").send("<:VD_add:1006511788155752558> `"+member.user.username+"` has joined the server.")
       }
      }
     },
