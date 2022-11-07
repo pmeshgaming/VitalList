@@ -50,3 +50,5 @@ module.exports = {
     }
   },
 };
+
+// you need to catch the errors
