@@ -26,7 +26,12 @@
 
         </div>
         <div class="col-sm">
-          <h3><%= bot.name %><small class="text-muted">#<%= bot.discriminator %></small></h3>
+          <h3><%= bot.name %><small class="text-muted">#<%= bot.discriminator %></small>
+            <% if(bot.flags === 65536) { %>
+              <span title="Verified Bot"><i class="fa-solid fa-medal"></i></span>
+             <% } %>
+            </h3>
+          
           <%- bot.shortDesc %><br>
           <!---
                         <span style="border-radius: 5px;" class="badge badge-primary" style="font-size: 20px;"><i class="fa-solid fa-server"></i> Servers: <%= bot.servers %></span>
@@ -62,7 +67,7 @@
     </hr>
     <p style="color: white; font-size: 16px;"><i class="fa-solid fa-terminal"></i> Prefix: <code style="padding: 3px 8px; font-weight: bold;"><%= bot.prefix %></code></p>
     <p style="color: white; font-size: 16px;"><i class="fa-solid fa-crown"></i> Owner:&nbsp;&nbsp;<strong><a style="color: white;" href="/users/<%- bot.owner %>"><%= bot.ownerTag %></a></strong></p>
-    <% if (bot.presence && bot.presence.status === "online") { %>
+    <!-- <% if (bot.presence && bot.presence.status === "online") { %>
     <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal %>"></i> Status: <strong>🟢Online</strong></p>
   <% } else if (bot && bot.presence && bot.presence.status === "idle") { %>
     <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal"></i> Status: <strong>🟡Idle</strong></p>
@@ -71,17 +76,8 @@
   <% } else { %>
       <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal"></i> Status: <strong>⚫Offline</strong></p>
   <% } %>
+  -->
     <p style="color: white; font-size: 16px;"><i class="fa-solid fa-hashtag"></i> Tags: <strong><%= bot.tags %></strong></p>
-    <!-- <% if (bot.presence && bot.presence.status === "online") { %>
-                    <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal"></i> Status: <strong>Online</strong></p>
-                <% } else if (bot.presence && bot.presence.status === "idle") { %>
-                    <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal"></i> Status: <strong>Idle</strong></p>
-                <% } else if (bot.presence && bot.presence.status === "dnd") { %>
-                    <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal"></i> Status: <strong>DND</strong></p>
-                <% } else { %>
-                    <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal"></i> Status: <strong>None</strong></p>
-                <% } %><br>
-                -->
     <h2><i class="fa-solid fa-chart-simple"></i> Statistics</h2>
     <hr>
     </hr>
@@ -117,8 +113,8 @@
     @media only screen and (min-width: 1080px) {
       .infoContainer {
         width: 300px;
-        margin-right: 150px;
-        margin-left: 150px;
+        margin-right: 125px;
+        margin-left: 125px;
       }
     }
 
@@ -144,6 +140,7 @@
         margin-right: 225px;
         margin-left: 225px;
         border: 1px solid rgba(255, 255, 255, 0.18);
+        background: rgba(255, 255, 255, 0.15);
       }
     }
 
@@ -210,6 +207,4 @@
         text: urlParams.get('body'),
       })
     }
-  </script>
-
   </script>

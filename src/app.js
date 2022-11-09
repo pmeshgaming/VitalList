@@ -41,7 +41,7 @@ const limiter = rateLimit({
 })
 
 // Apply the rate limiting middleware to all requests
-app.use(limiter)
+//app.use(limiter)
 app.use(require("express").json());
 app.use(
   require("express").urlencoded({
@@ -59,7 +59,7 @@ app.use(express.static(__dirname + "/static"));
 app.set("views", path.join(__dirname, "pages"));
 
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://localhost");
+  res.header("Access-Control-Allow-Origin", "http://localhost");
   res.header("Access-Control-Allow-Headers", "*");
   res.header("Access-Control-Allow-Methods", "*");
   if (req.method === "OPTIONS") {
@@ -202,9 +202,9 @@ app.get("/", checkMaintenance, async (req, res) => {
 
   for (dbot of dbots) {
     const tendaysago = new Date().getTime() - 10 * 24 * 60 * 60 * 1000;
-    if (dbot.deniedOn < tendaysago) {
-      dbot.deleteOne();
-      dbot.save();
+    if (dbots.deniedOn < tendaysago) {
+      dbots.deleteOne();
+      dbots.save();
     }
   }
 
@@ -228,6 +228,51 @@ app.get("/", checkMaintenance, async (req, res) => {
   };
 
   res.render("index.ejs", {
+    bot: req.bot,
+    bots: bots.shuffle(),
+    user: req.user || null,
+  });
+});
+
+app.get("/bots", checkMaintenance, async (req, res) => {
+  const client = global.client;
+
+  let model = require("./models/bot.js");
+  let bots = await model.find({
+    approved: true,
+  });
+  let dbots = await model.find({
+    denied: false,
+  });
+
+  for (dbot of dbots) {
+    const tendaysago = new Date().getTime() - 10 * 24 * 60 * 60 * 1000;
+    if (dbots.deniedOn < tendaysago) {
+      dbots.deleteOne();
+      dbots.save();
+    }
+  }
+
+  for (let i = 0; i < bots.length; i++) {
+    const BotRaw = await client.users.fetch(bots[i].id);
+    bots[i].name = BotRaw.username;
+    bots[i].avatar = BotRaw.avatar;
+    bots[i].name = bots[i].name.replace(
+      /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
+      ""
+    );
+    bots[i].tags = bots[i].tags.join(", ");
+  }
+  Array.prototype.shuffle = function () {
+    let a = this;
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+
+  res.render("botlist/bots.ejs", {
     bot: req.bot,
     bots: bots.shuffle(),
     user: req.user || null,
@@ -438,8 +483,7 @@ app.post("/bots/:id/vote", checkAuth, async (req, res) => {
   if (x) {
     let timeObj = ms(x.time - (Date.now() - x.date), { long: true });
     return res
-      .status(400)
-      .json({ message: `You can vote again in ${timeObj}.` });
+      .redirect(`/bots/${req.params.id}/vote?error=true&body=Please wait ${timeObj} before you can vote again.`)
   }
 
   await voteModel.create({
@@ -542,38 +586,44 @@ app.get("/bots/:id", async (req, res) => {
       .status(404)
       .json({ message: "This bot was not found on our list." });
 
-  try {
-    guild.members.fetch(id) || null;
-  } catch (err) {
-    return res
-      .status(404)
-      .send(
-        "This bot is not in our Discord server, so we could not fetch it's data. Error: " +
-          err
-      );
-  }
-
   const marked = require("marked");
   const desc = marked.parse(bot.desc);
   const BotRaw = (await client.users.fetch(id)) || null;
-
-  const BotPresence = (await guild.members.cache.get(id) || null)
   const OwnerRaw = await client.users.fetch(bot.owner)|| null;
   bot.name = BotRaw.username;
   bot.avatar = BotRaw.avatar;
-  bot.presence = BotPresence.presence;
   bot.discriminator = BotRaw.discriminator;
   bot.tag = BotRaw.tag;
   bot.ownerTag = OwnerRaw.tag;
   bot.ownerAvatar = OwnerRaw.avatar;
   bot.tags = bot.tags.join(", ");
   bot.desc = desc;
+  bot.flags = BotRaw.flags.bitfield;
   res.render("botlist/viewbot.ejs", {
     bot2: req.bot,
     bot: bot,
     user: req.user || null,
   });
 });
+
+app.get("/bots/:id/widget", async (req, res) => {
+  let id = req.params.id;
+  const client = global.client;
+  const model = require("./models/bot.js");
+  const bot = await model.findOne({ id: id });
+  
+  const BotRaw = (await client.users.fetch(id)) || null;
+  const OwnerRaw = await client.users.fetch(bot.owner)|| null;
+  bot.name = BotRaw.username;
+  bot.avatar = BotRaw.avatar;
+  bot.discriminator = BotRaw.discriminator;
+  bot.tag = BotRaw.tag;
+
+  res.render("botlist/widget.ejs", {
+    bot: bot,
+    user: req.user || null
+  })
+})
 
 //-TAGS-//
 
@@ -1519,6 +1569,10 @@ app.use("/bots/:id/status", checkAuth, checkStaff, async (req, res) => {
 app.get("/discord", (_req, res) =>
   res.redirect("https://discord.gg/HrWe2BwVbd")
 );
+
+app.get("/partners", async (req, res) => {
+  res.render("partners.ejs", { user: req.user });
+});
 
 app.get("/terms", async (req, res) => {
   res.render("legal/terms.ejs", { user: req.user });

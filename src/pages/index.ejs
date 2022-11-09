@@ -53,16 +53,17 @@
         <%  if (i === 8) break; %>
         <div class="card" style="border-radius:10px;">
           <img src="https://cdn.discordapp.com/avatars/<%= voted[i].id %>/<%= voted[i].avatar %>.png" alt="<%= voted[i].name %>'s Avatar" draggable="false" class="botimg_main">
-          <p class="botname_main"><%= voted[i].name %>
+          <p class="botname_main" style="height:65px;width:250px;padding:10px;"> 
+            <%= voted[i].name %>
             <% if (voted[i].id === "1004264023111507979") { %>
             <span title="Official Bot"><i class="fa fa-circle-check"></i></span>
             <%  } %> <br>
             <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-server"></i> <%= voted[i].servers %> • <i class="fa-solid fa-check-to-slot"></i> <%= voted[i].votes %></span>
           </p>
-          <div class="botdesc_main" style="height:auto;width:auto;overflow:auto;padding:10px;">
+          <div class="botdesc_main" style="height:75px;width:100%;overflow:auto;padding:10px;">
             <i class="fa-solid fa-file-lines"></i> <%= voted[i].shortDesc %>
           </div>
-          <div class="bottags_main" style="height:auto;width:auto;overflow:auto;padding:10px;">
+          <div class="bottags_main" style="height:75px;width:100%;overflow:auto;padding:10px;">
             <i class="fa-solid fa-hashtag"></i> <%= voted[i].tags %>
           </div>
           <div style="margin-left:20px;margin-top:-40px">
@@ -83,16 +84,17 @@
           <a href="/bots/<%=added[i].id %>/">
 
             <img src="https://cdn.discordapp.com/avatars/<%= added[i].id %>/<%= added[i].avatar %>.png" alt="<%= added[i].name %>'s Avatar" draggable="false" class="botimg_main">
-            <p class="botname_main"><%= added[i].name %><br>
+            <p class="botname_main" style="height:65px;width:250px;padding:10px;"> 
+              <%= added[i].name %><br>
               <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-server"></i> <%= added[i].servers %> • <i class="fa-solid fa-check-to-slot"></i> <%= added[i].votes %>
                 <% if (voted[i].id === "1004264023111507979") { %>
                 • <span title="Official Bot"><i class="fa-solid fa-circle-check"></i></span>
                 <%  } %></span>
             </p>
-            <div class="botdesc_main" style="height:auto;width:auto;overflow:auto;padding:10px;">
+            <div class="botdesc_main" style="height:75px;width:100%;overflow:auto;padding:10px;">
               <i class="fa-solid fa-file-lines"></i> <%= added[i].shortDesc %>
             </div>
-            <div class="bottags_main" style="height:auto;width:auto;overflow:auto;padding:10px;">
+            <div class="bottags_main" style="height:75px;width:100%;overflow:auto;padding:10px;">
               <i class="fa-solid fa-hashtag"></i> <%= added[i].tags %>
             </div>
             <div style="margin-left:20px;margin-top:-40px">
@@ -139,10 +141,6 @@
   @media only screen and (max-width: 600px) {
     .botContainer {
       width: 100%;
-      padding-right: 15px;
-      padding-left: 15px;
-      margin-right: auto;
-      margin-left: auto
     }
   }
 
@@ -205,7 +203,7 @@
   .botname_main {
     color: white;
     font-size: 25px;
-    margin-top: -95px;
+    margin-top: -105px;
     margin-left: 125px;
     border-radius: 10px;
     font-weight: bold;
