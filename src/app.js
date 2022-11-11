@@ -189,7 +189,7 @@ app.get("/auth/logout", function (req, res) {
 
 //-bot-//
 
-app.get("/", checkMaintenance, async (req, res) => {
+app.get("/", async (req, res) => {
   const client = global.client;
 
   let model = require("./models/bot.js");
@@ -234,7 +234,7 @@ app.get("/", checkMaintenance, async (req, res) => {
   });
 });
 
-app.get("/bots", checkMaintenance, async (req, res) => {
+app.get("/bots", async (req, res) => {
   const client = global.client;
 
   let model = require("./models/bot.js");
@@ -279,7 +279,7 @@ app.get("/bots", checkMaintenance, async (req, res) => {
   });
 });
 
-app.get("/bots/new", checkMaintenance, checkAuth, async (req, res) => {
+app.get("/bots/new", checkAuth, async (req, res) => {
   res.render("botlist/add.ejs", {
     bot: global.client,
     tags: global.config.tags,
@@ -287,7 +287,7 @@ app.get("/bots/new", checkMaintenance, checkAuth, async (req, res) => {
   });
 });
 
-app.post("/bots/new", checkMaintenance, checkAuth, async (req, res) => {
+app.post("/bots/new", checkAuth, async (req, res) => {
   const client = global.client;
   const logs = client.channels.cache.get(config.channels.weblogs);
   let model = require("./models/bot.js");
@@ -381,7 +381,7 @@ app.get("/bots/:id/invite", async (req, res) => {
   return await res.redirect(bot.invite);
 });
 
-app.get("/bots/:id/edit", checkMaintenance, checkAuth, async (req, res) => {
+app.get("/bots/:id/edit", checkAuth, async (req, res) => {
   const client = global.client;
   const model = require("./models/bot.js");
   const id = req.params.id;
@@ -401,7 +401,7 @@ app.get("/bots/:id/edit", checkMaintenance, checkAuth, async (req, res) => {
   });
 });
 
-app.post("/bots/:id/edit", checkMaintenance, checkAuth, async (req, res) => {
+app.post("/bots/:id/edit", checkAuth, async (req, res) => {
   const client = global.client;
   const logs = client.channels.cache.get(config.channels.weblogs);
   let model = require("./models/bot.js");
@@ -627,7 +627,7 @@ app.get("/bots/:id/widget", async (req, res) => {
 
 //-TAGS-//
 
-app.get("/tags", checkMaintenance, async (req, res) => {
+app.get("/tags", async (req, res) => {
   const bottags = global.config.tags.bots;
   const servertags = global.config.tags.servers;
 
@@ -638,7 +638,7 @@ app.get("/tags", checkMaintenance, async (req, res) => {
   });
 });
 
-app.get("/bots/tags/:tag", checkMaintenance, async (req, res) => {
+app.get("/bots/tags/:tag", async (req, res) => {
   const tag = req.params.tag;
 
   if (!global.config.tags.bots.includes(tag))
@@ -677,7 +677,7 @@ app.get("/bots/tags/:tag", checkMaintenance, async (req, res) => {
   });
 });
 
-app.get("/servers/tags/:tag", checkMaintenance, async (req, res) => {
+app.get("/servers/tags/:tag", async (req, res) => {
   const tag = req.params.tag;
 
   if (!global.config.tags.servers.includes(tag))
@@ -779,7 +779,7 @@ app.post("/api/bots/:id/", async (req, res) => {
 
 //-ServerList-//
 
-app.get("/servers", checkMaintenance, checkStaff, async (req, res) => {
+app.get("/servers", checkStaff, async (req, res) => {
   const client = global.sclient;
 
   let model = require("./models/server.js");
@@ -820,7 +820,7 @@ app.get(
     )
 );
 
-app.get("/servers/:id", checkMaintenance, async (req, res) => {
+app.get("/servers/:id", async (req, res) => {
   const client = global.sclient;
   const model = require("./models/server.js");
   const id = req.params.id;
@@ -876,7 +876,7 @@ app.get("/servers/:id/join", async (req, res) => {
   return await res.redirect(server.invite);
 });
 
-app.get("/servers/:id/edit", checkMaintenance, checkAuth, async (req, res) => {
+app.get("/servers/:id/edit", checkAuth, async (req, res) => {
   const client = global.sclient;
   const model = require("./models/server.js");
   const id = req.params.id;
@@ -1228,7 +1228,7 @@ app.get("/users/:id/edit", checkAuth, async (req, res) => {
   });
 });
 
-app.post("/users/:id/edit", checkMaintenance, checkAuth, async (req, res) => {
+app.post("/users/:id/edit", checkAuth, async (req, res) => {
   const client = global.client;
   let model = require("./models/user.js");
   const userm = await model.findOne({ id: req.params.id });
@@ -1624,20 +1624,6 @@ function checkStaff(req, res, next) {
     return res.render("errors/403.ejs", {
       user: req.user || null,
     });
-  return next();
-}
-
-function checkMaintenance(req, res, next) {
-  const config = global.config;
-  if (!req.user)
-    return res.render("errors/503.ejs", {
-      user: req.user || null,
-    });
-  if (!config.betatesters.includes(req.user.id)) {
-    return res.render("errors/503.ejs", {
-      user: req.user || null,
-    });
-  }
   return next();
 }
 
