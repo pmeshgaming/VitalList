@@ -627,7 +627,7 @@ app.get("/bots/:id/widget", async (req, res) => {
 
 //-TAGS-//
 
-app.get("/tags", async (req, res) => {
+app.get("/tags", checkMaintenance, async (req, res) => {
   const bottags = global.config.tags.bots;
   const servertags = global.config.tags.servers;
 
@@ -638,7 +638,7 @@ app.get("/tags", async (req, res) => {
   });
 });
 
-app.get("/bots/tags/:tag", async (req, res) => {
+app.get("/bots/tags/:tag", checkMaintenance, async (req, res) => {
   const tag = req.params.tag;
 
   if (!global.config.tags.bots.includes(tag))
@@ -677,7 +677,7 @@ app.get("/bots/tags/:tag", async (req, res) => {
   });
 });
 
-app.get("/servers/tags/:tag", async (req, res) => {
+app.get("/servers/tags/:tag", checkMaintenance, async (req, res) => {
   const tag = req.params.tag;
 
   if (!global.config.tags.servers.includes(tag))
