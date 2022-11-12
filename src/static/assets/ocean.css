@@ -165,12 +165,12 @@ sup {
   top: -0.5em;
 }
 a {
-  color: #df691a;
+  color: #094cdb;
   text-decoration: none;
   background-color: transparent;
 }
 a:hover {
-  color: #9a4912;
+  color: #094cdb;
   text-decoration: underline;
 }
 a:not([href]) {
@@ -2666,8 +2666,6 @@ textarea.form-control.is-invalid {
 .btn.focus,
 .btn:focus {
   outline: 0;
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(223, 105, 26, 0.25);
-  box-shadow: 0 0 0 0.2rem rgba(223, 105, 26, 0.25);
 }
 .btn.disabled,
 .btn:disabled {
@@ -2708,11 +2706,6 @@ fieldset:disabled a.btn {
   bottom: 0;
 }
 .btn-primary.focus,
-.btn-primary:focus {
-  color: #fff;
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(228, 128, 60, 0.5);
-  box-shadow: 0 0 0 0.2rem rgba(228, 128, 60, 0.5);
-}
 .btn-primary.disabled,
 .btn-primary:disabled {
   color: #fff;
@@ -2724,10 +2717,6 @@ fieldset:disabled a.btn {
 }
 .btn-primary:not(:disabled):not(.disabled).active:focus,
 .btn-primary:not(:disabled):not(.disabled):active:focus,
-.show > .btn-primary.dropdown-toggle:focus {
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(228, 128, 60, 0.5);
-  box-shadow: 0 0 0 0.2rem rgba(228, 128, 60, 0.5);
-}
 .btn-secondary {
   color: #fff;
   background-color: #4e5d6c;
@@ -10027,7 +10016,7 @@ a.text-dark:hover {
   font-size: 0.875rem;
 }
 .btn-primary {
-  background-color: #df691a;
+  background-color: transparent;
 }
 .btn-secondary {
   background-color: #4e5d6c;
