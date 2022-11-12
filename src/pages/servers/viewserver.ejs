@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css'>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sanitize-html/1.26.0/sanitize-html.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.all.min.js"></script>
   <title><%- server.name %> - VitalList</title>
   <%- include("../parts/head.ejs") %>
@@ -40,8 +41,10 @@
           <% if (server.support) { %>
           <a href="https://discord.gg/<%= bot.support %>" type="button" style="border-radius: 5px;" class="btn btn-info pr-3 pl-3 mr-1"><i class="fa-brands fa-discord"></i> Support</a>
           <% } %>
+          <% if (user) { %>
           <% if (server.owner.includes(user.id)) { %>
           <a href="/servers/<%= server.id %>/edit" type="button" style="border-radius: 5px;" class="btn btn-warning pr-3 pl-3 mr-1"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
+          <% } %>
           <% } %>
         </div>
       </div>
