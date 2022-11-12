@@ -164,17 +164,20 @@
   <script>
     $(document).ready(function() {
       const descriptionBox = $("#bot-description");
-      const descriptionBoxText = descriptionBox.text() || descriptionBox.val();
-      const allowedTags = sanitizeHtml.defaults.allowedTags.concat(["address", "article", "aside", "footer", "header", "h1", "h2", "h3", "h4",
+      const descriptionBoxText = descriptionBox.text() || descriptionBox.val(); sanitizedRender = sanitizeHtml(descriptionBoxText, {
+      allowedTags: ["address", "article", "aside", "footer", "header", "h1", "h2", "h3", "h4",
         "h5", "h6", "hgroup", "main", "nav", "section", "blockquote", "dd", "div",
         "dl", "dt", "figcaption", "figure", "hr", "li", "main", "ol", "p", "pre",
         "ul", "a", "abbr", "b", "bdi", "bdo", "br", "cite", "code", "data", "dfn",
         "em", "i", "kbd", "mark", "q", "rb", "rp", "rt", "rtc", "ruby", "s", "samp",
         "small", "span", "strong", "sub", "sup", "time", "u", "var", "wbr", "caption",
-        "col", "colgroup", "table", "tbody", "td", "tfoot", "th", "thead", "tr"
-      ]);
-      const sanitizedRender = sanitizeHtml(descriptionBoxText, {
-        allowedTags
+        "col", "colgroup", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "img", "iframe"],
+     allowedSchemes: [ 'data', 'http', 'https'],
+     allowedAttributes: {
+     a: [ 'href', 'name', 'target' ],
+     img: [ 'src', 'srcset', 'alt', 'title', 'width', 'height', 'loading' ],
+     iframe: ['src']
+},
       });
       descriptionBox.html(sanitizedRender);
     });

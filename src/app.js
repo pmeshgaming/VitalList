@@ -590,7 +590,7 @@ app.get("/bots/:id", async (req, res) => {
     return res
       .status(404)
       .json({ message: "This bot was not found on our list." });
-
+console.log(bot.desc)
       const marked = require("marked");
       const desc = marked.parse(bot.desc);
   const BotRaw = (await client.users.fetch(id)) || null;
