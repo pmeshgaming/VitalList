@@ -1172,7 +1172,6 @@ app.get("/users/:id", async (req, res) => {
 
   let bmodel = require("./models/bot.js");
   let bots = await bmodel.find({
-    tested: true,
     owner: req.params.id,
   });
   for (let i = 0; i < bots.length; i++) {
