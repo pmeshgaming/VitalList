@@ -316,6 +316,12 @@ app.post("/bots/new", checkAuth, async (req, res) => {
 
   const bot = await client.users.fetch(data.id);
 
+  if(bot.bot === true) {
+    return res.status(400).json({
+      message: "Please add a bot account, not a user.",
+    });
+  }
+
   await model.create({
     id: data.id,
     prefix: data.prefix,
@@ -407,7 +413,6 @@ app.post("/bots/:id/edit", checkAuth, async (req, res) => {
   let model = require("./models/bot.js");
   const botm = await model.findOne({ id: req.params.id });
   let data = req.body;
-  console.log(data);
 
   if (!data) {
     return res.redirect("/");
@@ -586,8 +591,8 @@ app.get("/bots/:id", async (req, res) => {
       .status(404)
       .json({ message: "This bot was not found on our list." });
 
-  const marked = require("marked");
-  const desc = marked.parse(bot.desc);
+      const marked = require("marked");
+      const desc = marked.parse(bot.desc);
   const BotRaw = (await client.users.fetch(id)) || null;
   const OwnerRaw = await client.users.fetch(bot.owner)|| null;
   bot.name = BotRaw.username;
@@ -853,7 +858,6 @@ app.get("/servers/:id", async (req, res) => {
   server.ownerAvatar = OwnerRaw.avatar;
   server.desc = desc;
   server.emojis = ServerRaw.emojis.cache.size;
-
   res.render("servers/viewserver.ejs", {
     bot: global.client,
     server: server,
@@ -1233,7 +1237,6 @@ app.post("/users/:id/edit", checkAuth, async (req, res) => {
   let model = require("./models/user.js");
   const userm = await model.findOne({ id: req.params.id });
   let data = req.body;
-  console.log(data);
 
   if (!data) {
     return res.redirect("/");

@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta property="og:author" content="Vital Development">
-  <meta property="og:title" content="Home - VitalList">
+  <meta property="og:title" content="VitalList - Find the best Discord bot for your server.">
   <meta property="og:url" content="https://vitallist.xyz">
-  <meta property="og:description" content="">
+  <meta property="og:description" content="A place where you can find Discord bots, Vital List.">
   <meta property="og:image" content="/img/icon.webp">
   <title>Home - VitalList</title>
   <%- include("./parts/head.ejs") %>
@@ -90,11 +90,11 @@
 
             <img src="https://cdn.discordapp.com/avatars/<%= added[i].id %>/<%= added[i].avatar %>.png" alt="<%= added[i].name %>'s Avatar" draggable="false" class="botimg_main">
             <p class="botname_main" style="height:65px;width:250px;padding:10px;"> 
-              <%= added[i].name %><br>
+              <%= added[i].name %>
+              <% if (voted[i].id === "1004264023111507979") { %>
+                <span title="Official Bot"><i class="fa fa-circle-check"></i></span>
+                <%  } %> <br>
               <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-server"></i> <%= added[i].servers %> • <i class="fa-solid fa-check-to-slot"></i> <%= added[i].votes %>
-                <% if (voted[i].id === "1004264023111507979") { %>
-                • <span title="Official Bot"><i class="fa-solid fa-circle-check"></i></span>
-                <%  } %></span>
             </p>
             <div class="botdesc_main" style="height:75px;width:100%;overflow:auto;padding:10px;">
               <i class="fa-solid fa-file-lines"></i> <%= added[i].shortDesc %>
