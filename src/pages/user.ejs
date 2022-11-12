@@ -37,8 +37,10 @@
         <%- fetched_user.bio %>
         <hr>
         </hr>
+        <% if (user) { %>
         <% if (fetched_user.id === user.id) { %>
         <a href="/users/<%= fetched_user.id %>/edit" type="button" style="border-radius: 5px;" class="btn btn-info pr-3 pl-3 mr-1"><i class="fa-solid fa-pen-to-square"></i> Edit Profile</a>
+        <% } %>
         <% } %>
         <a href="https://discord.com/users/<%= fetched_user.id %>" type="button" style="border-radius: 5px;" class="btn btn-info pr-3 pl-3 mr-1"><i class="fa-brands fa-discord"></i> Discord</a>
         <% if (fetched_user.website) { %>

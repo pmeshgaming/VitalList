@@ -784,7 +784,7 @@ app.post("/api/bots/:id/", async (req, res) => {
 
 //-ServerList-//
 
-app.get("/servers", checkStaff, async (req, res) => {
+app.get("/servers", async (req, res) => {
   const client = global.sclient;
 
   let model = require("./models/server.js");
