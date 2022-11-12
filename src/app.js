@@ -157,7 +157,7 @@ app.get(
 
     try {
       fetch(
-        `https://discordapp.com/api/v8/guilds/${config.guilds.main}/members/${req.user.id}`,
+        `https://discord.com/api/v10/guilds/${config.guilds.main}/members/${req.user.id}`,
         {
           method: "PUT",
           body: JSON.stringify({
@@ -316,9 +316,9 @@ app.post("/bots/new", checkAuth, async (req, res) => {
 
   const bot = await client.users.fetch(data.id);
 
-  if(bot.bot === true) {
+  if(bot.bot === false) {
     return res.status(400).json({
-      message: "Please add a bot account, not a user.",
+      message: "You tried to add a user account to the site, you need to add a BOT ID.",
     });
   }
 
