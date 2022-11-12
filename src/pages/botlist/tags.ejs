@@ -1,78 +1,80 @@
 <!DOCTYPE html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%- tag %> Bots - VitalList</title>
-    <%- include ("../parts/head.ejs") %>
-  </head>
-  <%- include ("../parts/navbar.ejs") %>
-  <br><br><br><br>
-  <center>
-    <img class="titlelogo" src="/img/icon.webp" alt="VitalList Logo" width="150" height="150">
-    <h2 class="title"><b>Vital List</b></h2>
-    <p><span class="typing_desc" style="font-size:18px;"></span></p>
-    <script>
-      new TypeIt(".typing_desc", {
-          speed: 90,
-          waitUntilVisible: true,
-          startDelay: 1000,
-        })
-        .type("A place where you can find bots, Vital List.")
-        .move(-17)
-        .type('Discord ')
-        .move(4)
-        .delete(4)
-        .type('servers')
-        .move(13)
-        .pause(1000)
-        .move(-13)
-        .delete(7)
-        .type('bots')
-        .move(13)
-        .go()
-    </script>
-    <!--
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%- tag %> Bots - VitalList</title>
+  <%- include ("../parts/head.ejs") %>
+</head>
+<%- include ("../parts/navbar.ejs") %>
+<br><br><br><br>
+<center>
+  <img class="titlelogo" src="/img/icon.webp" alt="VitalList Logo" width="150" height="150">
+  <h2 class="title"><b>Vital List</b></h2>
+  <p><span class="typing_desc" style="font-size:18px;"></span></p>
+  <script>
+    new TypeIt(".typing_desc", {
+        speed: 90,
+        waitUntilVisible: true,
+        startDelay: 1000,
+      })
+      .type("A place where you can find bots, Vital List.")
+      .move(-17)
+      .type('Discord ')
+      .move(4)
+      .delete(4)
+      .type('servers')
+      .move(13)
+      .pause(1000)
+      .move(-13)
+      .delete(7)
+      .type('bots')
+      .move(13)
+      .go()
+  </script>
+  <!--
 <div class="form-inline my-2 my-lg-0">
             <input id="search-box" style="margin-left: 425px;border-radius: 8px;" class="form-control" type="text" placeholder="Search" autocomplete="off">
             <button id="search-btn" class="btn btn-light my-2 my-sm-0" style="border-radius: 8px;" type="button">Search</button>
         </div>submittedOn
     -->
-  </center>
-  <br><br><br>
-  <div class="botContainer">
-    <h3><i class="fa-solid fa-hashtag"></i> <b><%= tag %> Bots</b></h3>
-    <p>These are the top voted bots for this month.</p>
-    <% let allbots = bots %>
-    <% let voted = allbots.sort((a,b) => b.votes - a.votes) %>
-    <% for(let i = 0; i < voted.length; i++){ %>
-    <div class="card" style="border-radius:10px;">
-      <img src="https://cdn.discordapp.com/avatars/<%= voted[i].id %>/<%= voted[i].avatar %>.png" alt="<%= voted[i].name %>'s Avatar" draggable="false" class="botimg_main">
-      <p class="botname_main"><%= voted[i].name %><br>
-        <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-server"></i> <%= voted[i].servers %> • <i class="fa-solid fa-check-to-slot"></i> <%= voted[i].votes %></span>
-      </p>
-      <div class="botdesc_main" style="height:75px;width:100%;overflow:auto;padding:10px;">
-        <i class="fa-solid fa-file-lines"></i> <%= voted[i].shortDesc %>
-        </div>
-      <div class="bottags_main" style="height:75px;width:100%;overflow:auto;padding:10px;">
-        <i class="fa-solid fa-hashtag"></i> <%= voted[i].tags %>
-      </div>
-      <div style="margin-left:20px;margin-top:-40px">
-        <a href="/bots/<%= voted[i].id %>/">
-          <button class="viewbtn">View</button>
-      </div></a>
-      <a href="/bots/<%= voted[i].id %>/vote">
-        <button class="votebtn">Vote</button></a>
+</center>
+<br><br><br>
+<div class="botContainer">
+  <h3><i class="fa-solid fa-hashtag"></i> <b><%= tag %> Bots</b></h3>
+  <p>These are the top voted bots for this month.</p>
+  <% let allbots = bots %>
+  <% let voted = allbots.sort((a,b) => b.votes - a.votes) %>
+  <% for(let i = 0; i < voted.length; i++){ %>
+  <div class="card" style="border-radius:10px;">
+    <img src="https://cdn.discordapp.com/avatars/<%= voted[i].id %>/<%= voted[i].avatar %>.png" alt="<%= voted[i].name %>'s Avatar" draggable="false" class="botimg_main">
+    <p class="botname_main"><%= voted[i].name %><br>
+      <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-server"></i> <%= voted[i].servers %> • <i class="fa-solid fa-check-to-slot"></i> <%= voted[i].votes %></span>
+    </p>
+    <div class="botdesc_main" style="height:75px;width:100%;overflow:auto;padding:10px;">
+      <i class="fa-solid fa-file-lines"></i> <%= voted[i].shortDesc %>
+    </div>
+    <div class="bottags_main" style="height:75px;width:100%;overflow:auto;padding:10px;">
+      <i class="fa-solid fa-hashtag"></i> <%= voted[i].tags %>
+    </div>
+    <div style="margin-left:20px;margin-top:-40px">
+      <a href="/bots/<%= voted[i].id %>/">
+        <button class="viewbtn">View</button>
     </div></a>
-    <% } %>
-  </div>
-  </div>
+    <a href="/bots/<%= voted[i].id %>/vote">
+      <button class="votebtn">Vote</button></a>
+  </div></a>
+  <% } %>
+</div>
+</div>
 </body>
 <br><br><br><br>
 <%- include("../parts/footer.ejs") %>
 <style>
   body {
     overflow: overlay;
-}
+  }
+
   @media screen and (max-width: 757px) {
     .bot-card-col {
       margin: 0 30px;
