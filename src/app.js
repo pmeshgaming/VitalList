@@ -277,7 +277,7 @@ app.get("/bots", async (req, res) => {
     bots: bots.shuffle(),
     user: req.user || null,
   });
-});
+}); //Removing end point
 
 app.get("/bots/new", checkAuth, async (req, res) => {
   res.render("botlist/add.ejs", {
