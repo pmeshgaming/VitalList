@@ -1426,7 +1426,7 @@ app.post("/bots/:id/deny", checkAuth, checkStaff, async (req, res) => {
   const kickBot = guild.members.cache.get(bot.id);
   kickBot.kick({ reason: "Denied on VitalList." });
   let channel = await guild.channels.cache.find(
-    (c) => c.name == channelName.toLowerCase()
+    (c) => c.name == channelName.toLowerCase().replace(" ", "-")
   );
   if (channel) channel.delete();
   return res.redirect(
