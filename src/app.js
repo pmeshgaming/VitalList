@@ -1153,7 +1153,7 @@ app.get("/me", checkAuth, async (req, res) => {
   });
 });
 
-app.get("/users/:id", checkAuth, async (req, res) => {
+app.get("/users/:id", async (req, res) => {
   const guild = await client.guilds.fetch(global.config.guilds.main);
   let user = (await guild.members.fetch(req.params.id)) || null;
   user = user?.user;
