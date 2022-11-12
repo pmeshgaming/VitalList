@@ -30,10 +30,10 @@
         <div class="col-sm">
           <h3><%= bot.name %><small class="text-muted">#<%= bot.discriminator %></small>
             <% if(bot.flags === 65536) { %>
-              <span title="Verified Bot"><i class="fa-solid fa-medal"></i></span>
-             <% } %>
-            </h3>
-          
+            <span title="Verified Bot"><i class="fa-solid fa-medal"></i></span>
+            <% } %>
+          </h3>
+
           <%- bot.shortDesc %><br>
           <!---
                         <span style="border-radius: 5px;" class="badge badge-primary" style="font-size: 20px;"><i class="fa-solid fa-server"></i> Servers: <%= bot.servers %></span>
@@ -58,7 +58,7 @@
           <% if (bot.owner.includes(user.id)) { %>
           <a href="/bots/<%= bot.id %>/edit" type="button" style="border-radius: 5px;" class="btn btn-warning pr-3 pl-3 mr-1"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
           <% } %>
-         <% } %>
+          <% } %>
         </div>
       </div>
     </div>
@@ -98,7 +98,7 @@
       </div>
     </div>
   </div>
-<br><br><br><br>
+  <br><br><br><br>
   <%- include("../parts/footer.ejs") %>
 
   <style>
