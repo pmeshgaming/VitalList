@@ -284,6 +284,10 @@ app.get("/bots", async (req, res) => {
     user: req.user || null,
   });
 }); //Removing end point
+app.get('/explore', async(req, res) => {
+  res.redirect('/')
+});
+
 
 app.get("/bots/new", checkAuth, async (req, res) => {
   res.render("botlist/add.ejs", {
@@ -661,7 +665,6 @@ app.get("/bots/:id", async (req, res) => {
     return res
       .status(404)
       .json({ message: "This bot was not found on our list." });
-console.log(bot.desc)
       const marked = require("marked");
       const desc = marked.parse(bot.desc);
   const BotRaw = (await client.users.fetch(id)) || null;
