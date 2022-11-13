@@ -58,6 +58,9 @@
           <% if (bot.owner.includes(user.id)) { %>
           <a href="/bots/<%= bot.id %>/edit" type="button" style="border-radius: 5px;" class="btn btn-warning pr-3 pl-3 mr-1"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
           <% } %>
+          <% if (!bot.owner.includes(user.id)) { %>
+            <a href="/bots/<%= bot.id %>/review" type="button" style="border-radius: 5px;" class="btn btn-warning pr-3 pl-3 mr-1"><i class="fa-solid fa-pen-to-square"></i> Review</a>
+            <% } %>
           <% } %>
         </div>
       </div>
@@ -88,8 +91,6 @@
     <p style="color: white; font-size: 16px;"><i class="fa-solid fa-diamond"></i> Shards: <strong><%= bot.shards %></strong></p>
   </div>
   </div>
-  </div>
-  </div>
   <br><br>
   <div class="container">
     <div class="desccard">
@@ -98,7 +99,68 @@
       </div>
     </div>
   </div>
-  <br><br><br><br>
+</div>
+</div>
+<div class="container">
+<br><br><br><br><hr><br><br>
+  <h2><i class="fa-solid fa-award"></i> Ratings & Reviews</h2>
+  <p>These are all of the reviews avaible for this bot.</p>
+  <br>
+
+    <% for(let i = 0; i < reviews.length; i++){ %>
+
+      <div class="card">
+        <img src="https://cdn.discordapp.com/avatars/<%= reviews[i].reviewer %>/<%= reviews[i].reviewerAvatar %>.png" alt="<%= reviews[i].reviewerName %>'s Avatar" draggable="false" class="botimg_main">
+        <p class="botname_main"><%= reviews[i].reviewerName %> <small class="text-muted"><%= reviews[i].date %></small><br>
+          <span style="font-size:15px; font-weight:normal;">
+          <% if(reviews[i].rating === 1) { %>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+              <% } %>
+              <% if(reviews[i].rating === 2) { %>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-regular fa-star"></i>
+                <i class="fa-regular fa-star"></i>
+                <i class="fa-regular fa-star"></i>
+                  <% } %>
+                  <% if(reviews[i].rating === 3) { %>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-regular fa-star"></i>
+                    <i class="fa-regular fa-star"></i>
+                      <% } %>
+                      <% if(reviews[i].rating === 4) { %>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                          <% } %>
+                          <% if(reviews[i].rating === 5) { %>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                              <% } %><br>
+                              <%= reviews[i].body %>
+                          
+            </span>
+          </p>
+      </div>
+
+      <% } if (reviews.length === 0) {  %>
+
+  <h5>There are no reviews for <%= bot.tag %>, they must be really good.</h5>
+  <% } %>
+  <br><br><br><br><br><br><br><br>
+</div>
+
   <%- include("../parts/footer.ejs") %>
 
   <style>
@@ -160,6 +222,40 @@
       color: #D9E4EC;
       text-decoration: none;
     }
+
+    .card {
+    height: auto;
+    width: 100%;
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(17, 25, 40, 0.75);
+    border-radius: 10px;
+    margin-top: 15px;
+    margin-left: auto;
+    transition: all 0.2s;
+    margin-right: 10px;
+    position: relative;
+    display: inline-block;
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .botname_main {
+    color: white;
+    font-size: 20px;
+    margin-top: -80px;
+    margin-left: 105px;
+    border-radius: 10px;
+    font-weight: bold;
+  }
+
+  .botimg_main {
+    width: 85px;
+    height: 85px;
+    border-radius: 100%;
+    margin-top: 10px;
+    margin-left: 10px;
+
+  }
   </style>
   <script>
     $(document).ready(function() {

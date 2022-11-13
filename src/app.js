@@ -328,7 +328,7 @@ app.post("/bots/new", checkAuth, async (req, res) => {
     owner: req.user.id,
     desc: data.desc,
     shortDesc: data.shortDesc,
-    submitedOn: Date.now(),
+    submittedOn: Date.now(),
     views: 0,
     tags: data.tags,
     invite: data.invite,
@@ -580,10 +580,75 @@ app.get("/bots/:id/vote", checkAuth, async (req, res) => {
   });
 });
 
+app.get("/bots/:id/review", checkAuth, async (req, res) => {
+  let id = req.params.id;
+  const model = require("./models/bot.js");
+  const reviewModel = require("./models/review.js")
+  const bot = await model.findOne({ id: id });
+
+ if (!bot)
+    return res.status(404).json({
+      message: "This bot could not be found in our site.",
+    });
+
+ if (bot.owner === req.user.id)
+    return res.status(400).json({
+      message: "You cannot review your own bot."
+    })
+  
+
+    const BotRaw = (await client.users.fetch(bot.id)) || null;
+    bot.name = BotRaw.username;
+    bot.discriminator = BotRaw.discriminator;
+    bot.avatar = BotRaw.avatar;
+
+  res.render("botlist/review.ejs", {
+    bot: bot,
+    config: global.config,
+    user: req.user || null,
+  });
+})
+
+app.post("/bots/:id/review", checkAuth, async (req, res) => {
+    let id = req.params.id;
+    const model = require("./models/bot.js");
+    const reviewModel = require("./models/review.js")
+    const bot = await model.findOne({ id: id });
+    const data = req.body;
+  
+   if (!bot)
+      return res.status(404).json({
+        message: "This bot could not be found in our site.",
+      });
+  
+   if (bot.owner === req.user.id)
+      return res.status(400).json({
+        message: "You cannot review your own bot."
+      })
+
+      if (await reviewModel.findOne({ reviewer: req.user.id, botid: req.params.id })) 
+      return res.status(400).json({
+      message: "You already have a review for this bot."
+   })
+
+      const d = new Date();
+      await reviewModel.create({
+        reviewer: req.user.id,
+        botid: req.params.id,
+        rating: data.rating,
+        body: data.body,
+        date: d.toLocaleString()
+      });
+
+      await res.redirect(`https://vitallist.xyz/bots/${id}?success=true&body=Your review was successfully added.`)
+
+})
+
 app.get("/bots/:id", async (req, res) => {
   let id = req.params.id;
   const client = global.client;
   const model = require("./models/bot.js");
+  const reviewsModel = require("./models/review.js")
   const bot = await model.findOne({ id: id });
   const guild = await client.guilds.fetch(global.config.guilds.main);
   if (!bot)
@@ -604,10 +669,29 @@ console.log(bot.desc)
   bot.tags = bot.tags.join(", ");
   bot.desc = desc;
   bot.flags = BotRaw.flags.bitfield;
+
+  const reviews = await reviewsModel.find({ botid: bot.id })
+
+  for (let i = 0; i < reviews.length; i++) {
+    const ReviewerRaw = await client.users.fetch(reviews[i].reviewer);
+    reviews[i].reviewerName = ReviewerRaw.tag;
+    reviews[i].reviewerAvatar = ReviewerRaw.avatar;
+  }
+
+  Array.prototype.shuffle = function () {
+    let a = this;
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+
   res.render("botlist/viewbot.ejs", {
     bot2: req.bot,
     bot: bot,
     user: req.user || null,
+    reviews: reviews.shuffle(),
   });
 });
 
