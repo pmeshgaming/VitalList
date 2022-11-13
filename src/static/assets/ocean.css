@@ -10470,3 +10470,6 @@ preloader {
     text-transform: uppercase;
     vertical-align: bottom;
 }
+cardcss {
+  height:75px;width:auto;flex:auto;padding:10px;
+}
