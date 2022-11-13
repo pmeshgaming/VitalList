@@ -218,14 +218,17 @@ app.get("/", async (req, res) => {
     );
     bots[i].tags = bots[i].tags.join(", ");
   }
-  Array.prototype.shuffle = function () {
+Array.prototype.shuffle = function() {
+    return this.map((k, i, o, p = Math.floor(Math.random() * this.length)) => [o[i], o[p]] = [o[p], o[i]]) && this
+}
+  /*Array.prototype.shuffle = function () {
     let a = this;
     for (let i = a.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [a[i], a[j]] = [a[j], a[i]];
     }
     return a;
-  };
+  };*/
 
   res.render("index.ejs", {
     bot: req.bot,
@@ -263,14 +266,17 @@ app.get("/bots", async (req, res) => {
     );
     bots[i].tags = bots[i].tags.join(", ");
   }
-  Array.prototype.shuffle = function () {
+  /*Array.prototype.shuffle = function () {
     let a = this;
     for (let i = a.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [a[i], a[j]] = [a[j], a[i]];
     }
     return a;
-  };
+  };*/
+	Array.prototype.shuffle = function() {
+    return this.map((k, i, o, p = Math.floor(Math.random() * this.length)) => [o[i], o[p]] = [o[p], o[i]]) && this
+}
 
   res.render("botlist/bots.ejs", {
     bot: req.bot,
@@ -678,14 +684,17 @@ console.log(bot.desc)
     reviews[i].reviewerAvatar = ReviewerRaw.avatar;
   }
 
-  Array.prototype.shuffle = function () {
+  /*Array.prototype.shuffle = function () {
     let a = this;
     for (let i = a.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [a[i], a[j]] = [a[j], a[i]];
     }
     return a;
-  };
+  };*/
+	Array.prototype.shuffle = function() {
+    return this.map((k, i, o, p = Math.floor(Math.random() * this.length)) => [o[i], o[p]] = [o[p], o[i]]) && this
+}
 
   res.render("botlist/viewbot.ejs", {
     bot2: req.bot,
@@ -750,14 +759,17 @@ app.get("/bots/tags/:tag", async (req, res) => {
     );
     bots[i].tags = bots[i].tags.join(", ");
   }
-  Array.prototype.shuffle = function () {
+  /*Array.prototype.shuffle = function () {
     let a = this;
     for (let i = a.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [a[i], a[j]] = [a[j], a[i]];
     }
     return a;
-  };
+  };*/
+	Array.prototype.shuffle = function() {
+    return this.map((k, i, o, p = Math.floor(Math.random() * this.length)) => [o[i], o[p]] = [o[p], o[i]]) && this
+}
 
   res.render("botlist/tags.ejs", {
     bots: bots.shuffle(),
@@ -791,14 +803,17 @@ app.get("/servers/tags/:tag", async (req, res) => {
     servers[i].tags = servers[i].tags.join(", ");
   }
 
-  Array.prototype.shuffle = function () {
+  /*Array.prototype.shuffle = function () {
     let a = this;
     for (let i = a.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [a[i], a[j]] = [a[j], a[i]];
     }
     return a;
-  };
+  };*/
+	Array.prototype.shuffle = function() {
+    return this.map((k, i, o, p = Math.floor(Math.random() * this.length)) => [o[i], o[p]] = [o[p], o[i]]) && this
+}
 
   res.render("servers/tags.ejs", {
     tag: tag,
