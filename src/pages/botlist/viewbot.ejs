@@ -154,9 +154,8 @@
           </p>
       </div>
 
-      <% } if (reviews.length === 0) {  %>
-
-  <h5>There are no reviews for <%= bot.tag %>, they must be really good.</h5>
+      <% } if (!reviews.length) {  %>
+        <h5>No reviews. Be the first to leave one!</h5>
   <% } %>
   <br><br><br><br><br><br><br><br>
 </div>
