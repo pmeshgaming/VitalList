@@ -21,6 +21,7 @@ module.exports = {
 
           let embed = new EmbedBuilder()
           .setAuthor({ name: `${bot.tag}`, iconURL: `${bot.displayAvatarURL()}`})
+          .setThumbnail(bot.displayAvatarURL())
           .setDescription("**[Vote for "+bot.tag+" on VitalList](https://vitallist.xyz/bots/"+bot.id+"/vote)**")
           .addFields({ name: "Prefix:", value: `${data.prefix || "N/A"}`, inline: true})
           .addFields({ name: "Short Desc:", value: `${data.shortDesc || "N/A"}`, inline: true})
@@ -34,6 +35,7 @@ module.exports = {
           .addFields({ name: "Invite:", value: `[Click Me](${data.invite || "N/A"})`, inline: true})
           .addFields({ name: "Tags:", value: `${data.tags.join(", ")}`, inline: true})
           .addFields({ name: "Owner:", value: `${botOwner.tag}`, inline: true})
+          .setFooter({ text: "VitalList - BotInfo command", iconURL: global.client.user.displayAvatarURL()})
         message.reply({ embeds: [embed] });
     },
   };
