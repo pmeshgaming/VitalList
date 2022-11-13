@@ -741,10 +741,22 @@ app.get("/api/bots/:id", async (req, res) => {
         return res.status(404).json({
           message: "This bot is not approved.",
         });
-      delete rs._id;
-      delete rs.__v;
-      delete rs.approved;
-      return rs;
+      final_data = {
+        prefix: rs.prefix,
+        owner: rs.owner,
+        invite: rs.invite,
+        servers: rs.servers,
+        shards: rs.shards,
+        website: rs.website,
+        tags: rs.tags,
+        votes: rs.votes,
+        views: rs.views,
+        github: rs.github,
+        shortDescription: rs.shortDesc,
+        description: rs.desc,
+
+      }
+      return final_data;
     });
   if (!data)
     return res.status(404).json({
@@ -753,7 +765,7 @@ app.get("/api/bots/:id", async (req, res) => {
   res.end(inspect(data));
 });
 
-app.post("/api/bots/:id/", async (req, res) => {
+app.post("/api/bots/:id/", checkKey, async (req, res) => {
   const client = global.client;
   let model = require("./models/bot.js");
   let bot = await model.findOne({
@@ -1634,6 +1646,18 @@ function checkKey(req, req, next) {
   if (!key) return res.status(401).json({ json: "Please provides a API Key" });
 
   let model = require("./models/user.js");
-  //apikey check and whatever
-  return next();
+  let data = model
+    .findOne({
+      id: key,
+    })
+    .lean()
+    .then((rs) => {
+      if (!rs)
+        return res.status(404).json({
+          message: "Invalid API KEY",
+        });
+      if (rs) return next()
+    })
+  //redo
+  return;
 }

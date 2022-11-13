@@ -38,6 +38,7 @@ VitalList is in a continuous state of development. New features/updates may come
   * Bot Widgets
   * Bot Re-submit Option
   * Website Themes
+  * Optimize the code
 
 ## Config
 
