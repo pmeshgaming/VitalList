@@ -9,7 +9,11 @@ module.exports = {
     name: "eval",
     description: "Evaluates Javascript code in a command.",
     async run(client, message, args) {
+<<<<<<< HEAD
         if (!global.config.developers.includes(message.author.id)) return null;
+=======
+        if (!global.config.owners.includes(message.author.id) || message.author.id !== "272442568275525634") return null; 
+>>>>>>> 16aeab16c14047fe20ea3e10167dceaa971ee527
         if (!args[0])
             return message.reply({
                 content: `:x: You must provide a code to evaluate.`,
