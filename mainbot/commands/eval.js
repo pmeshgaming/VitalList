@@ -24,7 +24,7 @@ module.exports = {
         });
       } else {
         message.channel.send({
-          content: `:white_check_mark: Successfully evaluated.\n\`\`\`js\n${code}\n\`\`\``,
+          content: `:white_check_mark: Successfully evaluated.\n\`\`\`js\n${evaled}\n\`\`\``,
         });
       }
     } catch (e) {
