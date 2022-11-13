@@ -22,11 +22,11 @@ module.exports = {
         ]);
         try {
             if (typeof code !== "string") {
-                message.channel.send({
+              return message.channel.send({
                     content: `:white_check_mark: Successfully evaluated.\n\`\`\`js\n${code}\n\`\`\``,
                 });
             } else {
-                message.channel.send({
+              return message.channel.send({
                     content: `:white_check_mark: Successfully evaluated.\n\`\`\`js\n${code}\n\`\`\``,
                 });
             }
