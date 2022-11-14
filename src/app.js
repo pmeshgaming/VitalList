@@ -168,7 +168,8 @@ app.get(
         }
       );
     } catch {}
-    res.redirect(req.session.returnTo || "/"); */ //Need to add a popup of consent before
+    Need to add a popup of consent before */
+    res.redirect(req.session.returnTo || "/"); 
   } 
 );
 
