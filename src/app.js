@@ -479,6 +479,9 @@ app.post("/bots/:id/edit", checkAuth, async (req, res) => {
   );
 });
 
+app.get("/bots/:id/apikey", checkAuth, async (req, res) => {
+  let model = require("./models/bot.js");
+})
 app.post("/bots/:id/vote", checkAuth, async (req, res) => {
   let model = require("./models/bot.js");
   let voteModel = require("./models/vote.js");
@@ -1744,7 +1747,7 @@ function checkStaff(req, res, next) {
 }
 
 function checkKey(req, req, next) {
-  const key = req.body.key || null;
+  const key = req.body?.key;
   if (!key) return res.status(401).json({ json: "Please provides a API Key" });
 
   let model = require("./models/user.js");
