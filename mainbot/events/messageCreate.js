@@ -2,6 +2,7 @@ module.exports = {
   async run(client, message) {
     const config = global.config;
     const prefix = config.bot.prefix;
+    if (!message.content.startsWith(prefix)) return;
     if (message.author.bot) return;
     if (message.channel.type === "dm") return;
     if (message.guild.id != "1006065494257848433") return;
