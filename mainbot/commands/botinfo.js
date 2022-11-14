@@ -1,5 +1,5 @@
 
-const { EmbedBuilder } = require("discord.js");
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
 module.exports = {
     name: "botinfo",
     description: "Find info on a specific bot on VitalList.",
@@ -22,21 +22,43 @@ module.exports = {
           let embed = new EmbedBuilder()
           .setAuthor({ name: `${bot.tag}`, iconURL: `${bot.displayAvatarURL()}`})
           .setThumbnail(bot.displayAvatarURL())
-          .setDescription("**[Vote for "+bot.tag+" on VitalList](https://vitallist.xyz/bots/"+bot.id+"/vote)**")
+          .setDescription("**[Vote for "+bot.tag+" on VitalList](https://vitallist.xyz/bots/"+bot.id+"/vote)**.")
           .addFields({ name: "Prefix:", value: `${data.prefix || "N/A"}`, inline: true})
-          .addFields({ name: "Short Desc:", value: `${data.shortDesc || "N/A"}`, inline: true})
-          .addFields({ name: "Website:", value: `${data.website || "N/A"}`, inline: true})
-          .addFields({ name: "Github:", value: `${data.github || "N/A"}`, inline: true})
-          .addFields({ name: "Support:", value: `https://discord.gg/${data.support || "N/A"}`, inline: true})
-          .addFields({ name: "Votes:", value: `${data.votes || "N/A"}`, inline: true})
           .addFields({ name: "Servers:", value: `${data.servers || "N/A"}`, inline: true})
           .addFields({ name: "Added on:", value: `${data.submittedOn || "N/A"}`, inline: true})
           .addFields({ name: "Approved on:", value: `${data.approvedOn || "N/A"}`, inline: true})
-          .addFields({ name: "Invite:", value: `[Click Me](${data.invite || "N/A"})`, inline: true})
           .addFields({ name: "Tags:", value: `${data.tags.join(", ")}`, inline: true})
           .addFields({ name: "Owner:", value: `${botOwner.tag}`, inline: true})
+          .addFields({ name: "Short Desc:", value: `${data.shortDesc || "N/A"}`, inline: true})
           .setFooter({ text: "VitalList - BotInfo command", iconURL: global.client.user.displayAvatarURL()})
-        message.reply({ embeds: [embed] });
+          let row = "hi";
+
+          if(data.invite) {
+           row = new ActionRowBuilder()
+             .addComponents(
+              new ButtonBuilder()
+              .setURL(data.invite)
+              .setLabel("Invite Link")
+              .setStyle(ButtonStyle.Link),
+
+              new ButtonBuilder()
+                  .setURL(`https://discord.gg/${data.support}`)
+                  .setLabel("Support")
+                  .setStyle(ButtonStyle.Link),
+
+                  new ButtonBuilder()
+                      .setURL(data.website)
+                      .setLabel("Website")
+                      .setStyle(ButtonStyle.Link),
+
+                      new ButtonBuilder()
+                          .setURL(`https://github.com/${data.github}`)
+                          .setLabel("Github")
+                          .setStyle(ButtonStyle.Link)
+
+             )}
+
+        message.reply({ embeds: [embed], components: [row] });
     },
   };
   

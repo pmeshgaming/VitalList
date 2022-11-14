@@ -1746,7 +1746,7 @@ function checkStaff(req, res, next) {
   return next();
 }
 
-function checkKey(req, req, next) {
+function checkKey(req, res, next) {
   const key = req.body?.key;
   if (!key) return res.status(401).json({ json: "Please provides a API Key" });
 
