@@ -17,6 +17,7 @@ module.exports = {
     },
     servers: {
       prefix: "vs!",
+      apikey: process.env.apikey,
       token: process.env.stoken
     },
     guilds: {

@@ -27,8 +27,8 @@ module.exports = {
     await fetch('https://vitallist.xyz/api/bots/1004264023111507979', {
       method: 'POST',
       headers: {
-          'api_key': '',
-          'server_count': client.guilds.cache.size,
+          'authorization': global.config.servers.apikey,
+          'server_count': sclient.guilds.cache.size,
           'shard_count': '1',
         'Content-Type': 'application/json'
       },

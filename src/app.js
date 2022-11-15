@@ -440,7 +440,6 @@ app.post("/bots/:id/apikey", checkAuth, async (req, res) => {
   }
   bot.apikey = genApiKey({ length: 20 });
   await bot.save();
-  console.log(bot)
   return res.redirect(`https://vitallist.xyz/bots/${id}/edit?success=true&body=You have successfully generated a new token.`)
 })
 
@@ -743,10 +742,6 @@ app.get("/servers/tags/:tag", async (req, res) => {
 });
 
 //-API-//
-
-app.get("/docs", async (req, res) => {
-  // do stuff
-})
 
 app.get("/api/bots/:id", async (req, res) => {
 
@@ -1569,8 +1564,12 @@ app.get("/discord", (_req, res) =>
 );
 
 app.get("/partners", async (req, res) => {
-  res.render("partners.ejs", { user: req.user });
+  res.render("partners.ejs", { user: req.user || null });
 });
+
+app.get("/docs", async (req, res) => {
+  res.render("apidocs.ejs", { user: req.user });
+})
 
 app.get("/terms", async (req, res) => {
   res.render("legal/terms.ejs", { user: req.user });
