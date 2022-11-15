@@ -148,24 +148,24 @@ app.get(
   function (req, res) {
     // const client = global.client;
 
-    /*  try {
-        fetch(
-          `https://discord.com/api/v10/guilds/${config.guilds.main}/members/${req.user.id}`,
-          {
-            method: "PUT",
-            body: JSON.stringify({
-              access_token: req.user.accessToken,
-            }),
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bot ${client.token}`,
-            },
-          }
-        );
-      } catch {}
-      */ //Need to add a popup of consent before
-      return res.redirect(req.session.returnTo || "/"); 
-  }
+  /*  try {
+      fetch(
+        `https://discord.com/api/v10/guilds/${config.guilds.main}/members/${req.user.id}`,
+        {
+          method: "PUT",
+          body: JSON.stringify({
+            access_token: req.user.accessToken,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bot ${client.token}`,
+          },
+        }
+      );
+    } catch {}
+    Need to add a popup of consent before */
+    res.redirect(req.session.returnTo || "/"); 
+  } 
 );
 
 app.get("/info", async (req, res) => {
