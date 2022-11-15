@@ -767,6 +767,7 @@ app.get("/api/bots/:id", async (req, res) => {
         const OwnerRaw = await client.users.fetch(rs.owner)|| null;
 
   final_data = {
+     id: rs.id,
      username: BotRaw.username,
      discriminator: BotRaw.discriminator,
      avatar: `https://cdn.discordapp.com/avatars/${rs.id}/${BotRaw.avatar}.png`,
