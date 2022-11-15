@@ -422,8 +422,7 @@ app.post("/bots/:id/edit", checkAuth, async (req, res) => {
 
 app.post("/bots/:id/apikey", checkAuth, async (req, res) => {
   let id = req.params.id;
-  let model = global.botModel;
-  let bot = await model.findOne({ bot: id });
+  let bot = await global.botModel.findOne({ id: id });
   if (!bot) return res.redirect("/");
   if (req.user.id !== bot.owner) return res.redirect("/");
 
@@ -440,9 +439,9 @@ app.post("/bots/:id/apikey", checkAuth, async (req, res) => {
     return code;
   }
   bot.apikey = genApiKey({ length: 20 });
-  await bot.save().then(() => {
-    res.status(201).json({ apikey: bot.apikey, code: "OK" });
-  });
+  await bot.save();
+  console.log(bot)
+  return res.redirect(`https://vitallist.xyz/bots/${id}/edit?success=true&body=You have successfully generated a new token.`)
 })
 
 app.post("/bots/:id/vote", checkAuth, async (req, res) => {
@@ -1039,7 +1038,7 @@ app.post("/servers/:id/vote", checkAuth, async (req, res) => {
       .status(404)
       .json({ message: "This server was not found on our site." });
 
-  let x = await global.voteModel.findOne({
+  let x = await global.serverVoteModel.findOne({
     user: req.user.id,
     server: req.params.id,
   });
@@ -1050,7 +1049,7 @@ app.post("/servers/:id/vote", checkAuth, async (req, res) => {
       .json({ message: `You can vote again in ${timeObj}.` });
   }
 
-  await global.voteModel.create({
+  await global.serverVoteModel.create({
     server: req.params.id,
     user: req.user.id,
     date: Date.now(),
