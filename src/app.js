@@ -452,7 +452,7 @@ app.post("/bots/:id/vote", checkAuth, async (req, res) => {
       .status(404)
       .json({ message: "This bot was not found on our site." });
 
-  let x = await global.voteMode.findOne({
+  let x = await global.voteModel.findOne({
     user: req.user.id,
     bot: req.params.id,
   });
@@ -463,7 +463,7 @@ app.post("/bots/:id/vote", checkAuth, async (req, res) => {
       .redirect(`/bots/${req.params.id}/vote?error=true&body=Please wait ${timeObj} before you can vote again.`)
   }
 
-  await global.voteMode.create({
+  await global.voteModel.create({
     bot: req.params.id,
     user: req.user.id,
     date: Date.now(),
