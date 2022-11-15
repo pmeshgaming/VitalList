@@ -63,11 +63,9 @@ cron.schedule("*/30 * * * *", () => {
 });
 
 
-cron.schedule("* * */ 30 * *", async () => {
-  let dbots = await global.botModel.find({
-    denied: true,
-  });
-  for (dbot of dbots) {
+cron.schedule("* * */ 10 * *", async () => {
+  let dbots = await global.botModel.find({ denied: true });
+  for (const {} of dbots) {
     const tendaysago = new Date().getTime() - 10 * 24 * 60 * 60 * 1000;
     if (dbots.deniedOn < tendaysago) {
       dbots.deleteOne();
