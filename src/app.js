@@ -34,11 +34,11 @@ try {
 
 const app = express();
 
-// const limiter = rateLimit({
-//   windowMs: 15 * 60 * 1000,
-//   max: 100,
-//   standardHeaders: true,
-// })
+/* const limiter = rateLimit({
+   windowMs: 15 * 60 * 1000,
+   max: 100,
+   standardHeaders: true,
+ }) */
 
 // Apply the rate limiting middleware to all requests
 //app.use(limiter)
