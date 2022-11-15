@@ -745,6 +745,10 @@ app.get("/servers/tags/:tag", async (req, res) => {
 
 //-API-//
 
+app.get("/docs", async (req, res) => {
+  // do stuff
+})
+
 app.get("/api/bots/:id", async (req, res) => {
 
   let model = global.botModel
@@ -777,7 +781,7 @@ app.get("/api/bots/:id", async (req, res) => {
      tags: rs.tags,
      views: rs.views,
      submittedOn: rs.submittedOn,
-     approvedOn: rs.approveOn,
+     approvedOn: rs.approvedOn,
      shortDescription: rs.shortDesc,
      description: rs.desc,
 
