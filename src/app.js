@@ -1552,7 +1552,7 @@ app.use("/bots/:id/status", checkAuth, checkStaff, async (req, res) => {
     );
     if (channel) channel.delete("This bot was approved on VitalList.");
     return res.redirect(
-      `/queue?success=true&body=The bot was successfully approved.`
+      `https://discord.com/oauth2/authorize?client_id=${bot.id}&scope=bot&permissions=0&guild_id=${global.config.guilds.main}`
     );
   }
 });
