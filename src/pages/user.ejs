@@ -1,9 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%- fetched_user.username %> - VitalList</title>
+  <meta property="og:author" content="VitalList.xyz">
+  <meta property="og:title" content="<%= fetched_user.username %>#<%= fetched_user.discriminator %>">
+  <meta property="og:url" content="https://vitallist.xyz">
+  <meta property="og:description" content="<%= fetched_user.bio %>">
+  <meta property="og:image" content="https://cdn.discordapp.com/avatars/<%= fetched_user.id %>/<%= fetched_user.avatar %>.png">
   <%- include ("./parts/head.ejs") %>
 </head>
 <%- include ("./parts/navbar.ejs") %>
@@ -33,8 +37,10 @@
         <%- fetched_user.bio %>
         <hr>
         </hr>
+        <% if (user) { %>
         <% if (fetched_user.id === user.id) { %>
         <a href="/users/<%= fetched_user.id %>/edit" type="button" style="border-radius: 5px;" class="btn btn-info pr-3 pl-3 mr-1"><i class="fa-solid fa-pen-to-square"></i> Edit Profile</a>
+        <% } %>
         <% } %>
         <a href="https://discord.com/users/<%= fetched_user.id %>" type="button" style="border-radius: 5px;" class="btn btn-info pr-3 pl-3 mr-1"><i class="fa-brands fa-discord"></i> Discord</a>
         <% if (fetched_user.website) { %>
@@ -57,25 +63,22 @@
   <% for(let i = 0; i < bots.length; i++){ %>
     <div class="card" style="border-radius:10px;">
       <img src="https://cdn.discordapp.com/avatars/<%= bots[i].id %>/<%= bots[i].avatar %>.png" alt="<%= bots[i].name %>'s Avatar" draggable="false" class="botimg_main">
-      <p class="botname_main"><%= bots[i].name %>
-        <% if (bots[i].id === "1004264023111507979") { %>
-        <span title="Official Bot"><i class="fas fa-badge-check"></i></span>
-        <%  } %> <br>
+      <p class="botname_main"><%= bots[i].name %><br>
         <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-server"></i> <%= bots[i].servers %> • <i class="fa-solid fa-check-to-slot"></i> <%= bots[i].votes %></span>
       </p>
-      <div class="botdesc_main" style="height:auto;width:auto;overflow:auto;padding:10px;">
+      <div class="botdesc_main" style="height:75px;width:auto;flex:auto;padding:10px;">
         <i class="fa-solid fa-file-lines"></i> <%= bots[i].shortDesc %>
-      </div>
-      <div class="bottags_main" style="height:auto;width:auto;overflow:auto;padding:10px;">
+        </div>
+      <div class="bottags_main" style="height:75px;width:auto;flex:auto;padding:10px;">
         <i class="fa-solid fa-hashtag"></i> <%= bots[i].tags %>
       </div>
-      <div style="margin-left:20px;margin-top:-20px">
+      <div style="margin-left:20px;margin-top:-40px">
         <a href="/bots/<%= bots[i].id %>/">
           <button class="viewbtn">View</button>
       </div></a>
       <a href="/bots/<%= bots[i].id %>/vote">
         <button class="votebtn">Vote</button></a>
-  </div></a>
+    </div></a>
   <% } %>
   <!--
         <% if (bots.length < 1) { %>
@@ -94,14 +97,14 @@
     <%= servers[i].name %><br>
       <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-user-group"></i> <%= servers[i].memberCount %> • <i class="fa-solid fa-bomb"></i> <%= servers[i].bumps %> • <i class="fa-solid fa-check-to-slot"></i> <%= servers[i].votes %></span>
     </p>
-    <div class="botdesc_main" style="height:auto;width:auto;overflow:auto;padding:10px;">
+    <div class="botdesc_main" style="height:75px;width:auto;flex:auto;padding:10px;">
       <i class="fa-solid fa-file-lines"></i> <%= servers[i].shortDesc %>
       </div>
-    <div class="bottags_main" style="height:auto;width:auto;overflow:auto;padding:10px;">
+    <div class="bottags_main" style="height:75px;width:auto;flex:auto;padding:10px;">
       <i class="fa-solid fa-hashtag"></i> <%= servers[i].tags %>
     </div>
   
-    <div style="margin-left:20px;margin-top:-30px">
+    <div style="margin-left:20px;margin-top:-60px">
       <a href="/servers/<%= servers[i].id %>/">
         <button class="viewbtn">View</button>
     </div></a>
@@ -215,7 +218,7 @@
     color: white;
     font-size: 25px;
     margin-top: -95px;
-    margin-left: 125px;
+    margin-left: 135px;
     border-radius: 10px;
     font-weight: bold;
   }
@@ -256,7 +259,7 @@
     color: white;
     font-size: 15px;
     border: 10px solid transparent;
-    margin-top: -5px;
+    margin-top: 15;
     overflow: hidden;
     text-align: left;
 

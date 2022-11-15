@@ -121,5 +121,9 @@ let app = mongoose.Schema({
     type: String,
     required: false,
   },
+  apikey: {
+    type: String,
+    required: false,
+  },
 });
 module.exports = mongoose.model("bots", app);

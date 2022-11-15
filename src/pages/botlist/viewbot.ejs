@@ -4,7 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta property="og:title" content="<%= bot.name %>">
+  <meta property="og:author" content="VitalList.xyz">
+  <meta property="og:title" content="<%= bot.name %>#<%= bot.discriminator %>">
+  <meta property="og:url" content="https://vitallist.xyz">
   <meta property="og:description" content="<%= bot.shortDesc %>">
   <meta property="og:image" content="https://cdn.discordapp.com/avatars/<%= bot.id %>/<%= bot.avatar %>.png">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sanitize-html/1.26.0/sanitize-html.min.js"></script>
@@ -26,7 +28,12 @@
 
         </div>
         <div class="col-sm">
-          <h3><%= bot.name %><small class="text-muted">#<%= bot.discriminator %></small></h3>
+          <h3><%= bot.name %><small class="text-muted">#<%= bot.discriminator %></small>
+            <% if(bot.flags === 65536) { %>
+            <span title="Verified Bot"><i class="fa-solid fa-medal"></i></span>
+            <% } %>
+          </h3>
+
           <%- bot.shortDesc %><br>
           <!---
                         <span style="border-radius: 5px;" class="badge badge-primary" style="font-size: 20px;"><i class="fa-solid fa-server"></i> Servers: <%= bot.servers %></span>
@@ -51,7 +58,10 @@
           <% if (bot.owner.includes(user.id)) { %>
           <a href="/bots/<%= bot.id %>/edit" type="button" style="border-radius: 5px;" class="btn btn-warning pr-3 pl-3 mr-1"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
           <% } %>
-         <% } %>
+          <% if (!bot.owner.includes(user.id)) { %>
+            <a href="/bots/<%= bot.id %>/review" type="button" style="border-radius: 5px;" class="btn btn-warning pr-3 pl-3 mr-1"><i class="fa-solid fa-pen-to-square"></i> Review</a>
+            <% } %>
+          <% } %>
         </div>
       </div>
     </div>
@@ -62,7 +72,7 @@
     </hr>
     <p style="color: white; font-size: 16px;"><i class="fa-solid fa-terminal"></i> Prefix: <code style="padding: 3px 8px; font-weight: bold;"><%= bot.prefix %></code></p>
     <p style="color: white; font-size: 16px;"><i class="fa-solid fa-crown"></i> Owner:&nbsp;&nbsp;<strong><a style="color: white;" href="/users/<%- bot.owner %>"><%= bot.ownerTag %></a></strong></p>
-    <% if (bot.presence && bot.presence.status === "online") { %>
+    <!-- <% if (bot.presence && bot.presence.status === "online") { %>
     <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal %>"></i> Status: <strong>🟢Online</strong></p>
   <% } else if (bot && bot.presence && bot.presence.status === "idle") { %>
     <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal"></i> Status: <strong>🟡Idle</strong></p>
@@ -71,25 +81,14 @@
   <% } else { %>
       <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal"></i> Status: <strong>⚫Offline</strong></p>
   <% } %>
+  -->
     <p style="color: white; font-size: 16px;"><i class="fa-solid fa-hashtag"></i> Tags: <strong><%= bot.tags %></strong></p>
-    <!-- <% if (bot.presence && bot.presence.status === "online") { %>
-                    <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal"></i> Status: <strong>Online</strong></p>
-                <% } else if (bot.presence && bot.presence.status === "idle") { %>
-                    <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal"></i> Status: <strong>Idle</strong></p>
-                <% } else if (bot.presence && bot.presence.status === "dnd") { %>
-                    <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal"></i> Status: <strong>DND</strong></p>
-                <% } else { %>
-                    <p style="color: white; font-size: 16px;"><i class="fa-solid fa-signal"></i> Status: <strong>None</strong></p>
-                <% } %><br>
-                -->
     <h2><i class="fa-solid fa-chart-simple"></i> Statistics</h2>
     <hr>
     </hr>
     <p style="color: white; font-size: 16px;"><i class="fa-solid fa-check-to-slot"></i> Votes: <strong><%= bot.votes %></strong></p>
     <p style="color: white; font-size: 16px;"><i class="fa-solid fa-server"></i> Servers: <strong><%= bot.servers %></strong></p>
     <p style="color: white; font-size: 16px;"><i class="fa-solid fa-diamond"></i> Shards: <strong><%= bot.shards %></strong></p>
-  </div>
-  </div>
   </div>
   </div>
   <br><br>
@@ -100,7 +99,67 @@
       </div>
     </div>
   </div>
-<br><br><br><br>
+</div>
+</div>
+<div class="container">
+<br><br><br><br><hr><br><br>
+  <h2><i class="fa-solid fa-award"></i> Ratings & Reviews</h2>
+  <p>These are all of the reviews avaible for this bot.</p>
+  <br>
+
+    <% for(let i = 0; i < reviews.length; i++){ %>
+
+      <div class="card">
+        <img src="https://cdn.discordapp.com/avatars/<%= reviews[i].reviewer %>/<%= reviews[i].reviewerAvatar %>.png" alt="<%= reviews[i].reviewerName %>'s Avatar" draggable="false" class="botimg_main">
+        <p class="botname_main"><%= reviews[i].reviewerName %> <small class="text-muted"><%= reviews[i].date %></small><br>
+          <span style="font-size:15px; font-weight:normal;">
+          <% if(reviews[i].rating === 1) { %>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+              <% } %>
+              <% if(reviews[i].rating === 2) { %>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-regular fa-star"></i>
+                <i class="fa-regular fa-star"></i>
+                <i class="fa-regular fa-star"></i>
+                  <% } %>
+                  <% if(reviews[i].rating === 3) { %>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-regular fa-star"></i>
+                    <i class="fa-regular fa-star"></i>
+                      <% } %>
+                      <% if(reviews[i].rating === 4) { %>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                          <% } %>
+                          <% if(reviews[i].rating === 5) { %>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                              <% } %><br>
+                              <%= reviews[i].body %>
+                          
+            </span>
+          </p>
+      </div>
+
+      <% } if (!reviews.length) {  %>
+        <h5>No reviews. Be the first to leave one!</h5>
+  <% } %>
+  <br><br><br><br><br><br><br><br>
+</div>
+
   <%- include("../parts/footer.ejs") %>
 
   <style>
@@ -117,8 +176,8 @@
     @media only screen and (min-width: 1080px) {
       .infoContainer {
         width: 300px;
-        margin-right: 150px;
-        margin-left: 150px;
+        margin-right: 125px;
+        margin-left: 125px;
       }
     }
 
@@ -144,6 +203,7 @@
         margin-right: 225px;
         margin-left: 225px;
         border: 1px solid rgba(255, 255, 255, 0.18);
+        background: rgba(255, 255, 255, 0.15);
       }
     }
 
@@ -161,21 +221,58 @@
       color: #D9E4EC;
       text-decoration: none;
     }
+
+    .card {
+    height: auto;
+    width: 100%;
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(17, 25, 40, 0.75);
+    border-radius: 10px;
+    margin-top: 15px;
+    margin-left: auto;
+    transition: all 0.2s;
+    margin-right: 10px;
+    position: relative;
+    display: inline-block;
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .botname_main {
+    color: white;
+    font-size: 20px;
+    margin-top: -80px;
+    margin-left: 105px;
+    border-radius: 10px;
+    font-weight: bold;
+  }
+
+  .botimg_main {
+    width: 85px;
+    height: 85px;
+    border-radius: 100%;
+    margin-top: 10px;
+    margin-left: 10px;
+
+  }
   </style>
   <script>
     $(document).ready(function() {
       const descriptionBox = $("#bot-description");
-      const descriptionBoxText = descriptionBox.text() || descriptionBox.val();
-      const allowedTags = sanitizeHtml.defaults.allowedTags.concat(["address", "article", "aside", "footer", "header", "h1", "h2", "h3", "h4",
+      const descriptionBoxText = descriptionBox.text() || descriptionBox.val(); sanitizedRender = sanitizeHtml(descriptionBoxText, {
+      allowedTags: ["address", "article", "aside", "footer", "header", "h1", "h2", "h3", "h4",
         "h5", "h6", "hgroup", "main", "nav", "section", "blockquote", "dd", "div",
         "dl", "dt", "figcaption", "figure", "hr", "li", "main", "ol", "p", "pre",
         "ul", "a", "abbr", "b", "bdi", "bdo", "br", "cite", "code", "data", "dfn",
         "em", "i", "kbd", "mark", "q", "rb", "rp", "rt", "rtc", "ruby", "s", "samp",
         "small", "span", "strong", "sub", "sup", "time", "u", "var", "wbr", "caption",
-        "col", "colgroup", "table", "tbody", "td", "tfoot", "th", "thead", "tr"
-      ]);
-      const sanitizedRender = sanitizeHtml(descriptionBoxText, {
-        allowedTags
+        "col", "colgroup", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "img", "iframe"],
+     allowedSchemes: [ 'data', 'http', 'https'],
+     allowedAttributes: {
+     a: [ 'href', 'name', 'target' ],
+     img: [ 'src', 'srcset', 'alt', 'title', 'width', 'height', 'loading' ],
+     iframe: ['src']
+},
       });
       descriptionBox.html(sanitizedRender);
     });
@@ -210,6 +307,4 @@
         text: urlParams.get('body'),
       })
     }
-  </script>
-
   </script>

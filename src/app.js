@@ -16,12 +16,12 @@ const express = require("express"),
   session = require("express-session"),
   passport = require("passport"),
   Strategy = require("passport-discord").Strategy;
-app = express();
 const SQLiteStore = require("connect-sqlite3")(session);
 const helmet = require("helmet");
-const { inspect } = require("util");
-const rateLimit = require('express-rate-limit')
-
+// const rateLimit = require('express-rate-limit')
+Array.prototype.shuffle = function () { // Define this once 
+  return this.map((k, i, o, p = Math.floor(Math.random() * this.length)) => [o[i], o[p]] = [o[p], o[i]]) && this
+}
 //-Database Login-//
 
 try {
@@ -32,22 +32,18 @@ try {
 
 //-Webserver-//
 
-app = express();
+const app = express();
 
-const limiter = rateLimit({
-	windowMs: 15 * 60 * 1000, 
-	max: 100,
-	standardHeaders: true, 
-})
+/* const limiter = rateLimit({
+   windowMs: 15 * 60 * 1000,
+   max: 100,
+   standardHeaders: true,
+ }) */
 
 // Apply the rate limiting middleware to all requests
-app.use(limiter)
-app.use(require("express").json());
-app.use(
-  require("express").urlencoded({
-    extended: false,
-  })
-);
+//app.use(limiter)
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(
   helmet({
     contentSecurityPolicy: false,
@@ -59,7 +55,7 @@ app.use(express.static(__dirname + "/static"));
 app.set("views", path.join(__dirname, "pages"));
 
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://localhost");
+  res.header("Access-Control-Allow-Origin", "http://localhost");
   res.header("Access-Control-Allow-Headers", "*");
   res.header("Access-Control-Allow-Methods", "*");
   if (req.method === "OPTIONS") {
@@ -72,8 +68,7 @@ app.use((req, res, next) => {
 //-Alaways use protection!-//
 
 var minifyHTML = require("express-minify-html-terser");
-const { accessSync } = require("fs");
-const { assert } = require("console");
+const { find } = require("./models/review.js");
 app.use(
   minifyHTML({
     override: true,
@@ -152,12 +147,11 @@ app.get(
     failureRedirect: "/",
   }),
   function (req, res) {
-    const config = global.config;
-    const client = global.client;
+    // const client = global.client;
 
-    try {
+  /*  try {
       fetch(
-        `https://discordapp.com/api/v8/guilds/${config.guilds.main}/members/${req.user.id}`,
+        `https://discord.com/api/v10/guilds/${config.guilds.main}/members/${req.user.id}`,
         {
           method: "PUT",
           body: JSON.stringify({
@@ -170,8 +164,10 @@ app.get(
         }
       );
     } catch {}
-    res.redirect(req.session.returnTo || "/");
-  }
+    Need to add a popup of consent before */
+
+    res.redirect(req.session.returnTo || "/"); 
+  } 
 );
 
 app.get("/info", async (req, res) => {
@@ -189,24 +185,11 @@ app.get("/auth/logout", function (req, res) {
 
 //-bot-//
 
-app.get("/", checkMaintenance, async (req, res) => {
+app.get("/", async (req, res) => {
   const client = global.client;
-
-  let model = require("./models/bot.js");
-  let bots = await model.find({
+  let bots = await global.botModel.find({
     approved: true,
   });
-  let dbots = await model.find({
-    denied: false,
-  });
-
-  for (dbot of dbots) {
-    const tendaysago = new Date().getTime() - 10 * 24 * 60 * 60 * 1000;
-    if (dbot.deniedOn < tendaysago) {
-      dbot.deleteOne();
-      dbot.save();
-    }
-  }
 
   for (let i = 0; i < bots.length; i++) {
     const BotRaw = await client.users.fetch(bots[i].id);
@@ -218,14 +201,7 @@ app.get("/", checkMaintenance, async (req, res) => {
     );
     bots[i].tags = bots[i].tags.join(", ");
   }
-  Array.prototype.shuffle = function () {
-    let a = this;
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  };
+
 
   res.render("index.ejs", {
     bot: req.bot,
@@ -234,7 +210,33 @@ app.get("/", checkMaintenance, async (req, res) => {
   });
 });
 
-app.get("/bots/new", checkMaintenance, checkAuth, async (req, res) => {
+app.get("/bots", async (req, res) => {
+  const client = global.client;
+  let bots = await global.botModel.find({ approved: true });
+
+  for (let i = 0; i < bots.length; i++) {
+    const BotRaw = await client.users.fetch(bots[i].id);
+    bots[i].name = BotRaw.username;
+    bots[i].avatar = BotRaw.avatar;
+    bots[i].name = bots[i].name.replace(
+      /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
+      ""
+    );
+    bots[i].tags = bots[i].tags.join(", ");
+  }
+
+  res.render("botlist/bots.ejs", {
+    bot: req.bot,
+    bots: bots.shuffle(),
+    user: req.user || null,
+  });
+}); //Removing end point
+app.get('/explore', async (req, res) => {
+  res.redirect('/')
+});
+
+
+app.get("/bots/new", checkAuth, async (req, res) => {
   res.render("botlist/add.ejs", {
     bot: global.client,
     tags: global.config.tags,
@@ -242,18 +244,15 @@ app.get("/bots/new", checkMaintenance, checkAuth, async (req, res) => {
   });
 });
 
-app.post("/bots/new", checkMaintenance, checkAuth, async (req, res) => {
+app.post("/bots/new", checkAuth, async (req, res) => {
   const client = global.client;
   const logs = client.channels.cache.get(config.channels.weblogs);
-  let model = require("./models/bot.js");
   let data = req.body;
 
-  if (!data) {
-    res.redirect("/");
-  }
+  if (!data) return res.redirect("/");
 
   if (
-    await model.findOne({
+    await global.botModel.findOne({
       id: data.id,
     })
   )
@@ -263,21 +262,27 @@ app.post("/bots/new", checkMaintenance, checkAuth, async (req, res) => {
 
   try {
     await client.users.fetch(data.id);
-  } catch(err) {
- return res.status(400).json({
+  } catch (err) {
+    return res.status(400).json({
       message: "This is not a real application on Discord.",
     });
   }
 
   const bot = await client.users.fetch(data.id);
 
-  await model.create({
+  if (bot.bot === false) {
+    return res.status(400).json({
+      message: "You tried to add a user account to the site, you need to add a BOT ID.",
+    });
+  }
+
+  await global.botModel.create({
     id: data.id,
     prefix: data.prefix,
     owner: req.user.id,
     desc: data.desc,
     shortDesc: data.shortDesc,
-    submitedOn: Date.now(),
+    submittedOn: Date.now(),
     views: 0,
     tags: data.tags,
     invite: data.invite,
@@ -291,8 +296,8 @@ app.post("/bots/new", checkMaintenance, checkAuth, async (req, res) => {
     .setTitle("Bot Added")
     .setDescription(
       "<:VD_add:1006511788155752558> " +
-        bot.tag +
-        " has been submitted to Vital List."
+      bot.tag +
+      " has been submitted to Vital List."
     )
     .setColor("Blue")
     .addFields({
@@ -322,26 +327,24 @@ app.post("/bots/new", checkMaintenance, checkAuth, async (req, res) => {
 });
 
 app.get("/bots/:id/invite", async (req, res) => {
-  const model = require("./models/bot.js");
   const id = req.params.id;
-  const bot = await model.findOne({ id: id });
+  const bot = await global.botModel.findOne({ id: id });
   if (!bot) return res.status(404).redirect("/404");
 
   if (!bot.invite) {
-    return await res.redirect(
+    return res.redirect(
       `https://discord.com/oauth2/authorize?client_id=${id}&scope=bot%20applications.commands&permissions=0&response_type=code`
     );
   }
 
-  return await res.redirect(bot.invite);
+  return res.redirect(bot.invite);
 });
 
-app.get("/bots/:id/edit", checkMaintenance, checkAuth, async (req, res) => {
+app.get("/bots/:id/edit", checkAuth, async (req, res) => {
   const client = global.client;
-  const model = require("./models/bot.js");
   const id = req.params.id;
 
-  const bot = await model.findOne({ id: id });
+  const bot = await global.botModel.findOne({ id: id });
   if (!bot) return res.redirect("/404");
   if (req.user.id !== bot.owner) return res.redirect("/404");
 
@@ -356,13 +359,11 @@ app.get("/bots/:id/edit", checkMaintenance, checkAuth, async (req, res) => {
   });
 });
 
-app.post("/bots/:id/edit", checkMaintenance, checkAuth, async (req, res) => {
+app.post("/bots/:id/edit", checkAuth, async (req, res) => {
   const client = global.client;
   const logs = client.channels.cache.get(config.channels.weblogs);
-  let model = require("./models/bot.js");
-  const botm = await model.findOne({ id: req.params.id });
+  const botm = await global.botModel.findOne({ id: req.params.id });
   let data = req.body;
-  console.log(data);
 
   if (!data) {
     return res.redirect("/");
@@ -419,10 +420,31 @@ app.post("/bots/:id/edit", checkMaintenance, checkAuth, async (req, res) => {
   );
 });
 
+app.post("/bots/:id/apikey", checkAuth, async (req, res) => {
+  let id = req.params.id;
+  let bot = await global.botModel.findOne({ id: id });
+  if (!bot) return res.redirect("/");
+  if (req.user.id !== bot.owner) return res.redirect("/");
+
+  let data = req.body;
+  function genApiKey(options = {}) {
+    let length = options.length || 5;
+    let string =
+      "abcdefghijklmnopqrstuwvxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+    let code = "";
+    for (let i = 0; i < length; i++) {
+      let random = Math.floor(Math.random() * string.length);
+      code += string.charAt(random);
+    }
+    return code;
+  }
+  bot.apikey = genApiKey({ length: 20 });
+  await bot.save();
+  return res.redirect(`https://vitallist.xyz/bots/${id}/edit?success=true&body=You have successfully generated a new token.`)
+})
+
 app.post("/bots/:id/vote", checkAuth, async (req, res) => {
-  let model = require("./models/bot.js");
-  let voteModel = require("./models/vote.js");
-  let bot = await model.findOne({
+  let bot = await global.botModel.findOne({
     id: req.params.id,
   });
   if (!bot)
@@ -430,7 +452,7 @@ app.post("/bots/:id/vote", checkAuth, async (req, res) => {
       .status(404)
       .json({ message: "This bot was not found on our site." });
 
-  let x = await voteModel.findOne({
+  let x = await global.voteMode.findOne({
     user: req.user.id,
     bot: req.params.id,
   });
@@ -438,18 +460,17 @@ app.post("/bots/:id/vote", checkAuth, async (req, res) => {
   if (x) {
     let timeObj = ms(x.time - (Date.now() - x.date), { long: true });
     return res
-      .status(400)
-      .json({ message: `You can vote again in ${timeObj}.` });
+      .redirect(`/bots/${req.params.id}/vote?error=true&body=Please wait ${timeObj} before you can vote again.`)
   }
 
-  await voteModel.create({
+  await global.voteMode.create({
     bot: req.params.id,
     user: req.user.id,
     date: Date.now(),
     time: 43200000,
   });
 
-  await model.findOneAndUpdate(
+  await global.botModel.findOneAndUpdate(
     {
       id: req.params.id,
     },
@@ -460,21 +481,21 @@ app.post("/bots/:id/vote", checkAuth, async (req, res) => {
     }
   );
 
-  const BotRaw = (await client.users.fetch(bot.id)) || null;
+  const BotRaw = (await global.client.users.fetch(bot.id)) || null;
   bot.name = BotRaw.username;
   bot.discriminator = BotRaw.discriminator;
   bot.avatar = BotRaw.avatar;
 
-  const logs = client.channels.cache.get(global.config.channels.weblogs);
+  const logs = global.client.channels.cache.get(global.config.channels.weblogs);
   const date = new Date();
   const votedEmbed = new EmbedBuilder()
     .setTitle("Bot Voted")
     .setDescription(
       "<:vote:1028862219313762304> " +
-        bot.name +
-        "#" +
-        bot.discriminator +
-        " has been voted on Vital List."
+      bot.name +
+      "#" +
+      bot.discriminator +
+      " has been voted on Vital List."
     )
     .setColor("Purple")
     .addFields({
@@ -504,23 +525,21 @@ app.post("/bots/:id/vote", checkAuth, async (req, res) => {
 });
 
 app.get("/bots/:id/vote", checkAuth, async (req, res) => {
-  let model = require("./models/bot.js");
-  let bot = await model.findOne({
+  let bot = await global.botModel.findOne({
     id: req.params.id,
   });
   if (!bot)
     return res
       .status(404)
       .json({ message: "This bot was not found on our site." });
-  let umodel = require("./models/user.js");
-  let user = await umodel.findOne({
+  let user = await global.userModel.findOne({
     id: req.user.id,
   });
   if (!user) {
-    await umodel.create({ id: req.user.id });
+    await global.userModel.create({ id: req.user.id });
   }
 
-  const BotRaw = (await client.users.fetch(bot.id)) || null;
+  const BotRaw = (await global.client.users.fetch(bot.id)) || null;
   bot.name = BotRaw.username;
   bot.discriminator = BotRaw.discriminator;
   bot.avatar = BotRaw.avatar;
@@ -531,49 +550,122 @@ app.get("/bots/:id/vote", checkAuth, async (req, res) => {
   });
 });
 
+app.get("/bots/:id/review", checkAuth, async (req, res) => {
+  let id = req.params.id;
+  const bot = await global.botModel.findOne({ id: id });
+
+  if (!bot)
+    return res.status(404).json({
+      message: "This bot could not be found in our site.",
+    });
+
+  if (bot.owner === req.user.id)
+    return res.status(400).json({
+      message: "You cannot review your own bot."
+    })
+
+
+  const BotRaw = (await global.client.users.fetch(bot.id)) || null;
+  bot.name = BotRaw.username;
+  bot.discriminator = BotRaw.discriminator;
+  bot.avatar = BotRaw.avatar;
+
+  res.render("botlist/review.ejs", {
+    bot: bot,
+    config: global.config,
+    user: req.user || null,
+  });
+})
+
+app.post("/bots/:id/review", checkAuth, async (req, res) => {
+  let id = req.params.id;
+  const reviewModel = require("./models/review.js")
+  const bot = await global.botModel.findOne({ id: id });
+  const data = req.body;
+
+  if (!bot)
+    return res.status(404).json({
+      message: "This bot could not be found in our site.",
+    });
+
+  if (bot.owner === req.user.id)
+    return res.status(400).json({
+      message: "You cannot review your own bot."
+    })
+
+  if (await reviewModel.findOne({ reviewer: req.user.id, botid: req.params.id }))
+    return res.status(400).json({
+      message: "You already have a review for this bot."
+    })
+
+  const d = new Date();
+  await reviewModel.create({
+    reviewer: req.user.id,
+    botid: req.params.id,
+    rating: data.rating,
+    body: data.body,
+    date: d.toLocaleString()
+  });
+
+  await res.redirect(`https://vitallist.xyz/bots/${id}?success=true&body=Your review was successfully added.`)
+
+})
+
 app.get("/bots/:id", async (req, res) => {
   let id = req.params.id;
   const client = global.client;
-  const model = require("./models/bot.js");
-  const bot = await model.findOne({ id: id });
-  const guild = await client.guilds.fetch(global.config.guilds.main);
+  const reviewsModel = require("./models/review.js")
+  const bot = await global.botModel.findOne({ id: id });
   if (!bot)
     return res
       .status(404)
       .json({ message: "This bot was not found on our list." });
-
-  try {
-    guild.members.fetch(id) || null;
-  } catch (err) {
-    return res
-      .status(404)
-      .send(
-        "This bot is not in our Discord server, so we could not fetch it's data. Error: " +
-          err
-      );
-  }
-
   const marked = require("marked");
   const desc = marked.parse(bot.desc);
   const BotRaw = (await client.users.fetch(id)) || null;
-
-  const BotPresence = (await guild.members.cache.get(id) || null)
-  const OwnerRaw = await client.users.fetch(bot.owner)|| null;
+  const OwnerRaw = await client.users.fetch(bot.owner) || null;
   bot.name = BotRaw.username;
   bot.avatar = BotRaw.avatar;
-  bot.presence = BotPresence.presence;
   bot.discriminator = BotRaw.discriminator;
   bot.tag = BotRaw.tag;
   bot.ownerTag = OwnerRaw.tag;
   bot.ownerAvatar = OwnerRaw.avatar;
   bot.tags = bot.tags.join(", ");
   bot.desc = desc;
+  bot.flags = BotRaw.flags.bitfield;
+
+  const reviews = await reviewsModel.find({ botid: bot.id })
+
+  for (let i = 0; i < reviews.length; i++) {
+    const ReviewerRaw = await client.users.fetch(reviews[i].reviewer);
+    reviews[i].reviewerName = ReviewerRaw.tag;
+    reviews[i].reviewerAvatar = ReviewerRaw.avatar;
+  }
+
   res.render("botlist/viewbot.ejs", {
     bot2: req.bot,
     bot: bot,
     user: req.user || null,
+    reviews: reviews.shuffle(),
   });
 });
+
+app.get("/bots/:id/widget", async (req, res) => {
+  let id = req.params.id;
+  const client = global.client;
+  const bot = await global.botModel.findOne({ id: id });
+
+  const BotRaw = (await client.users.fetch(id)) || null;
+  bot.name = BotRaw.username;
+  bot.avatar = BotRaw.avatar;
+  bot.discriminator = BotRaw.discriminator;
+  bot.tag = BotRaw.tag;
+
+  res.render("botlist/widget.ejs", {
+    bot: bot,
+    user: req.user || null
+  })
+})
 
 //-TAGS-//
 
@@ -596,13 +688,12 @@ app.get("/bots/tags/:tag", async (req, res) => {
       .status(404)
       .json({ message: "This tag was not found in our database." });
 
-  let model = require("./models/bot");
-  let data = await model.find();
+  let data = await global.botModel.find();
   let bots = data.filter((a) => a.approved === true && a.tags.includes(tag));
   if (bots.length <= 0) return res.redirect("/");
 
   for (let i = 0; i < bots.length; i++) {
-    const BotRaw = await client.users.fetch(bots[i].id);
+    const BotRaw = await global.client.users.fetch(bots[i].id);
     bots[i].name = BotRaw.username;
     bots[i].avatar = BotRaw.avatar;
     bots[i].name = bots[i].name.replace(
@@ -611,14 +702,6 @@ app.get("/bots/tags/:tag", async (req, res) => {
     );
     bots[i].tags = bots[i].tags.join(", ");
   }
-  Array.prototype.shuffle = function () {
-    let a = this;
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  };
 
   res.render("botlist/tags.ejs", {
     bots: bots.shuffle(),
@@ -635,8 +718,7 @@ app.get("/servers/tags/:tag", async (req, res) => {
       .status(404)
       .json({ message: "This tag was not found in our database." });
 
-  let model = require("./models/server");
-  let data = await model.find();
+  let data = await global.serverModel.find();
   let servers = data.filter(
     (a) => a.published === true && a.tags.includes(tag)
   );
@@ -652,15 +734,6 @@ app.get("/servers/tags/:tag", async (req, res) => {
     servers[i].tags = servers[i].tags.join(", ");
   }
 
-  Array.prototype.shuffle = function () {
-    let a = this;
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  };
-
   res.render("servers/tags.ejs", {
     tag: tag,
     user: req.user || null,
@@ -671,71 +744,83 @@ app.get("/servers/tags/:tag", async (req, res) => {
 //-API-//
 
 app.get("/api/bots/:id", async (req, res) => {
-  let model = require("./models/bot.js");
+
+  let model = global.botModel
   let data = await model
     .findOne({
       id: req.params.id,
     })
     .lean()
-    .then((rs) => {
+    .then(async (rs) => {
       if (!rs)
         return res.status(404).json({
           message: "This bot is not in our database.",
         });
       if (!rs.approved)
         return res.status(404).json({
-          message: "This bot is not approved.",
+          message: "This bot is not approved yet.",
         });
-      delete rs._id;
-      delete rs.__v;
-      delete rs.approved;
-      return rs;
-    });
-  if (!data)
-    return res.status(404).json({
-      message: "This bot is not in our database.",
-    });
-  res.end(inspect(data));
+
+        const BotRaw = await client.users.fetch(rs.id) || null;
+        const OwnerRaw = await client.users.fetch(rs.owner)|| null;
+
+  final_data = {
+     id: rs.id,
+     username: BotRaw.username,
+     discriminator: BotRaw.discriminator,
+     avatar: `https://cdn.discordapp.com/avatars/${rs.id}/${BotRaw.avatar}.png`,
+     prefix: rs.prefix,
+     owner: rs.owner,
+     ownerTag: OwnerRaw.tag,
+     tags: rs.tags,
+     views: rs.views,
+     submittedOn: rs.submittedOn,
+     approvedOn: rs.approvedOn,
+     shortDescription: rs.shortDesc,
+     description: rs.desc,
+
+    // Counts
+    shards: rs.shards,
+    servers: rs.servers,
+    votes: rs.votes,
+    views: rs.views,
+
+    // Links
+    banner: rs.banner,
+    invite: rs.invite,
+    website: rs.website,
+    github: rs.github,
+    support: rs.support,
+  }
+
+   return res.json(final_data)
+  });
 });
 
 app.post("/api/bots/:id/", async (req, res) => {
-  const client = global.client;
-  let model = require("./models/bot.js");
-  let bot = await model.findOne({
-    id: req.params.id,
-  });
-  if (!bot)
-    return res.status(404).json({
-      message: "This bot is not on our list.",
-    });
+  const key = req.headers.authorization;
+  if (!key) return res.status(401).json({ json: "Please provides a API Key." });
 
-  if (!req.header("server_count"))
-    return res.status(400).json({
-      message: "Please provide a server count.",
-    });
-  if (!req.header("shard_count"))
-    return res.status(400).json({
-      message: "Please provide a shard count.",
-    });
-  bot.servers = req.header("server_count");
-  bot.servers = bot.servers.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  bot.shards = req.header("shard_count");
-  bot.shards = bot.shards.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  bot.save();
-  res.json({
-    message: "Successfully updated.",
-  });
+  let bot = await global.botModel.findOne({ apikey: key });
+  if (!bot) return res.status(404).json({ message: "This bot is not on our list, or you entered an invaild API Key." });
+  const servers = req.body.server_count || req.header("server_count");
+  const shards = req.body.shard_count || req.header("shard_count");
+
+  if (!servers) return res.status(400).json({ message: "Please provide a server count." });
+  if (!shards) return res.status(400).json({ message: "Please provide a shard count." });
+
+  bot.servers = servers.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  bot.shards = shards.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  await bot.save().catch(() => null);
+  return res.json({ message: "Successfully updated." });
 });
 
 //-ServerList-//
 
-app.get("/servers", checkMaintenance, checkStaff, async (req, res) => {
-  const client = global.sclient;
-
-  let model = require("./models/server.js");
-  let servers = await model.find({ published: true });
+app.get("/servers", async (req, res) => {
+  let servers = await global.serverModel.find({ published: true });
   for (let i = 0; i < servers.length; i++) {
-    const ServerRaw = await client.guilds.fetch(servers[i].id);
+    const ServerRaw = await global.sclient.guilds.fetch(servers[i].id);
     servers[i].name = ServerRaw.name;
     servers[i].icon = ServerRaw.iconURL({ dynamic: true });
     servers[i].memberCount = ServerRaw.memberCount
@@ -744,15 +829,6 @@ app.get("/servers", checkMaintenance, checkStaff, async (req, res) => {
     servers[i].boosts = ServerRaw.premiumSubscriptionCount;
     servers[i].tags = servers[i].tags.join(`, `);
   }
-
-  Array.prototype.shuffle = function () {
-    let a = this;
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  };
 
   res.render("servers/index.ejs", {
     bot: req.bot,
@@ -770,12 +846,10 @@ app.get(
     )
 );
 
-app.get("/servers/:id", checkMaintenance, async (req, res) => {
-  const client = global.sclient;
-  const model = require("./models/server.js");
+app.get("/servers/:id", async (req, res) => {
   const id = req.params.id;
 
-  const server = await model.findOne({ id: id });
+  const server = await global.serverModel.findOne({ id: id });
   if (!server) return res.redirect("/404");
 
   if (server.published === false) {
@@ -791,8 +865,8 @@ app.get("/servers/:id", checkMaintenance, async (req, res) => {
   const marked = require("marked");
   const desc = marked.parse(server.desc);
 
-  const ServerRaw = (await client.guilds.fetch(id)) || null;
-  const OwnerRaw = await client.users.fetch(server.owner);
+  const ServerRaw = (await global.sclient.guilds.fetch(id)) || null;
+  const OwnerRaw = await global.sclient.users.fetch(server.owner);
   (server.name = ServerRaw.name),
     (server.icon = ServerRaw.iconURL({ dynamic: true })),
     (server.memberCount = ServerRaw.memberCount
@@ -803,7 +877,6 @@ app.get("/servers/:id", checkMaintenance, async (req, res) => {
   server.ownerAvatar = OwnerRaw.avatar;
   server.desc = desc;
   server.emojis = ServerRaw.emojis.cache.size;
-
   res.render("servers/viewserver.ejs", {
     bot: global.client,
     server: server,
@@ -812,31 +885,28 @@ app.get("/servers/:id", checkMaintenance, async (req, res) => {
 });
 
 app.get("/servers/:id/join", async (req, res) => {
-  const model = require("./models/server.js");
   const id = req.params.id;
-  const server = await model.findOne({ id: id });
+  const server = await global.serverModel.findOne({ id: id });
   if (!server) return res.status(404).redirect("/404");
 
   if (!server.invite) {
-    return await res.send(
+    return res.send(
       "This server does not have an invite set, please contact the owner or set one with the /invite command in this guild."
     );
   }
 
-  return await res.redirect(server.invite);
+  return res.redirect(server.invite);
 });
 
-app.get("/servers/:id/edit", checkMaintenance, checkAuth, async (req, res) => {
-  const client = global.sclient;
-  const model = require("./models/server.js");
+app.get("/servers/:id/edit", checkAuth, async (req, res) => {
   const id = req.params.id;
 
-  const server = await model.findOne({ id: id });
+  const server = await global.serverModel.findOne({ id: id });
   if (!server) return res.redirect("/404");
 
   if (req.user.id !== server.owner) return res.redirect("/404");
 
-  const ServerRaw = (await client.guilds.fetch(id)) || null;
+  const ServerRaw = (await global.sclient.guilds.fetch(id)) || null;
 
   (server.name = ServerRaw.name),
     (server.icon = ServerRaw.iconURL()),
@@ -851,14 +921,10 @@ app.get("/servers/:id/edit", checkMaintenance, checkAuth, async (req, res) => {
 });
 
 app.post("/servers/:id/edit", checkAuth, async (req, res) => {
-  const sclient = global.sclient;
-  const model = require("./models/server.js");
   const id = req.params.id;
   const data = req.body;
-  const server = await model.findOne({ id: id });
+  const server = await global.serverModel.findOne({ id: id });
   if (!server) return res.redirect("/404");
-
-  const logServer = await model.findOne({ id: id });
 
   if (req.user.id !== server.owner) return res.redirect("/404");
 
@@ -869,19 +935,19 @@ app.post("/servers/:id/edit", checkAuth, async (req, res) => {
   server.published = true;
   await server.save();
 
-  const ServerRaw = (await sclient.guilds.fetch(server.id)) || null;
+  const ServerRaw = (await global.sclient.guilds.fetch(server.id)) || null;
 
   server.name = ServerRaw.name;
 
-  if (logServer.published === false) {
-    const logs = sclient.channels.cache.get(global.config.channels.weblogs);
+  if (server.published === false) {
+    const logs = global.sclient.channels.cache.get(global.config.channels.weblogs);
     const date = new Date();
     const publishEmbed = new EmbedBuilder()
       .setTitle("Server Published")
       .setDescription(
         "<:VD_add:1006511788155752558> " +
-          server.name +
-          " has been published to Vital Servers."
+        server.name +
+        " has been published to Vital Servers."
       )
       .setColor("Blue")
       .addFields({
@@ -908,7 +974,7 @@ app.post("/servers/:id/edit", checkAuth, async (req, res) => {
       `/servers/${req.params.id}?success=true&body=Your server was successfully published.`
     );
   } else {
-    const logs = sclient.channels.cache.get(global.config.channels.weblogs);
+    const logs = global.sclient.channels.cache.get(global.config.channels.weblogs);
     const date = new Date();
     const editEmbed = new EmbedBuilder()
       .setTitle("Server Edited")
@@ -943,9 +1009,7 @@ app.post("/servers/:id/edit", checkAuth, async (req, res) => {
 });
 
 app.post("/servers/:id/vote", checkAuth, async (req, res) => {
-  let model = require("./models/server.js");
-  let voteModel = require("./models/serverVote.js");
-  let server = await model.findOne({
+  let server = await global.serverModel.findOne({
     id: req.params.id,
   });
   if (!server)
@@ -953,7 +1017,7 @@ app.post("/servers/:id/vote", checkAuth, async (req, res) => {
       .status(404)
       .json({ message: "This server was not found on our site." });
 
-  let x = await voteModel.findOne({
+  let x = await global.serverVoteModel.findOne({
     user: req.user.id,
     server: req.params.id,
   });
@@ -964,14 +1028,14 @@ app.post("/servers/:id/vote", checkAuth, async (req, res) => {
       .json({ message: `You can vote again in ${timeObj}.` });
   }
 
-  await voteModel.create({
+  await global.serverVoteModel.create({
     server: req.params.id,
     user: req.user.id,
     date: Date.now(),
     time: 3600000,
   });
 
-  await model.findOneAndUpdate(
+  await global.serverModel.findOneAndUpdate(
     {
       id: req.params.id,
     },
@@ -994,8 +1058,8 @@ app.post("/servers/:id/vote", checkAuth, async (req, res) => {
     .setTitle("Server Voted")
     .setDescription(
       "<:vote:1028862219313762304> " +
-        server.name +
-        " has been voted on VitalServers."
+      server.name +
+      " has been voted on VitalServers."
     )
     .setColor("Purple")
     .addFields({
@@ -1025,21 +1089,19 @@ app.post("/servers/:id/vote", checkAuth, async (req, res) => {
 });
 
 app.get("/servers/:id/vote", checkAuth, async (req, res) => {
-  let model = require("./models/server.js");
-  let server = await model.findOne({
+  let server = await global.serverModel.findOne({
     id: req.params.id,
   });
   if (!server)
     return res
       .status(404)
       .json({ message: "This server was not found on our site." });
-  let umodel = require("./models/user.js");
-  let user = await umodel.findOne({
+  let user = await global.userModel.findOne({
     id: req.user.id,
   });
 
   if (!user) {
-    await umodel.create({ id: req.user.id });
+    await global.userModel.create({ id: req.user.id });
   }
 
   const ServerRaw = (await global.sclient.guilds.fetch(server.id)) || null;
@@ -1057,19 +1119,15 @@ app.get("/servers/:id/vote", checkAuth, async (req, res) => {
 app.get("/me", checkAuth, async (req, res) => {
   const user = req.user || null;
   //const response = await fetch(`https://japi.rest/discord/v1/user/${req.user.id}`)
-  let umodel = require("./models/user.js");
-  let userm = await umodel.findOne({
+  let userm = await global.userModel.findOne({
     id: req.user.id,
   });
   user.bio = userm?.bio || "No bio has been set";
-  let model = require("./models/bot.js");
-  let bots = await model.find({
+  let bots = await global.botModel.find({
     tested: true,
     owner: user.id,
   });
-
-  let smodel = require("./models/server.js");
-  let servers = await smodel.find({
+  let servers = await global.serverModel.find({
     published: true,
     owner: req.params.id,
   });
@@ -1083,53 +1141,43 @@ app.get("/me", checkAuth, async (req, res) => {
   }
 
   for (let i = 0; i < bots.length; i++) {
-    const BotRaw = await client.users.fetch(bots[i].id);
+    const BotRaw = await global.client.users.fetch(bots[i].id);
     bots[i].name = BotRaw.username;
     bots[i].avatar = BotRaw.avatar;
     bots[i].tags = bots[i].tags.join(", ");
   }
   res.render("user.ejs", {
     bot: req.bot,
-    fetched_user: user,
+    fetched_user: user || null,
     bots: bots,
     servers: servers,
     config: global.config,
-    fetched_user: user || null,
     user: user || null,
   });
 });
 
-app.get("/users/:id", checkAuth, async (req, res) => {
-  const guild = await client.guilds.fetch(global.config.guilds.main);
+app.get("/users/:id", async (req, res) => {
+  const guild = await global.client.guilds.fetch(global.config.guilds.main);
   let user = (await guild.members.fetch(req.params.id)) || null;
   user = user?.user;
   if (user.bot) return res.redirect("/");
-  if (!user) {
-    res.status(404).json({ message: "This user was not found on Discord." });
-  }
-
-  let umodel = require("./models/user.js");
-  let userm = await umodel.findOne({
+  if (!user) return res.status(404).json({ message: "This user was not found on Discord." });
+  let userm = await global.userModel.findOne({
     id: req.params.id,
   });
   user.bio = userm?.bio || "This user has no bio set.";
   user.website = userm?.website;
   user.github = userm?.github;
-
-  let bmodel = require("./models/bot.js");
-  let bots = await bmodel.find({
-    tested: true,
+  let bots = await global.botModel.find({
     owner: req.params.id,
   });
   for (let i = 0; i < bots.length; i++) {
-    const BotRaw = await client.users.fetch(bots[i].id);
+    const BotRaw = await global.client.users.fetch(bots[i].id);
     bots[i].name = BotRaw.username;
     bots[i].avatar = BotRaw.avatar;
     bots[i].tags = bots[i].tags.join(", ");
   }
-
-  let smodel = require("./models/server.js");
-  let servers = await smodel.find({
+  let servers = await global.serverModel.find({
     published: true,
     owner: req.params.id,
   });
@@ -1153,7 +1201,7 @@ app.get("/users/:id", checkAuth, async (req, res) => {
 });
 
 app.get("/users/:id/edit", checkAuth, async (req, res) => {
-  const guild = await client.guilds.fetch(global.config.guilds.main);
+  const guild = await global.client.guilds.fetch(global.config.guilds.main);
   let user = (await guild.members.fetch(req.params.id)) || null;
   user = user?.user;
   if (user.bot) return res.redirect("/");
@@ -1162,8 +1210,7 @@ app.get("/users/:id/edit", checkAuth, async (req, res) => {
   }
   if (req.user.id !== user.id) return res.redirect("/404");
 
-  let umodel = require("./models/user.js");
-  let userm = await umodel.findOne({
+  let userm = await global.userModel.findOne({
     id: req.params.id,
   });
   user.bio = userm?.bio || "This user has no bio set.";
@@ -1178,12 +1225,10 @@ app.get("/users/:id/edit", checkAuth, async (req, res) => {
   });
 });
 
-app.post("/users/:id/edit", checkMaintenance, checkAuth, async (req, res) => {
+app.post("/users/:id/edit", checkAuth, async (req, res) => {
   const client = global.client;
-  let model = require("./models/user.js");
-  const userm = await model.findOne({ id: req.params.id });
+  const userm = await global.userModel.findOne({ id: req.params.id });
   let data = req.body;
-  console.log(data);
 
   if (!data) {
     return res.redirect("/");
@@ -1191,7 +1236,7 @@ app.post("/users/:id/edit", checkMaintenance, checkAuth, async (req, res) => {
 
   if (req.user.id !== userm.id) return res.redirect("/404");
 
-  const user = await client.users.fetch(req.params.id);
+  const user = await client.users.fetch(req.params.id).catch(() => null);
   if (!user) {
     return res.status(400).json({
       message: "This is not a real person on Discord.",
@@ -1213,10 +1258,7 @@ app.post("/users/:id/edit", checkMaintenance, checkAuth, async (req, res) => {
 
 app.get("/queue", checkAuth, checkStaff, async (req, res) => {
   const client = global.client;
-  const config = global.config;
-
-  let model = require("./models/bot.js");
-  let bots = await model.find({
+  let bots = await global.botModel.find({
     tested: false,
   });
   for (let i = 0; i < bots.length; i++) {
@@ -1231,7 +1273,7 @@ app.get("/queue", checkAuth, checkStaff, async (req, res) => {
     bots[i].tags = bots[i].tags.join(", ");
   }
 
-  let inprogress = await model.find({
+  let inprogress = await global.botModel.find({
     inprogress: true,
   });
 
@@ -1245,15 +1287,6 @@ app.get("/queue", checkAuth, checkStaff, async (req, res) => {
     inprogress[i].tags = inprogress[i].tags.join(", ");
   }
 
-  Array.prototype.shuffle = function () {
-    let a = this;
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  };
-
   res.render("queue/index.ejs", {
     bot: req.bot,
     bots: bots.shuffle(),
@@ -1265,8 +1298,7 @@ app.get("/queue", checkAuth, checkStaff, async (req, res) => {
 
 app.get("/bots/:id/approve", checkAuth, checkStaff, async (req, res) => {
   const config = global.config;
-  let model = require("./models/bot.js");
-  let bot = await model.findOne({ id: req.params.id });
+  let bot = await global.botModel.findOne({ id: req.params.id });
   if (!bot)
     return res.status(404).json({
       message: "This application could not be found in our site.",
@@ -1281,9 +1313,7 @@ app.get("/bots/:id/approve", checkAuth, checkStaff, async (req, res) => {
 });
 
 app.get("/bots/:id/deny", checkAuth, checkStaff, async (req, res) => {
-  const config = global.config;
-  let model = require("./models/bot.js");
-  let bot = await model.findOne({ id: req.params.id });
+  let bot = await global.botModel.findOne({ id: req.params.id });
   if (!bot)
     return res.status(404).json({
       message: "This application could not be found in our site.",
@@ -1299,10 +1329,9 @@ app.get("/bots/:id/deny", checkAuth, checkStaff, async (req, res) => {
 
 app.post("/bots/:id/deny", checkAuth, checkStaff, async (req, res) => {
   const config = global.config;
-  const logs = client.channels.cache.get(config.channels.weblogs);
-  const BotRaw = await client.users.fetch(req.params.id);
-  let model = require("./models/bot.js");
-  let bot = await model.findOne({ id: req.params.id });
+  const logs = global.client.channels.cache.get(config.channels.weblogs);
+  const BotRaw = await global.client.users.fetch(req.params.id);
+  let bot = await global.botModel.findOne({ id: req.params.id });
 
   if (!bot)
     return res.status(404).json({
@@ -1321,7 +1350,7 @@ app.post("/bots/:id/deny", checkAuth, checkStaff, async (req, res) => {
       .json({ message: "This bot is already denied. on VitalList." });
   }
 
-  const OwnerRaw = await client.users.fetch(bot.owner) || null;
+  const OwnerRaw = await global.client.users.fetch(bot.owner) || null;
 
   bot.tag = BotRaw.tag;
   bot.denied = true;
@@ -1338,8 +1367,8 @@ app.post("/bots/:id/deny", checkAuth, checkStaff, async (req, res) => {
     .setTitle("Bot Denied")
     .setDescription(
       "<:redcross:1020135034075746404> " +
-        bot.tag +
-        " has been denied on Vital List."
+      bot.tag +
+      " has been denied on Vital List."
     )
     .setColor("Red")
     .addFields({
@@ -1369,11 +1398,11 @@ app.post("/bots/:id/deny", checkAuth, checkStaff, async (req, res) => {
     });
   logs.send({ content: `<@${bot.owner}>`, embeds: [denyEmbed] });
   const channelName = `${BotRaw.username}-${BotRaw.discriminator}`;
-  let guild = client.guilds.cache.get(global.config.guilds.testing);
+  let guild = global.client.guilds.cache.get(global.config.guilds.testing);
   const kickBot = guild.members.cache.get(bot.id);
   kickBot.kick({ reason: "Denied on VitalList." });
-  let channel = await guild.channels.cache.find(
-    (c) => c.name == channelName.toLowerCase()
+  let channel = guild.channels.cache.find(
+    (c) => c.name == channelName.toLowerCase().replace(" ", "-")
   );
   if (channel) channel.delete();
   return res.redirect(
@@ -1382,8 +1411,7 @@ app.post("/bots/:id/deny", checkAuth, checkStaff, async (req, res) => {
 });
 
 app.post("/bots/:id/testing", checkAuth, checkStaff, async (req, res) => {
-  let model = require("./models/bot.js");
-  let bot = await model.findOne({ id: req.params.id });
+  let bot = await global.botModel.findOne({ id: req.params.id });
   let client = global.client;
 
   if (!bot)
@@ -1397,7 +1425,7 @@ app.post("/bots/:id/testing", checkAuth, checkStaff, async (req, res) => {
   await bot.save();
 
   res.redirect(
-    `https://discordapp.com/oauth2/authorize?client_id=${bot.id}&scope=bot&permissions=0&guild_id=${global.config.guilds.testing}`
+    `https://discord.com/oauth2/authorize?client_id=${bot.id}&scope=bot&permissions=0&guild_id=${global.config.guilds.testing}`
   );
   let guild = client.guilds.cache.get(global.config.guilds.testing);
   let channel = await guild.channels.create({
@@ -1431,8 +1459,7 @@ app.use("/bots/:id/status", checkAuth, checkStaff, async (req, res) => {
   const client = global.client;
   const logs = client.channels.cache.get(config.channels.weblogs);
   const BotRaw = await client.users.fetch(req.params.id);
-  let model = require("./models/bot.js");
-  let bot = await model.findOne({ id: req.params.id });
+  let bot = await global.botModel.findOne({ id: req.params.id });
 
   if (!bot)
     return res.status(404).json({
@@ -1467,8 +1494,8 @@ app.use("/bots/:id/status", checkAuth, checkStaff, async (req, res) => {
       .setTitle("Bot Approved")
       .setDescription(
         "<:greentick:1020134758753255555> " +
-          bot.tag +
-          " has been approved on Vital List."
+        bot.tag +
+        " has been approved on Vital List."
       )
       .setColor("Green")
       .addFields({
@@ -1504,12 +1531,12 @@ app.use("/bots/:id/status", checkAuth, checkStaff, async (req, res) => {
     let guild = client.guilds.cache.get(global.config.guilds.testing);
     const kickBot = guild.members.cache.get(bot.id);
     kickBot.kick("Approved on VitalList.");
-    let channel = await guild.channels.cache.find(
+    let channel = guild.channels.cache.find(
       (c) => c.name == channelName.toLowerCase()
     );
     if (channel) channel.delete("This bot was approved on VitalList.");
     return res.redirect(
-      `/queue?success=true&body=The bot was successfully approved.`
+      `https://discord.com/oauth2/authorize?client_id=${bot.id}&scope=bot&permissions=0&guild_id=${global.config.guilds.main}`
     );
   }
 });
@@ -1519,6 +1546,14 @@ app.use("/bots/:id/status", checkAuth, checkStaff, async (req, res) => {
 app.get("/discord", (_req, res) =>
   res.redirect("https://discord.gg/HrWe2BwVbd")
 );
+
+app.get("/partners", async (req, res) => {
+  res.render("partners.ejs", { user: req.user || null });
+});
+
+app.get("/docs", async (req, res) => {
+  res.render("apidocs.ejs", { user: req.user });
+})
 
 app.get("/terms", async (req, res) => {
   res.render("legal/terms.ejs", { user: req.user });
@@ -1573,25 +1608,21 @@ function checkStaff(req, res, next) {
   return next();
 }
 
-function checkMaintenance(req, res, next) {
-  const config = global.config;
-  if (!req.user)
-    return res.render("errors/503.ejs", {
-      user: req.user || null,
-    });
-  if (!config.betatesters.includes(req.user.id)) {
-    return res.render("errors/503.ejs", {
-      user: req.user || null,
-    });
-  }
-  return next();
-}
-
-function checkKey(req, req, next) {
-  const key = req.body.key || null;
+/* function checkKey(req, res, next) {
+  const key = req.headers.authorization
   if (!key) return res.status(401).json({ json: "Please provides a API Key" });
-
-  let model = require("./models/user.js");
-  //apikey check and whatever
-  return next();
-}
+  let data = global.userModel
+    .findOne({
+      id: key,
+    })
+    .lean()
+    .then((rs) => {
+      if (!rs)
+        return res.status(404).json({
+          message: "Invalid API KEY",
+        });
+      if (rs) return next()
+    })
+  //redo
+  return;
+} */

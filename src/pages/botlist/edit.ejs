@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,9 +12,9 @@
 </head>
 <%- include("../parts/navbar.ejs") %>
 <div class="container">
-  <% console.log(bot) %>
   <h2 style="color:white;margin-top: 175px;"><b>Edit Bot</b></h2>
-  <p style="color:white;font-size: 20">Fill out the below form in order to edit your bot.</p><br><br>
+  <p style="color:white;font-size: 20">Fill out the form below in order to edit your bot.</p>
+  <hr class="my-4"><br><br>
   <div class="form">
     <form action="/bots/<%= bot.id %>/edit" method="POST">
       <div class="form-group required">
@@ -46,7 +46,7 @@
       </div>
       <div class="form-group required">
         <label for="botInvite">Invite URL</label>
-        <input type="url" class="form-control" value="<%= bot.invite %>" name="invite" aria-describedby="botInvitehelp" placeholder="https://discordapp.com/oauth2/authorize?client_id=<%= bot.id %>&scope=bot&permissions=8" autocomplete="off" required>
+        <input type="url" class="form-control" value="<%= bot.invite %>" name="invite" aria-describedby="botInvitehelp" placeholder="https://discord.com/oauth2/authorize?client_id=<%= bot.id %>&scope=bot&permissions=8" autocomplete="off" required>
         <small id="botInvitehelp" class="form-text text-muted">Can be generated at <a style="color: #094cdb" target="__blank" href="https://discordapi.com/permissions.html">Discord API Permissions</a></small>
       </div>
       <div class="form-group">
@@ -75,7 +75,7 @@
         <small class="form-text text-muted mt-0 mb-2">Max. 4 tags</small>
         <select name="tags" id="tags" value="<%= bot.tags %>" class="form-control" placeholder="Max. 4 tags" multiple size="4" required>
           <% tags.bots.map(tag => {%>
-          <% if(tags.bots.includes(tag)) {%>
+          <% if(bot.tags.includes(tag)) {%>
           <option value="<%= tag %>" selected><%= tag %></option>
           <% } else { %>
           <option value="<%= tag %>"><%= tag %></option>
@@ -87,14 +87,33 @@
       <p style="color: #555;">By clicking edit , you agree to our's TOS and <a style="color: #094cdb" href="https://discord.com/developers/docs/policies-and-agreements/terms-of-service">Discord Developer TOS</a></p>
       <button type="submit" class="bluebtn"><i class="fa-solid fa-paper-plane"></i>&nbsp&nbspEdit</button>
     </form>
-      <form class="deleteForm" method="POST" action="/bots/<%= bot.id %>/delete">
-        <input type="hidden" name="_method" value="delete" />
-        <button type="submit" style="border-radius: 5px;" class="btn btn-danger pr-3 pl-3 mr-1" onclick="return confirm('Are you sure you want to delete <%= bot.name %>?');"><i class="fa-solid fa-trash"></i>&nbsp&nbspDelete</a>
-      </form>
+    <form class="deleteForm" method="POST" action="/bots/<%= bot.id %>/delete">
+      <input type="hidden" name="_method" value="delete" />
+      <button type="submit" style="border-radius: 5px;" class="btn btn-danger pr-3 pl-3 mr-1" onclick="return confirm('Are you sure you want to delete <%= bot.name %>? - this cannot be undone!');"><i class="fa-solid fa-trash"></i>&nbsp&nbspDelete</a>
+    </form>
   </div>
   <br><br>
 </div>
-<br><br><br><br><br>
+<div class="container">
+  <h3><b>API Key</b></h3>
+<p>Below is your API Key to use in order to post your server count.</p>
+<hr class="my-4">
+
+<form id="apikeyform" action="/bots/<%= bot.id %>/apikey" method="POST">
+  <% if(bot.apikey){ %>
+     <div class="form-group">
+        <input  id="apitokeninput" value="<%= bot.apikey %>" class="form-control" id="apitoken" autocomplete="off" readonly>
+    </div>
+   <button type="submit" class="bluebtn"><i class="fa-solid fa-rotate-right"></i> Regenerate</button><br>
+  <% }else{ %>
+   <div class="form-group">
+        <input  id="apitokeninput" class="form-control" id="apitoken" autocomplete="off" readonly>
+    </div>
+    <button type="submit" class="bluebtn"><i class="fa-solid fa-rotate-right"></i> Generate</button><br>
+  <% } %>
+  <br><br>
+</form>
+</div>
 </div>
 
 <script>
@@ -114,10 +133,14 @@
       "ul", "a", "abbr", "b", "bdi", "bdo", "br", "cite", "code", "data", "dfn",
       "em", "i", "kbd", "mark", "q", "rb", "rp", "rt", "rtc", "ruby", "s", "samp",
       "small", "span", "strong", "sub", "sup", "time", "u", "var", "wbr", "caption",
-      "col", "colgroup", "table", "tbody", "td", "tfoot", "th", "thead", "tr"
+      "col", "colgroup", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "img"
+      
     ]);
     const sanitizedRender = sanitizeHtml(markdownRender, {
-      allowedTags
+      allowedTags,   
+      allowedAttributes: {'img': ['src']},
+     allowedSchemes: [ 'data', 'http', 'https'],
+     allowedIframeHostnames: ['www.youtube.com', 'player.vimeo.com']
     });
     longDescPreview.html(sanitizedRender);
   });

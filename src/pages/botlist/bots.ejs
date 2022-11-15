@@ -1,4 +1,3 @@
-<html lang="en">
 
 <head>
   <meta charset="UTF-8">
@@ -50,13 +49,16 @@
     <% for(let i = 0; i < voted.length; i++){ %>
     <div class="card" style="border-radius:10px;">
       <img src="https://cdn.discordapp.com/avatars/<%= voted[i].id %>/<%= voted[i].avatar %>.png" alt="<%= voted[i].name %>'s Avatar" draggable="false" class="botimg_main">
-      <p class="botname_main"><%= voted[i].name %><br>
+      <p class="botname_main"><%= voted[i].name %>
+        <% if (voted[i].id === "1004264023111507979") { %>
+          <span title="Official Bot"><i class="fa fa-circle-check"></i></span>
+          <%  } %> <br>
         <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-server"></i> <%= voted[i].servers %> • <i class="fa-solid fa-check-to-slot"></i> <%= voted[i].votes %></span>
       </p>
-      <div class="botdesc_main" style="height:auto;width:auto;overflow:auto;padding:10px;">
+      <div class="botdesc_main" style="height:75px;width:100%;flex:auto;padding:10px;">
         <i class="fa-solid fa-file-lines"></i> <%= voted[i].shortDesc %>
-        </div>
-      <div class="bottags_main" style="height:auto;width:auto;overflow:auto;padding:10px;">
+      </div>
+      <div class="bottags_main" style="height:75px;width:100%;flex:auto;padding:10px;">
         <i class="fa-solid fa-hashtag"></i> <%= voted[i].tags %>
       </div>
       <div style="margin-left:20px;margin-top:-40px">
@@ -73,9 +75,6 @@
 <br><br><br><br>
 <%- include("../parts/footer.ejs") %>
 <style>
-  body {
-    overflow: overlay;
-}
   @media screen and (max-width: 757px) {
     .bot-card-col {
       margin: 0 30px;

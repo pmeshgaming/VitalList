@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/sanitize-html/1.26.0/sanitize-html.min.js"></script>
   <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css'>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sanitize-html/1.26.0/sanitize-html.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.all.min.js"></script>
   <title><%- server.name %> - VitalList</title>
   <%- include("../parts/head.ejs") %>
@@ -41,8 +41,10 @@
           <% if (server.support) { %>
           <a href="https://discord.gg/<%= bot.support %>" type="button" style="border-radius: 5px;" class="btn btn-info pr-3 pl-3 mr-1"><i class="fa-brands fa-discord"></i> Support</a>
           <% } %>
+          <% if (user) { %>
           <% if (server.owner.includes(user.id)) { %>
           <a href="/servers/<%= server.id %>/edit" type="button" style="border-radius: 5px;" class="btn btn-warning pr-3 pl-3 mr-1"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
+          <% } %>
           <% } %>
         </div>
       </div>
@@ -91,8 +93,9 @@
     @media only screen and (min-width: 1080px) {
       .infoContainer {
         width: 300px;
-        margin-right: -175px;
-        margin-left: -175px;
+        margin-top: -75px;
+        margin-right: -250px;
+        margin-left: -250px;
       }
     }
 
@@ -115,9 +118,9 @@
         -webkit-backdrop-filter: blur(20px);
         width: 1000px;
         border-radius: 10px;
-        margin-top: -550px;
-        margin-right: 250px;
-        margin-left: 250px;
+        margin-top: -500px;
+        margin-right: 225px;
+        margin-left: 225px;
         border: 1px solid rgba(255, 255, 255, 0.18);
       }
     }
