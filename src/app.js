@@ -68,6 +68,7 @@ app.use((req, res, next) => {
 //-Alaways use protection!-//
 
 var minifyHTML = require("express-minify-html-terser");
+const { find } = require("./models/review.js");
 app.use(
   minifyHTML({
     override: true,
@@ -790,6 +791,8 @@ app.get("/api/bots/:id", async (req, res) => {
     github: rs.github,
     support: rs.support,
   }
+
+   return res.json(final_data)
   });
 });
 
