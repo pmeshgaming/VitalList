@@ -776,6 +776,8 @@ app.get("/api/bots/:id", async (req, res) => {
      ownerTag: OwnerRaw.tag,
      tags: rs.tags,
      views: rs.views,
+     submittedOn: rs.submittedOn,
+     approvedOn: rs.approveOn,
      shortDescription: rs.shortDesc,
      description: rs.desc,
 
