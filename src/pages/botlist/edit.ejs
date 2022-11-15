@@ -97,7 +97,22 @@
 <div class="container">
   <h3><b>API Key</b></h3>
 <p>Below is your API Key to use in order to post your server count.</p>
-<hr class="my-4"><br><br>
+<hr class="my-4">
+
+<form id="apikeyform" action="/bots/<%= bot.id %>/apikey" method="POST">
+  <% if(bot.apikey){ %>
+     <div class="form-group">
+        <input  id="apitokeninput" value="<%= bot.apikey %>" class="form-control" id="apitoken" autocomplete="off" readonly>
+    </div>
+   <button type="submit" class="bluebtn"><i class="fa-solid fa-rotate-right"></i> Regenerate</button><br>
+  <% }else{ %>
+   <div class="form-group">
+        <input  id="apitokeninput" class="form-control" id="apitoken" autocomplete="off" readonly>
+    </div>
+    <button type="submit" class="bluebtn"><i class="fa-solid fa-rotate-right"></i> Generate</button><br>
+  <% } %>
+  <br><br>
+</form>
 </div>
 </div>
 

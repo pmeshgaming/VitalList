@@ -169,6 +169,7 @@ app.get(
       );
     } catch {}
     Need to add a popup of consent before */
+
     res.redirect(req.session.returnTo || "/"); 
   } 
 );
@@ -453,9 +454,31 @@ app.post("/bots/:id/edit", checkAuth, async (req, res) => {
   );
 });
 
-app.get("/bots/:id/apikey", checkAuth, async (req, res) => {
-  let model = global.botModel
+app.post("/bots/:id/apikey", checkAuth, async (req, res) => {
+  let id = req.params.id;
+  let model = global.botModel;
+  let bot = await model.findOne({ bot: id });
+  if (!bot) return res.redirect("/");
+  if (req.user.id !== bot.owner) return res.redirect("/");
+
+  let data = req.body;
+  function genApiKey(options = {}) {
+    let length = options.length || 5;
+    let string =
+      "abcdefghijklmnopqrstuwvxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+    let code = "";
+    for (let i = 0; i < length; i++) {
+      let random = Math.floor(Math.random() * string.length);
+      code += string.charAt(random);
+    }
+    return code;
+  }
+  bot.apikey = genApiKey({ length: 20 });
+  await bot.save().then(() => {
+    res.status(201).json({ apikey: bot.apikey, code: "OK" });
+  });
 })
+
 app.post("/bots/:id/vote", checkAuth, async (req, res) => {
   let model = global.botModel
   let voteModel = require("./models/vote.js");
@@ -790,18 +813,26 @@ app.get("/api/bots/:id", async (req, res) => {
       id: req.params.id,
     })
     .lean()
-    .then((rs) => {
+    .then(async (rs) => {
       if (!rs)
         return res.status(404).json({
           message: "This bot is not in our database.",
         });
       if (!rs.approved)
         return res.status(404).json({
-          message: "This bot is not approved.",
+          message: "This bot is not approved yet.",
         });
+
+        const BotRaw = await client.users.fetch(rs.id) || null;
+        const OwnerRaw = await client.users.fetch(rs.owner)|| null;
+
       final_data = {
+        username: BotRaw.username,
+        discriminator: BotRaw.discriminator,
+        avatar: `https://cdn.discordapp.com/avatars/${rs.id}/${BotRaw.avatar}.png`,
         prefix: rs.prefix,
         owner: rs.owner,
+        ownerTag: OwnerRaw.tag,
         invite: rs.invite,
         servers: rs.servers,
         shards: rs.shards,
@@ -823,15 +854,19 @@ app.get("/api/bots/:id", async (req, res) => {
   res.json(data);
 });
 
-app.post("/api/bots/:id/", checkKey, async (req, res) => {
+app.post("/api/bots/:id/", async (req, res) => {
   const client = global.client;
   let model = global.botModel
+
+  const key = req.headers.authorization;
+  if (!key) return res.status(401).json({ json: "Please provides a API Key." });
+
   let bot = await model.findOne({
-    id: req.params.id,
+    apikey: key,
   });
   if (!bot)
     return res.status(404).json({
-      message: "This bot is not on our list.",
+      message: "This bot is not on our list, or you entered an invaild API Key.",
     });
 
   if (!req.header("server_count"))
@@ -842,6 +877,7 @@ app.post("/api/bots/:id/", checkKey, async (req, res) => {
     return res.status(400).json({
       message: "Please provide a shard count.",
     });
+
   bot.servers = req.header("server_count");
   bot.servers = bot.servers.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   bot.shards = req.header("shard_count");
@@ -1697,7 +1733,7 @@ function checkStaff(req, res, next) {
   return next();
 }
 
-function checkKey(req, res, next) {
+/* function checkKey(req, res, next) {
   const key = req.headers.authorization
   if (!key) return res.status(401).json({ json: "Please provides a API Key" });
 
@@ -1716,4 +1752,4 @@ function checkKey(req, res, next) {
     })
   //redo
   return;
-}
+} */
