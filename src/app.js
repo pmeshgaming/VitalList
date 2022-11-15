@@ -798,37 +798,21 @@ app.get("/api/bots/:id", async (req, res) => {
 });
 
 app.post("/api/bots/:id/", async (req, res) => {
-  const client = global.client;
-  let model = global.botModel
-
   const key = req.headers.authorization;
   if (!key) return res.status(401).json({ json: "Please provides a API Key." });
 
-  let bot = await model.findOne({
-    apikey: key,
-  });
-  if (!bot)
-    return res.status(404).json({
-      message: "This bot is not on our list, or you entered an invaild API Key.",
-    });
+  let bot = await global.botModel.findOne({ apikey: key });
+  if (!bot) return res.status(404).json({ message: "This bot is not on our list, or you entered an invaild API Key." });
+  const servers = req.body.server_count || req.header("server_count");
+  const shards = req.body.shard_count || req.header("shard_count");
 
-  if (!req.header("server_count"))
-    return res.status(400).json({
-      message: "Please provide a server count.",
-    });
-  if (!req.header("shard_count"))
-    return res.status(400).json({
-      message: "Please provide a shard count.",
-    });
+  if (!servers) return res.status(400).json({ message: "Please provide a server count." });
+  if (!shards) return res.status(400).json({ message: "Please provide a shard count." });
 
-  bot.servers = req.header("server_count");
-  bot.servers = bot.servers.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  bot.shards = req.header("shard_count");
-  bot.shards = bot.shards.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  bot.save();
-  res.json({
-    message: "Successfully updated.",
-  });
+  bot.servers = servers.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  bot.shards = shards.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  await bot.save().catch(() => null);
+  return res.json({ message: "Successfully updated." });
 });
 
 //-ServerList-//
