@@ -613,7 +613,7 @@ app.post("/bots/:id/review", checkAuth, async (req, res) => {
 app.get("/bots/:id", async (req, res) => {
   let id = req.params.id;
   const client = global.client;
-  const reviewsModel = require("./models/review.js")
+  const reviewsModel = global.reviewModel;
   const bot = await global.botModel.findOne({ id: id });
   if (!bot)
     return res
