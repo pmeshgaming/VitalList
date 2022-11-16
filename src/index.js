@@ -57,7 +57,8 @@ global.botModel = require("./models/bot.js");
 
 //Updater
 cron.schedule("*/30 * * * *", () => {
-  global.voteModel = require("./models/serverVote.js");
+  global.voteModel = require("./models/vote.js");
+  global.serverVoteModel = require("./models/serverVote.js");
   global.serverModel = require("./models/server.js");
   global.userModel = require("./models/user.js");
   global.botModel = require("./models/bot.js");
