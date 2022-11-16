@@ -68,7 +68,6 @@ app.use((req, res, next) => {
 //-Alaways use protection!-//
 
 var minifyHTML = require("express-minify-html-terser");
-const { find } = require("./models/review.js");
 app.use(
   minifyHTML({
     override: true,
@@ -579,7 +578,7 @@ app.get("/bots/:id/review", checkAuth, async (req, res) => {
 
 app.post("/bots/:id/review", checkAuth, async (req, res) => {
   let id = req.params.id;
-  const reviewModel = require("./models/review.js")
+  const reviewModel = global.reviewModel;
   const bot = await global.botModel.findOne({ id: id });
   const data = req.body;
 
