@@ -1,12 +1,9 @@
-const config = global.config;
 module.exports = {
   async run(client, message) {
-    let prefix = config.servers.prefix;
+    let prefix = global.config.servers.prefix;
     if (message.author.bot) return;
-    if (!message.content.startsWith(prefix)) return;
-
-    if (message.content.startsWith(prefix + "ping")) {
-      message.reply(`:ping_pong: Ping: \`${client.ws.ping}ms\``);
-    }
+    const content = message.content.toLowerCase();
+    if (!content.startsWith(prefix)) return;
+    if (content.startsWith(`${prefix}ping`)) return message.reply(`:ping_pong: Ping: \`${client.ws.ping}ms\``);
   },
 };

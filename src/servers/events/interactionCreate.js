@@ -1,4 +1,3 @@
-const model = require("../../models/server.js");
 module.exports = {
   name: "guildCreate",
   async run(sclient, interaction) {

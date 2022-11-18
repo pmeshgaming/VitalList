@@ -1,6 +1,4 @@
 const { ActivityType } = require("discord.js");
-const fetch = (...args) =>
-  import("node-fetch").then(({ default: fetch }) => fetch(...args));
 const votes = require("../../models/serverVote");
 
 module.exports = {
@@ -8,7 +6,7 @@ module.exports = {
   async run(message, args) {
     const sclient = global.sclient;
 
-    global.logger.system(sclient.user.tag + ` is online and ready.`);
+    global.logger.system(`${sclient.user.tag} is online and ready.`);
     sclient.user.setActivity("vitallist.xyz/servers", {
       type: ActivityType.Watching,
     });
@@ -24,15 +22,12 @@ module.exports = {
       }
     }, 300000);
 
-    await fetch('https://vitallist.xyz/api/bots/1004264023111507979', {
-      method: 'POST',
-      headers: {
-          'authorization': global.config.servers.apikey,
-          'server_count': sclient.guilds.cache.size,
-          'shard_count': '1',
-        'Content-Type': 'application/json'
-      },
-    })
+    const find = await global.botModel.findOne({ id: "1004264023111507979" });
+    if (find) {
+      find.servers = `${sclient.guilds.cache.size}`,
+      find.shards = `1`;
+      await find.save().catch(() => null);
+    }
   },
 };
  
