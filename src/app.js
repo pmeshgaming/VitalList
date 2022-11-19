@@ -68,7 +68,6 @@ app.use((req, res, next) => {
 //-Alaways use protection!-//
 
 var minifyHTML = require("express-minify-html-terser");
-const { find } = require("./models/review.js");
 app.use(
   minifyHTML({
     override: true,
@@ -452,7 +451,7 @@ app.post("/bots/:id/vote", checkAuth, async (req, res) => {
       .status(404)
       .json({ message: "This bot was not found on our site." });
 
-  let x = await global.voteMode.findOne({
+  let x = await global.voteModel.findOne({
     user: req.user.id,
     bot: req.params.id,
   });
@@ -463,7 +462,7 @@ app.post("/bots/:id/vote", checkAuth, async (req, res) => {
       .redirect(`/bots/${req.params.id}/vote?error=true&body=Please wait ${timeObj} before you can vote again.`)
   }
 
-  await global.voteMode.create({
+  await global.voteModel.create({
     bot: req.params.id,
     user: req.user.id,
     date: Date.now(),
@@ -579,7 +578,7 @@ app.get("/bots/:id/review", checkAuth, async (req, res) => {
 
 app.post("/bots/:id/review", checkAuth, async (req, res) => {
   let id = req.params.id;
-  const reviewModel = require("./models/review.js")
+  const reviewModel = global.reviewModel;
   const bot = await global.botModel.findOne({ id: id });
   const data = req.body;
 
@@ -614,7 +613,7 @@ app.post("/bots/:id/review", checkAuth, async (req, res) => {
 app.get("/bots/:id", async (req, res) => {
   let id = req.params.id;
   const client = global.client;
-  const reviewsModel = require("./models/review.js")
+  const reviewsModel = global.reviewModel;
   const bot = await global.botModel.findOne({ id: id });
   if (!bot)
     return res

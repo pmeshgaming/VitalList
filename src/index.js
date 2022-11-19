@@ -54,13 +54,16 @@ global.serverVoteModel = require("./models/serverVote.js");
 global.serverModel = require("./models/server.js");
 global.userModel = require("./models/user.js");
 global.botModel = require("./models/bot.js");
+global.reviewModel = require("./models/review.js")
 
 //Updater
 cron.schedule("*/30 * * * *", () => {
-  global.voteModel = require("./models/serverVote.js");
+  global.voteModel = require("./models/vote.js");
+  global.serverVoteModel = require("./models/serverVote.js");
   global.serverModel = require("./models/server.js");
   global.userModel = require("./models/user.js");
   global.botModel = require("./models/bot.js");
+  global.reviewModel = require("./models/review.js")
 });
 
 

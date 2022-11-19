@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta property="og:author" content="VitalList.xyz">
   <meta property="og:title" content="<%= bot.name %>#<%= bot.discriminator %>">
+  <meta name="keywords" content="VitalList,botlist,discord,<%= bot.name %>,discordbots,discordservers">
   <meta property="og:url" content="https://vitallist.xyz">
   <meta property="og:description" content="<%= bot.shortDesc %>">
   <meta property="og:image" content="https://cdn.discordapp.com/avatars/<%= bot.id %>/<%= bot.avatar %>.png">
@@ -266,12 +267,12 @@
         "ul", "a", "abbr", "b", "bdi", "bdo", "br", "cite", "code", "data", "dfn",
         "em", "i", "kbd", "mark", "q", "rb", "rp", "rt", "rtc", "ruby", "s", "samp",
         "small", "span", "strong", "sub", "sup", "time", "u", "var", "wbr", "caption",
-        "col", "colgroup", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "img", "iframe"],
+        "col", "colgroup", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "img", "iframe", "style"],
      allowedSchemes: [ 'data', 'http', 'https'],
      allowedAttributes: {
      a: [ 'href', 'name', 'target' ],
      img: [ 'src', 'srcset', 'alt', 'title', 'width', 'height', 'loading' ],
-     iframe: ['src']
+     iframe: ['src', 'width', 'height', 'id']
 },
       });
       descriptionBox.html(sanitizedRender);
