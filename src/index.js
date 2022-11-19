@@ -73,7 +73,7 @@ cron.schedule("* * */ 10 * *", async () => {
   for (const bot of dbots) {
     const tendaysago = new Date().getTime() - 10 * 24 * 60 * 60 * 1000;
     if (bot.deniedOn < tendaysago) {
-      bot.save().catch(() => null);
+      bot.remove().catch(() => null);
     }
   }
   
