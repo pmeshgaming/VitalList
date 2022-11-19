@@ -6,7 +6,6 @@ const {
   ButtonStyle,
   PermissionsBitField,
 } = require("discord.js");
-const model = require("../../models/server.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -19,55 +18,34 @@ module.exports = {
         .setRequired(true)
     ),
   async execute(interaction) {
+    const footer = { text: `VitalServers - Invite Command`, iconURL: global.client.user.displayAvatarURL() };
+    await interaction.deferReply({ ephemeral: true }).catch(() => null);
     const errorEmbed = new EmbedBuilder()
       .setTitle("Missing Permissions")
-      .setDescription(
-        "The command you are trying to run can only be run by administrators."
-      )
-      .setFooter({
-        text: `VitalServers - Invite Command`,
-        iconURL: `${global.client.user.displayAvatarURL()}`,
-      });
+      .setDescription("The command you are trying to run can only be run by administrators.")
+      .setFooter(footer);
+    if (!interaction.member.permissions.has(PermissionsBitField.Flags.Administrator)) return interaction.editReply({ embeds: [errorEmbed] }).catch(() => null);
 
-    const member = interaction.guild.members.cache.get(interaction.user.id);
-
-    if (!member.permissions.has(PermissionsBitField.Flags.Administrator))
-      return interaction.reply({ embeds: [errorEmbed], ephemeral: true });
-
-    const server = await model.findOne({ id: interaction.guild.id });
-    if (!server)
-      return interaction.reply("This server is not on VitalServers.");
-
-    const guild = interaction.guild;
+    const server = await global.serverModel.findOne({ id: interaction.guild.id });
+    if (!server) return interaction.editReply("This server is not on VitalServers.").catch(() => null);
     const channel = interaction.options.getChannel("channel");
+    const invitecode = await interaction.guild.invites.create(channel.id, { maxAge: 0 }).catch(e => e);
+    if (invitecode instanceof Error) return interaction.reply(`There was an error while trying to make that invite.\n\`\`\`js\n${invitecode}\`\`\``);
+    server.invite = invitecode.url;
+    await server.save().catch(() => null);
+    const embed = new EmbedBuilder()
+      .setTitle("Successfully Created Invite")
+      .setDescription(`The invite link on this server has been made in ${channel.toString()}.`)
+      .setFooter(footer);
 
-    try {
-      const invitecode = await guild.invites.create(channel.id, { maxAge: 0 });
-      server.invite = invitecode.url;
-      await server.save();
-      const embed = new EmbedBuilder()
-        .setTitle("Successfully Created Invite")
-        .setDescription(
-          "The invite link on this server has been made in <#" +
-            channel.id +
-            ">."
-        )
-        .setFooter({
-          text: `VitalServers - Invite Command`,
-          iconURL: `${global.sclient.user.displayAvatarURL()}`,
-        });
-      const row = new ActionRowBuilder().addComponents(
+    const row = new ActionRowBuilder()
+      .addComponents(
         new ButtonBuilder()
           .setURL(`https://vitallist.xyz/servers/${interaction.guild.id}/edit`)
           .setLabel("Edit Server")
           .setStyle(ButtonStyle.Link)
       );
 
-      interaction.reply({ embeds: [embed], components: [row] });
-    } catch (err) {
-      interaction.reply({
-        content: `There was an error while trying to make that invite.\n${err}`,
-      });
-    }
+    return interaction.editReply({ embeds: [embed], components: [row] }).catch(() => null);
   },
 };

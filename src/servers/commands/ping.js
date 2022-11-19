@@ -5,6 +5,6 @@ module.exports = {
     .setName("ping")
     .setDescription("Check if the bot is alive and runng."),
   async execute(interaction) {
-    await interaction.reply(`:ping_pong: Ping: \`${sclient.ws.ping}ms\``);
+    return interaction.reply(`:ping_pong: Ping: \`${sclient.ws.ping}ms\``).catch(() => null);
   },
 };

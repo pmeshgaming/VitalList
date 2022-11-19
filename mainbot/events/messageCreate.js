@@ -1,13 +1,10 @@
 module.exports = {
   async run(client, message) {
-    const config = global.config;
-    const prefix = config.bot.prefix;
-    if (!message.content.startsWith(prefix)) return;
-    if (message.author.bot) return;
-    if (message.channel.type === "dm") return;
-    if (message.guild.id != "1006065494257848433") return;
+    if (!message.author.bot || !message.guild) return;
+    if (!message.content.toLowerCase().startsWith(global.config.bot.prefix)) return;
+    if (message.guild.id !== global.config.guilds.main) return;
     let args = message.content.split(" ");
-    let command = args.shift().slice(prefix.length).toLowerCase();
+    let command = args.shift().slice(global.config.bot.prefix.length).toLowerCase();
     let cmd = client.commands.get(command);
     if (!cmd) return;
     try {
