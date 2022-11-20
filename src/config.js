@@ -48,7 +48,7 @@ module.exports = {
     },
     tags: {
       servers: ['Community', 'Development', 'BotList', "ServerList", 'Soical', 'Gaming', 'Fun', 'Emotes', 'Streaming', 'Anime', 'Memes'],
-      bots: ['Moderation', 'Fun', 'Economy', 'Leveling', 'Utilities', 'Logging', 'Music', 'Anime', 'Memes',]
+      bots: ['Moderation', 'Fun', 'Economy', 'Leveling', 'Utilities', 'Logging', 'Music', 'Anime', 'Memes', 'Game']
     }
      
 } 
