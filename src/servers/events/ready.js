@@ -1,4 +1,8 @@
 const { ActivityType } = require("discord.js");
+const vitallist = require("vitallist.js")
+const fetch = (...args) =>
+  import("node-fetch").then(({ default: fetch }) => fetch(...args));
+const votes = require("../../models/serverVote");
 
 module.exports = {
   name: "ready",

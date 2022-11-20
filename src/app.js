@@ -823,6 +823,10 @@ app.get("/servers", async (req, res) => {
     const ServerRaw = await global.sclient.guilds.fetch(servers[i].id);
     servers[i].name = ServerRaw.name;
     servers[i].icon = ServerRaw.iconURL({ dynamic: true });
+    servers[i].name = servers[i].name.replace(
+      /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
+      ""
+    );
     servers[i].memberCount = ServerRaw.memberCount
       .toLocaleString()
       .replace(",", ",");
@@ -1157,9 +1161,8 @@ app.get("/me", checkAuth, async (req, res) => {
 });
 
 app.get("/users/:id", async (req, res) => {
-  const guild = await global.client.guilds.fetch(global.config.guilds.main);
-  let user = (await guild.members.fetch(req.params.id)) || null;
-  user = user?.user;
+  let client = global.client;
+  let user = (await client.users.fetch(req.params.id)) || null;
   if (user.bot) return res.redirect("/");
   if (!user) return res.status(404).json({ message: "This user was not found on Discord." });
   let userm = await global.userModel.findOne({
