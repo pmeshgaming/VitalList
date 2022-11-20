@@ -1170,6 +1170,7 @@ app.get("/users/:id", async (req, res) => {
   });
   user.bio = userm?.bio || "This user has no bio set.";
   user.website = userm?.website;
+  user.twitter = userm?.twitter;
   user.github = userm?.github;
   let bots = await global.botModel.find({
     owner: req.params.id,

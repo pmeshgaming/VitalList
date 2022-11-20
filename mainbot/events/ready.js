@@ -1,3 +1,5 @@
+const { EmbedBuilder } = require("discord.js")
+
 module.exports = {
   name: "ready",
   async run(client) {
@@ -8,7 +10,7 @@ module.exports = {
     const lb_message = await client.channels.cache.get(global.config.channels.leaderboardC).messages.fetch(global.config.channels.leaderboardM);
 
     setInterval(async () => {
-        const model = require("../../src/models/user.js");
+        const model = global.userModel;
         const users = await model.find({}).sort({ xp: -1}).limit(10)
         const filtered = users.filter(user => user.xp > 0);
         const sorted = filtered.sort((a, b) => b.level - a.level || b.xp - a.xp);
@@ -18,11 +20,11 @@ module.exports = {
         .setTitle(`Top 10 Leaderboard`)
         .setDescription(`${list}`)
         .setColor('Random')
-        .setThumbnail(lb_message.guild.iconURL())
+        .setThumbnail("https://vitallist.xyz/img/icon.webp")
         .setTimestamp()
         .setFooter({ text: lb_message.guild.name+" - Live Leaderboard | Updated", iconURL: "https://vitallist.xyz/img/icon.webp"})
         await lb_message.edit({embeds: [embed]});
-    }, 1200000);
+      }, 300000);
 
     setInterval(async () => {
       let voteModels = await global.voteModel.find();
@@ -31,6 +33,16 @@ module.exports = {
         let time = vote.time - (Date.now() - vote.date);
         if (time > 0) continue;
         global.voteModel.findOneAndDelete({ bot: vote.bot, user: vote.user });
+      }
+    }, 300000);
+
+    setInterval(async () => {
+      let userModel = await global.userModel.find();
+      if (!userModel.length) return;
+      for (const user of userModel) {
+        const userRaw = await client.users.fetch(user.id)
+        user.username = userRaw.tag;
+        await user.save();
       }
     }, 300000);
   },
