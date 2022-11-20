@@ -744,7 +744,7 @@ app.get("/servers/tags/:tag", async (req, res) => {
 
 app.get("/api/bots/:id", async (req, res) => {
   const reviewModel = require("./models/review.js")
-  let reviews = await reviewModel.findOne({ botid: req.params.id })
+  let reviews = await reviewModel.find({ botid: req.params.id })
   let model = global.botModel;
   let data = await model
     .findOne({
