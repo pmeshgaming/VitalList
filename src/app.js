@@ -133,7 +133,7 @@ app.get(
     scope: scopes,
     prompt: prompt,
   }),
-  (req) => {
+  (req, res) => {
     if (req.query.from) req.session.returnTo = req.query.from;
   }
 );
