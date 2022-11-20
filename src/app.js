@@ -746,6 +746,11 @@ app.get("/servers/tags/:tag", async (req, res) => {
 app.get("/api/bots/:id", async (req, res) => {
   const reviewModel = require("./models/review.js")
   let reviews = await reviewModel.find({ botid: req.params.id })
+  reviews = reviews.map(set => {
+    delete set._id
+    delete set.__v
+    return set
+})
   let model = global.botModel;
   let data = await model
     .findOne({
@@ -782,8 +787,8 @@ app.get("/api/bots/:id", async (req, res) => {
      reviews,
      
     // Counts
-    shards: rs.shards,
-    servers: rs.servers,
+    shards: +rs.shards,
+    servers: +rs.servers,
     votes: rs.votes,
     views: rs.views,
 
