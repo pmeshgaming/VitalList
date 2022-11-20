@@ -47,6 +47,10 @@ VitalList is in a continuous state of development. New features/updates may come
   * Most of the variables are Discord IDs.
   * The MongoDB URL can be either a local server or a remote one. Atlas provides a free tier with 500mb.
   * The minimum and maximum lengths for bot / server description and summary are in characters.
+  
+ ## Credits
+
+`README.md` file stolen by Ishaantek#0001.
 
 ## License
 
