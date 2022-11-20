@@ -6,6 +6,7 @@ const {
   ButtonStyle,
 } = require("discord.js");
 const ms = require("ms");
+const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
 const mongoose = require("mongoose");
 const config = global.config;
 global.logger = logger;
