@@ -743,8 +743,9 @@ app.get("/servers/tags/:tag", async (req, res) => {
 //-API-//
 
 app.get("/api/bots/:id", async (req, res) => {
-
-  let model = global.botModel
+  const reviewModel = require("./models/review.js")
+  let reviews = await reviewModel.findOne({ botid: req.params.id })
+  let model = global.botModel;
   let data = await model
     .findOne({
       id: req.params.id,
@@ -777,7 +778,7 @@ app.get("/api/bots/:id", async (req, res) => {
      approvedOn: rs.approvedOn,
      shortDescription: rs.shortDesc,
      description: rs.desc,
-
+     reviews,
     // Counts
     shards: rs.shards,
     servers: rs.servers,
