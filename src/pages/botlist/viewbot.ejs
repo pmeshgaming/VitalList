@@ -20,7 +20,7 @@
 <body>
   <%- include("../parts/navbar.ejs", { bot, user }) %>
 
-  <div class="botpagecontainer">
+  <div class="container">
     <div style="background-color: transparent" class="jumbotron mt-5">
       <div class="row" style="width: 100%;">
           <img class="idk" src="https://cdn.discordapp.com/avatars/<%= bot.id %>/<%= bot.avatar %>.png">
@@ -48,6 +48,9 @@
           <% if (bot.website) { %>
           <a href="<%= bot.website %>" type="button" style="border-radius: 5px;" class="btn btn-info pr-3 pl-3 mr-1"><i class="fa-solid fa-globe"></i> Website</a>
           <% } %>
+          <% if (bot.donate) { %>
+            <a href="<%= bot.donate %>" type="button" style="border-radius: 5px;" class="btn btn-info pr-3 pl-3 mr-1"><i class="fa-solid fa-dollar-sign"></i> donate</a>
+            <% } %>
           <% if (bot.support) { %>
           <a href="https://discord.gg/<%= bot.support %>" type="button" style="border-radius: 5px;" class="btn btn-info pr-3 pl-3 mr-1"><i class="fa-brands fa-discord"></i> Support</a>
           <% } %>
@@ -89,7 +92,7 @@
   </div>
   </div>
   <br><br>
-  <div class="botpagecontainer">
+  <div class="container">
     <div class="desccard" style="margin-left:0px">
       <div class="card-body">
         <div id="bot-description"><%= bot.desc %></div>
@@ -98,7 +101,7 @@
   </div>
 </div>
 </div>
-<div class="botpagecontainer">
+<div class="container">
 <br><br><br><br><br><br><br><br><hr><br>
   <h2><i class="fa-solid fa-award"></i> Ratings & Reviews</h2>
   <p>These are all of the reviews avaible for this bot.</p>
@@ -253,12 +256,25 @@
     margin-left: 10px;
 
   }
+  @media only screen and (max-width: 600px) {
+    .botpagecontainer {
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+  }
+
+@media only screen and (max-width: 1080px) {
   .botpagecontainer {
   width: 100%;
   padding-right: 150px;
   padding-left: 150px;
   margin-right: auto;
   margin-left: auto;
+  }
 }
   </style>
   <script>

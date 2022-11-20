@@ -23,6 +23,10 @@ let app = mongoose.Schema({
     type: String,
     required: false,
   },
+  donate: {
+    type: String,
+    required: false,
+  },
   owner: {
     type: String,
     required: false,
