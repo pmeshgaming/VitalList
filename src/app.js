@@ -822,6 +822,10 @@ app.get("/servers", async (req, res) => {
     const ServerRaw = await global.sclient.guilds.fetch(servers[i].id);
     servers[i].name = ServerRaw.name;
     servers[i].icon = ServerRaw.iconURL({ dynamic: true });
+    servers[i].name = servers[i].name.replace(
+      /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
+      ""
+    );
     servers[i].memberCount = ServerRaw.memberCount
       .toLocaleString()
       .replace(",", ",");

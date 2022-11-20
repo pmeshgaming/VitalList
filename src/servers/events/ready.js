@@ -1,4 +1,5 @@
 const { ActivityType } = require("discord.js");
+const vitallist = require("vitallist.js")
 const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));
 const votes = require("../../models/serverVote");
@@ -12,6 +13,10 @@ module.exports = {
     sclient.user.setActivity("vitallist.xyz/servers", {
       type: ActivityType.Watching,
     });
+    
+    setInterval(async () => {
+      vitallist.postStats(sclient, global.config.servers.apikey)
+    }, 500000)
 
     setInterval(async () => {
       let voteModels = await votes.find();
@@ -23,16 +28,6 @@ module.exports = {
         });
       }
     }, 300000);
-
-    await fetch('https://vitallist.xyz/api/bots/1004264023111507979', {
-      method: 'POST',
-      headers: {
-          'authorization': global.config.servers.apikey,
-          'server_count': sclient.guilds.cache.size,
-          'shard_count': '1',
-        'Content-Type': 'application/json'
-      },
-    })
   },
 };
  
