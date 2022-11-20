@@ -42,7 +42,8 @@ module.exports = {
       weblogs: '1006247458906591372',
       levelup: '1007055641199779910',
       modlogs: '1006247811613982791',
-      leaderboard: '1008533581238374430',
+      leaderboardC: '1043696296533446656',
+      leaderboardM: '1043698229100953710',
       testingcategory: "1006664887084273685"
     },
     tags: {
