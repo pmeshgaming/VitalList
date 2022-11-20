@@ -1,6 +1,6 @@
 //-Config Varibles-//
 const config = require("./config.js");
-var cron = require("node-cron");
+const cron = require("node-cron");
 global.config = config;
 const {
   Client,
@@ -69,11 +69,11 @@ cron.schedule("*/30 * * * *", () => {
 
 cron.schedule("* * */ 10 * *", async () => {
   let dbots = await global.botModel.find({ denied: true });
-  for (const {} of dbots) {
+  if (!dbots.length) return;
+  for (const bot of dbots) {
     const tendaysago = new Date().getTime() - 10 * 24 * 60 * 60 * 1000;
-    if (dbots.deniedOn < tendaysago) {
-      dbots.deleteOne();
-      dbots.save();
+    if (bot.deniedOn < tendaysago) {
+      bot.remove().catch(() => null);
     }
   }
   

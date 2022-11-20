@@ -1,20 +1,15 @@
 const client = global.client;
-const config = global.config;
-const fs = require("fs");
-const { join } = require("path");
+const { readdirSync } = require("node:fs");
+const { join } = require("node:path");
+const getFiles = (path) => readdirSync(join(__dirname, path)).filter((file) => file.endsWith(".js"));
 
-const cfiles = fs
-  .readdirSync(join(__dirname, "commands"))
-  .filter((file) => file.endsWith(".js"));
-for (const cfile of cfiles) {
+
+for (const cfile of getFiles("commands")) {
   const command = require(join(__dirname, "commands", `${cfile}`));
   client.commands.set(command.name, command);
 }
 
-const efiles = fs
-  .readdirSync(join(__dirname, "events"))
-  .filter((file) => file.endsWith(".js"));
-for (const efile of efiles) {
+for (const efile of getFiles("events")) {
   const event = require(join(__dirname, "events", `${efile}`));
   const eventName = efile.split(".")[0];
   client.on(eventName, (...args) => event.run(client, ...args));

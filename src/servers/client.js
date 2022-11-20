@@ -1,10 +1,7 @@
-const config = global.config;
 const sclient = global.sclient;
-const fss = require("node:fs");
-const path = require("node:path");
-const fs = require("fs");
+const fs = require("node:fs");
 const { REST } = require("@discordjs/rest");
-const { join } = require("path");
+const { join } = require("node:path");
 const { Collection, Routes } = require("discord.js");
 
 sclient.on("guildCreate", async (guild) => {
@@ -12,8 +9,8 @@ sclient.on("guildCreate", async (guild) => {
   const guildId = guild.id;
 
   const commands = [];
-  const commandsPath = path.join(__dirname, "commands");
-  const commandFiles = fss
+  const commandsPath = join(__dirname, "commands");
+  const commandFiles = fs
     .readdirSync(commandsPath)
     .filter((file) => file.endsWith(".js"));
 
@@ -21,7 +18,7 @@ sclient.on("guildCreate", async (guild) => {
     const command = require(`./commands/${file}`);
     commands.push(command.data.toJSON());
   }
-  const rest = new REST({ version: "10" }).setToken(config.servers.token);
+  const rest = new REST({ version: "10" }).setToken(global.config.servers.token);
 
   (async () => {
     try {
@@ -36,13 +33,13 @@ sclient.on("guildCreate", async (guild) => {
 });
 
 sclient.commands = new Collection();
-const commandsPath = path.join(__dirname, "commands");
-const commandFiles = fss
+const commandsPath = join(__dirname, "commands");
+const commandFiles = fs
   .readdirSync(commandsPath)
   .filter((file) => file.endsWith(".js"));
 
 for (const file of commandFiles) {
-  const filePath = path.join(commandsPath, file);
+  const filePath = join(commandsPath, file);
   const command = require(filePath);
   sclient.commands.set(command.data.name, command);
 }
