@@ -1161,9 +1161,8 @@ app.get("/me", checkAuth, async (req, res) => {
 });
 
 app.get("/users/:id", async (req, res) => {
-  const guild = await global.client.guilds.fetch(global.config.guilds.main);
-  let user = (await guild.members.fetch(req.params.id)) || null;
-  user = user?.user;
+  let client = global.client;
+  let user = (await client.users.fetch(req.params.id)) || null;
   if (user.bot) return res.redirect("/");
   if (!user) return res.status(404).json({ message: "This user was not found on Discord." });
   let userm = await global.userModel.findOne({
