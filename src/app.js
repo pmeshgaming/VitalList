@@ -6,8 +6,7 @@ const {
   ButtonStyle,
 } = require("discord.js");
 const ms = require("ms");
-const fetch = (...args) =>
-  import("node-fetch").then(({ default: fetch }) => fetch(...args));
+const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
 const mongoose = require("mongoose");
 const config = global.config;
 global.logger = logger;
@@ -425,7 +424,7 @@ app.post("/bots/:id/apikey", checkAuth, async (req, res) => {
   let bot = await global.botModel.findOne({ id: id });
   if (!bot) return res.redirect("/");
   if (req.user.id !== bot.owner) return res.redirect("/");
-
+  
   let data = req.body;
   function genApiKey(options = {}) {
     let length = options.length || 5;
@@ -744,64 +743,40 @@ app.get("/servers/tags/:tag", async (req, res) => {
 //-API-//
 
 app.get("/api/bots/:id", async (req, res) => {
-  const reviewModel = require("./models/review.js")
-  let reviews = await reviewModel.find({ botid: req.params.id })
-  reviews = reviews.map(set => {
-    delete set._id
-    delete set.__v
-    return set
-})
-  let model = global.botModel;
-  let data = await model
-    .findOne({
-      id: req.params.id,
-    })
-    .lean()
-    .then(async (rs) => {
-      if (!rs)
-        return res.status(404).json({
-          message: "This bot is not in our database.",
-        });
-      if (!rs.approved)
-        return res.status(404).json({
-          message: "This bot is not approved yet.",
-        });
+    const rs = await global.botModel.findOne({ id: req.params.id })
+    if (!rs) return res.status(404).json({ message: "This bot is not in our database." });
+    if (!rs.approved) return res.status(404).json({ message: "This bot is not approved yet." });
+    const reviews = await global.reviewModel.find({ botid: req.params.id }, "-_id -__v");
+    const BotRaw = await global.client.users.fetch(rs.id).catch(() => null);
+    const OwnerRaw = await global.client.users.fetch(rs.owner).catch(() => null);
+    return res.json({ // This doesn't need to be in another object (i.e: 'final_data')
+        id: rs.id,
+        username: BotRaw.username,
+        discriminator: BotRaw.discriminator,
+        avatar: `https://cdn.discordapp.com/avatars/${rs.id}/${BotRaw.avatar}.png`,
+        prefix: rs.prefix,
+        owner: rs.owner,
+        ownerTag: OwnerRaw.tag,
+        tags: rs.tags,
+        submittedOn: rs.submittedOn,
+        approvedOn: rs.approvedOn,
+        shortDescription: rs.shortDesc,
+        description: rs.desc,
+        reviews,
+    
+        // Counts
+        shards: +rs.shards,
+        servers: +rs.servers,
+        votes: rs.votes,
+        views: rs.views,
 
-        const BotRaw = await client.users.fetch(rs.id) || null;
-        const OwnerRaw = await client.users.fetch(rs.owner)|| null;
-
-  final_data = {
-     id: rs.id,
-     username: BotRaw.username,
-     discriminator: BotRaw.discriminator,
-     avatar: `https://cdn.discordapp.com/avatars/${rs.id}/${BotRaw.avatar}.png`,
-     prefix: rs.prefix,
-     owner: rs.owner,
-     ownerTag: OwnerRaw.tag,
-     tags: rs.tags,
-     views: rs.views,
-     submittedOn: rs.submittedOn,
-     approvedOn: rs.approvedOn,
-     shortDescription: rs.shortDesc,
-     description: rs.desc,
-     reviews,
-     
-    // Counts
-    shards: +rs.shards,
-    servers: +rs.servers,
-    votes: rs.votes,
-    views: rs.views,
-
-    // Links
-    banner: rs.banner,
-    invite: rs.invite,
-    website: rs.website,
-    github: rs.github,
-    support: rs.support,
-  }
-
-   return res.json(final_data)
-  });
+        // Links
+        banner: rs.banner,
+        invite: rs.invite,
+        website: rs.website,
+        github: rs.github,
+        support: rs.support,
+    });
 });
 
 app.post("/api/bots/:id/", async (req, res) => {
