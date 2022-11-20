@@ -779,6 +779,7 @@ app.get("/api/bots/:id", async (req, res) => {
      shortDescription: rs.shortDesc,
      description: rs.desc,
      reviews,
+     
     // Counts
     shards: rs.shards,
     servers: rs.servers,
