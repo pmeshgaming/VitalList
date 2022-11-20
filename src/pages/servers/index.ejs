@@ -81,6 +81,32 @@
       <button class="votebtn">Vote</button></a>
   </div></a>
   <% } %><br><br><br><br><br>
+  <h3><b><i class="fa-solid fa-chart-line"></i> Top Servers</b></h3>
+  <p>These are the servers with the most members.</p>
+  <% let members = allservers.sort((a,b) => b.memberCount - a.memberCount) %>
+  <% for(let i = 0; i < members.length; i++){ %>
+  <%  if (i === 6) break; %>
+  <div class="card" style="border-radius:10px;">
+    <img src="<%= members[i].icon %>" alt="<%= members[i].name %>'s Icon" draggable="false" class="botimg_main">
+    <p class="botname_main" style="height:75px;width:250px;padding:10px;"> 
+    <%= members[i].name %><br>
+      <span style="font-size:15px; font-weight:normal;"><i class="fa-solid fa-user-group"></i> <%= members[i].memberCount %> • <i class="fa-solid fa-bomb"></i> <%= members[i].bumps %> • <i class="fa-solid fa-check-to-slot"></i> <%= members[i].votes %></span>
+    </p>
+    <div class="botdesc_main" style="height:75px;width:auto;flex:auto;padding:10px;">
+      <i class="fa-solid fa-file-lines"></i> <%= members[i].shortDesc %>
+      </div>
+    <div class="bottags_main" style="height:75px;width:auto;flex:auto;padding:10px;">
+      <i class="fa-solid fa-hashtag"></i> <%= members[i].tags %>
+    </div>
+  
+    <div style="margin-left:20px;margin-top:-50px">
+      <a href="/servers/<%= members[i].id %>/">
+        <button class="viewbtn">View</button>
+    </div></a>
+    <a href="/servers/<%= members[i].id %>/vote">
+      <button class="votebtn">Vote</button></a>
+  </div></a>
+  <% } %><br><br><br><br>
   <h3><i class="fa-solid fa-fire-flame-curved"></i> <b>Top Voted Servers</b></h3>
   <p>These are the most voted servers this month.</p>
   <% let votedservers = servers %>
