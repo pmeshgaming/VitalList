@@ -385,6 +385,7 @@ app.post("/bots/:id/edit", checkAuth, async (req, res) => {
   botm.support = data.support || null;
   botm.github = data.github || null;
   botm.website = data.website || null;
+  botm.donate = data.donate || null;
   botm.webhook = data.webhook || null;
   await botm.save();
 
