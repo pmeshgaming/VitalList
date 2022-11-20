@@ -424,6 +424,8 @@ app.post("/bots/:id/apikey", checkAuth, async (req, res) => {
   let bot = await global.botModel.findOne({ id: id });
   if (!bot) return res.redirect("/");
   if (req.user.id !== bot.owner) return res.redirect("/");
+  
+  let data = req.body;
   function genApiKey(options = {}) {
     let length = options.length || 5;
     let string =
