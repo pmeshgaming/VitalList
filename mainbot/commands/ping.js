@@ -2,8 +2,6 @@ module.exports = {
   name: "ping",
   description: "Check the bots ping. (Delay)",
   async run(client, message, args) {
-    return await message.reply({
-      content: `:ping_pong: Ping: \`${client.ws.ping}ms\``,
-    });
+    return message.reply(`:ping_pong: Ping: \`${client.ws.ping}ms\``);
   },
 };

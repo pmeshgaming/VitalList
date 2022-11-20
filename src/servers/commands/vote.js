@@ -5,7 +5,6 @@ const {
   ActionRowBuilder,
   ButtonStyle,
 } = require("discord.js");
-const model = require("../../models/server.js");
 const ms = require("ms");
 
 module.exports = {
@@ -13,70 +12,34 @@ module.exports = {
     .setName("vote")
     .setDescription("Vote for this server on VitalServers."),
   async execute(interaction) {
-    let model = require("../../models/server.js");
-    let voteModel = require("../../models/serverVote.js");
-    let server = await model.findOne({
-      id: interaction.guild.id,
-    });
-    if (!server)
-      return interaction.reply("This server was not found on VitalServers.");
+    await interaction.deferReply().catch(() => null);
+    let server = await global.serverModel.findOne({ id: interaction.guild.id });
+    if (!server) return interaction.editReply("This server was not found on VitalServers.").catch(() => null);
+    if (!server.published) return interaction.editReply("This server is not published on VitalServers yet.\nRun the /help command for more info.").catch(() => null);
 
-      if (server.published === false)
-      return interaction.reply("This server is not published on VitalServers yet.\nRun the /help command for more info.");
-
-    let x = await voteModel.findOne({
-      user: interaction.user.id,
-      server: interaction.guild.id,
-    });
+    let x = await global.serverVoteModel.findOne({ user: interaction.user.id, server: interaction.guild.id });
     if (x) {
       let timeObj = ms(x.time - (Date.now() - x.date), { long: true });
-      return interaction.reply(
-        `You can only vote once per hour.\nPlease come back in ${timeObj}.`
-      );
+      return interaction.editReply(`You can only vote once per hour.\nPlease come back in ${timeObj}.`).catch(() => null);
     }
 
-    await voteModel.create({
-      user: interaction.user.id,
-      server: interaction.guild.id,
-      date: Date.now(),
-      time: 3600000,
-    });
-
-    await model.findOneAndUpdate(
-      {
-        id: interaction.guild.id,
-      },
-      {
-        $inc: {
-          votes: 1,
-        },
-      }
-    );
-
-    const ServerRaw = (await global.sclient.guilds.fetch(server.id)) || null;
-    server.name = ServerRaw.name;
-    server.icon = ServerRaw.iconURL();
-
-    const logs = global.sclient.channels.cache.get(
-      global.config.channels.weblogs
-    );
+    await global.serverVoteModel.create({ user: interaction.user.id, server: interaction.guild.id, date: Date.now(), time: 3600000 });
+    server.votes++;
+    await server.save().catch(() => null);
+    const logs = global.sclient.channels.resolve(global.config.channels.weblogs);
     const date = new Date();
     const votedEmbed = new EmbedBuilder()
       .setTitle("Server Voted")
-      .setDescription(
-        "<:vote:1028862219313762304> " +
-          server.name +
-          " has been voted on VitalServers."
-      )
+      .setDescription(`<:vote:1028862219313762304> ${interaction.guild.name} has been voted on VitalServers.`)
       .setColor("Purple")
       .addFields({
         name: "Server",
-        value: `[${server.name}](https://vitallist.xyz/servers/${server.id})`,
+        value: `[${interaction.guild.name}](https://vitallist.xyz/servers/${interaction.guild.id})`,
         inline: true,
       })
       .addFields({
         name: "Voter",
-        value: `[${interaction.user.username}#${interaction.user.discriminator}](https://vitallist.xyz/users/${interaction.user.id})`,
+        value: `[${interaction.user.tag}](https://vitallist.xyz/users/${interaction.user.id})`,
         inline: true,
       })
       .addFields({
@@ -84,29 +47,22 @@ module.exports = {
         value: `${date.toLocaleString()}`,
         inline: true,
       })
-      .setFooter({
-        text: "Vote Logs - VitalServers",
-        iconURL: `${global.sclient.user.displayAvatarURL()}`,
-      });
-    logs.send({ embeds: [votedEmbed] });
+      .setFooter({ text: "Vote Logs - VitalServers", iconURL: global.sclient.user.displayAvatarURL() });
+    if (logs) logs.send({ embeds: [votedEmbed] }).catch(() => null);
 
     const embed = new EmbedBuilder()
       .setTitle("Successful Vote")
-      .setDescription(
-        "You have successfully voted for this server on [VitalServers](https://vitallist.xyz/servers)."
-      )
-      .setFooter({
-        text: `VitalServers - Vote Command`,
-        iconURL: `${global.sclient.user.displayAvatarURL()}`,
-      });
+      .setDescription("You have successfully voted for this server on [VitalServers](https://vitallist.xyz/servers).")
+      .setFooter({ text: `VitalServers - Vote Command`, iconURL: global.sclient.user.displayAvatarURL() });
 
-    const row = new ActionRowBuilder().addComponents(
+    const row = new ActionRowBuilder()
+    .addComponents(
       new ButtonBuilder()
         .setURL(`https://vitallist.xyz/servers/${interaction.guild.id}`)
         .setLabel("View Server Page")
         .setStyle(ButtonStyle.Link)
     );
 
-    interaction.reply({ embeds: [embed], components: [row] });
+    return interaction.editReply({ embeds: [embed], components: [row] }).catch(() => null);
   },
 };

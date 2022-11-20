@@ -1,13 +1,8 @@
-const { EmbedBuilder } = require("discord.js");
-const { model } = require("mongoose");
-const model1 = require("../../src/models/bot.js");
-const votes = require("../../src/models/vote.js");
 module.exports = {
   name: "ready",
-  async run(client, message, args) {
-    const bots = await model1.find();
+  async run(client) {
     global.logger.system(`${client.user.tag} is online and ready.`);
-    client.user.setActivity(`vitallist.xyz | ${bots.length} bots.`, {
+    client.user.setActivity(`vitallist.xyz | ${await global.botModel.count()} bots.`, {
       type: 3,
     });       
     const lb_message = await client.channels.cache.get(global.config.channels.leaderboardC).messages.fetch(global.config.channels.leaderboardM);
@@ -30,13 +25,12 @@ module.exports = {
     }, 1200000);
 
     setInterval(async () => {
-      let voteModels = await votes.find();
-      if (voteModels.length > 0) {
-        voteModels.forEach(async (a) => {
-          let time = a.time - (Date.now() - a.date);
-          if (time > 0) return;
-          await votes.findOneAndDelete({ bot: a.bot, user: a.user });
-        });
+      let voteModels = await global.voteModel.find();
+      if (!voteModels.length) return;
+      for (const vote of voteModels) {
+        let time = vote.time - (Date.now() - vote.date);
+        if (time > 0) continue;
+        global.voteModel.findOneAndDelete({ bot: vote.bot, user: vote.user });
       }
     }, 300000);
   },

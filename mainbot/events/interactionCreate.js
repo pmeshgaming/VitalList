@@ -1,54 +1,32 @@
+const roles = {
+  "r1": "1006653826843029654",
+  "r2": "1006653433970958376",
+  "r3": "1006653765920755825"
+}
+
 module.exports = {
   async run(client, interaction) {
-    const r1 = "1006653826843029654";
-    const r2 = "1006653433970958376";
-    const r3 = "1006653765920755825";
     if (interaction.isButton()) {
-      if (interaction.customId == "r1") {
-        if (interaction.member.roles.cache.some((role) => role.id == r1)) {
-          interaction.reply({
-            content: `The role **Sneak Peaks** was successfully removed from you.`,
-            ephemeral: true,
-          });
-          interaction.member.roles.remove(r1);
-        } else {
-          interaction.member.roles.add(r1);
-          await interaction.reply({
-            content: `The role **Sneak Peaks** was successfully added to you.`,
-            ephemeral: true,
-          });
-        }
-      } else if (interaction.customId == "r2") {
-        if (interaction.member.roles.cache.some((role) => role.id == r2)) {
-          interaction.reply({
-            content: `The role **Announcements** was successfully removed from you!`,
-            ephemeral: true,
-          });
-          interaction.member.roles.remove(r2);
-        } else {
-          interaction.member.roles.add(r2);
-          await interaction.reply({
-            content: `The role **Announcements** was successfully added to you!`,
-            ephemeral: true,
-          });
-        }
-      } else if (interaction.customId == "r3") {
-        if (interaction.member.roles.cache.some((role) => role.id == r3)) {
-          interaction.reply({
-            content: `The role **Website Status** was successfully removed from you!`,
-            ephemeral: true,
-          });
-          interaction.member.roles.remove(r3);
-        } else {
-          interaction.member.roles.add(r3);
-          await interaction.reply({
-            content: `The role **Website Status** was successfully added to you!`,
-            ephemeral: true,
-          });
-        }
+      if (["r1", "r2", "r3"].includes(interaction.customId)) {
+        await interaction.deferReply({ ephemeral: true }).catch(() => null);
+        let roleId = roles[interaction.customId];
+        let role = interaction.guild.roles.resolve(roleId);
+        if (!role) return interaction.editReply(`I was unable to find that role in the server (${roleId})`).catch(() => null);
+        if (interaction.member.roles.cache.has(role.id)) {
+          let r = await interaction.member.roles.remove(role.id).catch(e => e);
+          if (r instanceof Error) {
+            console.log(r);
+            return interaction.editReply(`I was unable to remove you from the role.`).catch(() => null);
+          };
+          return interaction.editReply(`The role **${role.name}** was successfully removed from you.`).catch(() => null);
+        };
+        let r = await interaction.member.roles.add(role.id).catch(e => e);
+        if (r instanceof Error) {
+          console.log(r);
+          return interaction.editReply(`I was unable to add you to the role.`).catch(() => null);
+        };
+        return interaction.editReply(`The role **${role.name}** was successfully added to you.`).catch(() => null);
       }
     }
   },
 };
-
-// you need to catch the errors
