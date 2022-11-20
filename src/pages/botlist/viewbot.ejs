@@ -20,14 +20,10 @@
 <body>
   <%- include("../parts/navbar.ejs", { bot, user }) %>
 
-  <div class="container">
+  <div class="botpagecontainer">
     <div style="background-color: transparent" class="jumbotron mt-5">
       <div class="row" style="width: 100%;">
-        <div class="col-sm-2">
-
-          <img style="border-radius: 50%;" class="card-img-top" src="https://cdn.discordapp.com/avatars/<%= bot.id %>/<%= bot.avatar %>.png?size=1280">
-
-        </div>
+          <img class="idk" src="https://cdn.discordapp.com/avatars/<%= bot.id %>/<%= bot.avatar %>.png">
         <div class="col-sm">
           <h3><%= bot.name %><small class="text-muted">#<%= bot.discriminator %></small>
             <% if(bot.flags === 65536) { %>
@@ -93,8 +89,8 @@
   </div>
   </div>
   <br><br>
-  <div class="container">
-    <div class="desccard">
+  <div class="botpagecontainer">
+    <div class="desccard" style="margin-left:0px">
       <div class="card-body">
         <div id="bot-description"><%= bot.desc %></div>
       </div>
@@ -102,8 +98,8 @@
   </div>
 </div>
 </div>
-<div class="container">
-<br><br><br><br><hr><br><br>
+<div class="botpagecontainer">
+<br><br><br><br><br><br><br><br><hr><br>
   <h2><i class="fa-solid fa-award"></i> Ratings & Reviews</h2>
   <p>These are all of the reviews avaible for this bot.</p>
   <br>
@@ -166,7 +162,7 @@
   <style>
     @media only screen and (max-width: 600px) {
       .infoContainer {
-        width: 300px;
+        width: 450px;
         padding-right: 15px;
         padding-left: 15px;
         margin-right: auto;
@@ -176,9 +172,9 @@
 
     @media only screen and (min-width: 1080px) {
       .infoContainer {
-        width: 300px;
-        margin-right: 125px;
-        margin-left: 125px;
+        width: 450px;
+        margin-right: 1325px;
+        margin-left: 1325px;
       }
     }
 
@@ -209,8 +205,9 @@
     }
 
     .idk {
-      width: 32px;
-      height: 32px;
+      width: 175px;
+      height: 175px;
+      border-radius: 50%;
     }
 
     .owner {
@@ -256,6 +253,13 @@
     margin-left: 10px;
 
   }
+  .botpagecontainer {
+  width: 100%;
+  padding-right: 150px;
+  padding-left: 150px;
+  margin-right: auto;
+  margin-left: auto;
+}
   </style>
   <script>
     $(document).ready(function() {
