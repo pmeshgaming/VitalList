@@ -26,23 +26,24 @@ module.exports = {
         await lb_message.edit({embeds: [embed]});
       }, 300000);
 
-    setInterval(async () => {
-      let voteModels = await global.voteModel.find();
-      if (!voteModels.length) return;
-      for (const vote of voteModels) {
-        let time = vote.time - (Date.now() - vote.date);
-        if (time > 0) continue;
-        global.voteModel.findOneAndDelete({ bot: vote.bot, user: vote.user });
-      }
-    }, 300000);
+//     setInterval(async () => { // This shouldn't be needed now, since the check is in the POST: /xxx/vote endpoint.
+//       let voteModels = await global.voteModel.find();
+//       if (!voteModels.length) return;
+//       for (const vote of voteModels) {
+//         let time = vote.time - (Date.now() - vote.date);
+//         if (time > 0) continue;
+//         global.voteModel.findOneAndDelete({ bot: vote.bot, user: vote.user });
+//       }
+//     }, 300000);
 
     setInterval(async () => {
       let userModel = await global.userModel.find();
       if (!userModel.length) return;
       for (const user of userModel) {
-        const userRaw = await client.users.fetch(user.id)
+        const userRaw = await client.users.fetch(user.id).catch(() => null);
+        if (!userRaw) continue;
         user.username = userRaw.tag;
-        await user.save();
+        await user.save().catch(() => null);
       }
     }, 300000);
   },
