@@ -362,18 +362,11 @@ app.post("/bots/:id/edit", checkAuth, async (req, res) => {
   const logs = client.channels.cache.get(config.channels.weblogs);
   const botm = await global.botModel.findOne({ id: req.params.id });
   let data = req.body;
-
-  if (!data) {
-    return res.redirect("/");
-  }
+  if (!data) return res.redirect("/");
   if (req.user.id !== botm.owner) return res.redirect("/404");
 
-  const bot = await client.users.fetch(req.params.id);
-  if (!bot) {
-    return res.status(400).json({
-      message: "This is not a real application on Discord.",
-    });
-  }
+  const bot = await client.users.fetch(req.params.id).catch(() => null);
+  if (!bot) return res.status(400).json({ message: "This is not a real application on Discord." });
   botm.id = req.params.id;
   botm.prefix = data.prefix;
   botm.owner = req.user.id;
@@ -443,23 +436,15 @@ app.post("/bots/:id/apikey", checkAuth, async (req, res) => {
 })
 
 app.post("/bots/:id/vote", checkAuth, async (req, res) => {
-  let bot = await global.botModel.findOne({
-    id: req.params.id,
-  });
-  if (!bot)
-    return res
-      .status(404)
-      .json({ message: "This bot was not found on our site." });
-
-  let x = await global.voteModel.findOne({
-    user: req.user.id,
-    bot: req.params.id,
-  });
-
+  let bot = await global.botModel.findOne({ id: req.params.id });
+  if (!bot) return res.status(404).json({ message: "This bot was not found on our site." });
+  let x = await global.voteModel.findOne({ user: req.user.id, bot: req.params.id });
   if (x) {
-    let timeObj = ms(x.time - (Date.now() - x.date), { long: true });
-    return res
-      .redirect(`/bots/${req.params.id}/vote?error=true&body=Please wait ${timeObj} before you can vote again.`)
+    const left = x.time - (Date.now() - x.date),
+          formatted = ms(left, { long: true });
+    // Unsure if we should do "|| !formatted.includes("-")" as well 🤷
+    if (left > 0) return res.redirect(`/bots/${req.params.id}/vote?error=true&body=Please wait ${formatted} before you can vote again.`)
+    await x.remove().catch(() => null);
   }
 
   await global.voteModel.create({
@@ -468,55 +453,33 @@ app.post("/bots/:id/vote", checkAuth, async (req, res) => {
     date: Date.now(),
     time: 43200000,
   });
-
-  await global.botModel.findOneAndUpdate(
-    {
-      id: req.params.id,
-    },
-    {
-      $inc: {
-        votes: 1,
-      },
-    }
-  );
-
-  const BotRaw = (await global.client.users.fetch(bot.id)) || null;
+  await global.botModel.findOneAndUpdate({ id: req.params.id }, { $inc: { votes: 1 } });
+  const BotRaw = await global.client.users.fetch(bot.id).catch(() => ({ username: "Unknown Bot", discriminator: "0000", avatar: "" }))
   bot.name = BotRaw.username;
   bot.discriminator = BotRaw.discriminator;
   bot.avatar = BotRaw.avatar;
 
-  const logs = global.client.channels.cache.get(global.config.channels.weblogs);
+  const logs = global.client.channels.resolve(global.config.channels.weblogs);
   const date = new Date();
   const votedEmbed = new EmbedBuilder()
     .setTitle("Bot Voted")
-    .setDescription(
-      "<:vote:1028862219313762304> " +
-      bot.name +
-      "#" +
-      bot.discriminator +
-      " has been voted on Vital List."
-    )
+    .setDescription(`<:vote:1028862219313762304> ${bot.name}#${bot.discriminator} has been voted on Vital List.`)
     .setColor("Purple")
-    .addFields({
-      name: "Bot",
-      value: `[${bot.name}#${bot.discriminator}](https://vitallist.xyz/bots/${bot.id})`,
-      inline: true,
-    })
-    .addFields({
-      name: "Voter",
-      value: `[${req.user.username}#${req.user.discriminator}](https://vitallist.xyz/users/${req.user.id})`,
-      inline: true,
-    })
-    .addFields({
-      name: "Date",
-      value: `${date.toLocaleString()}`,
-      inline: true,
-    })
-    .setFooter({
-      text: "Vote Logs - VitalList",
-      iconURL: `${global.client.user.displayAvatarURL()}`,
-    });
-  logs.send({ embeds: [votedEmbed] });
+    .addFields(
+      {
+        name: "Bot",
+        value: `[${bot.name}#${bot.discriminator}](https://vitallist.xyz/bots/${bot.id})`,
+        inline: true,
+      },
+      {
+        name: "Voter",
+        value: `[${req.user.username}#${req.user.discriminator}](https://vitallist.xyz/users/${req.user.id})`,
+        inline: true,
+      },
+      { name: "Date", value: `${date.toLocaleString()}`, inline: true }
+    )
+    .setFooter({ text: "Vote Logs - VitalList", iconURL: global.client.user.displayAvatarURL() });
+  if (logs) logs.send({ embeds: [votedEmbed] }).catch(() => null);
 
   return res.redirect(
     `/bots/${req.params.id}?success=true&body=You voted successfully. You can vote again after 12 hours.`
@@ -524,19 +487,10 @@ app.post("/bots/:id/vote", checkAuth, async (req, res) => {
 });
 
 app.get("/bots/:id/vote", checkAuth, async (req, res) => {
-  let bot = await global.botModel.findOne({
-    id: req.params.id,
-  });
-  if (!bot)
-    return res
-      .status(404)
-      .json({ message: "This bot was not found on our site." });
-  let user = await global.userModel.findOne({
-    id: req.user.id,
-  });
-  if (!user) {
-    await global.userModel.create({ id: req.user.id });
-  }
+  let bot = await global.botModel.findOne({ id: req.params.id });
+  if (!bot) return res.status(404).json({ message: "This bot was not found on our site." });
+  let user = await global.userModel.findOne({ id: req.user.id });
+  if (!user) await global.userModel.create({ id: req.user.id });
 
   const BotRaw = (await global.client.users.fetch(bot.id)) || null;
   bot.name = BotRaw.username;
@@ -578,47 +532,28 @@ app.get("/bots/:id/review", checkAuth, async (req, res) => {
 
 app.post("/bots/:id/review", checkAuth, async (req, res) => {
   let id = req.params.id;
-  const reviewModel = global.reviewModel;
-  const bot = await global.botModel.findOne({ id: id });
+  const bot = await global.botModel.findOne({ id });
+  if (!bot) return res.status(404).json({ message: "This bot could not be found in our site." });
+  if (bot.owner === req.user.id) return res.status(400).json({ message: "You cannot review your own bot." })
   const data = req.body;
 
-  if (!bot)
-    return res.status(404).json({
-      message: "This bot could not be found in our site.",
-    });
-
-  if (bot.owner === req.user.id)
-    return res.status(400).json({
-      message: "You cannot review your own bot."
-    })
-
-  if (await reviewModel.findOne({ reviewer: req.user.id, botid: req.params.id }))
-    return res.status(400).json({
-      message: "You already have a review for this bot."
-    })
-
-  const d = new Date();
-  await reviewModel.create({
+  if (await global.reviewModel.findOne({ reviewer: req.user.id, botid: req.params.id })) return res.status(400).json({ message: "You already have a review for this bot." })
+  await global.reviewModel.create({
     reviewer: req.user.id,
     botid: req.params.id,
     rating: data.rating,
     body: data.body,
-    date: d.toLocaleString()
+    date: new Date().toLocaleString()
   });
-
-  await res.redirect(`https://vitallist.xyz/bots/${id}?success=true&body=Your review was successfully added.`)
-
+  return res.redirect(`https://vitallist.xyz/bots/${id}?success=true&body=Your review was successfully added.`)
 })
 
 app.get("/bots/:id", async (req, res) => {
   let id = req.params.id;
   const client = global.client;
   const reviewsModel = global.reviewModel;
-  const bot = await global.botModel.findOne({ id: id });
-  if (!bot)
-    return res
-      .status(404)
-      .json({ message: "This bot was not found on our list." });
+  const bot = await global.botModel.findOne({ id });
+  if (!bot) return res.status(404).json({ message: "This bot was not found on our list." });
   const marked = require("marked");
   const desc = marked.parse(bot.desc);
   const BotRaw = (await client.users.fetch(id)) || null;
@@ -669,24 +604,16 @@ app.get("/bots/:id/widget", async (req, res) => {
 //-TAGS-//
 
 app.get("/tags", async (req, res) => {
-  const bottags = global.config.tags.bots;
-  const servertags = global.config.tags.servers;
-
   res.render("tags.ejs", {
-    bottags: bottags,
-    servertags: servertags,
+    bottags: global.config.tags.bots,
+    servertags: global.config.tags.servers,
     user: req.user || null,
   });
 });
 
 app.get("/bots/tags/:tag", async (req, res) => {
   const tag = req.params.tag;
-
-  if (!global.config.tags.bots.includes(tag))
-    return res
-      .status(404)
-      .json({ message: "This tag was not found in our database." });
-
+  if (!global.config.tags.bots.includes(tag)) return res.status(404).json({ message: "This tag was not found in our database." });
   let data = await global.botModel.find();
   let bots = data.filter((a) => a.approved === true && a.tags.includes(tag));
   if (bots.length <= 0) return res.redirect("/");
@@ -711,16 +638,10 @@ app.get("/bots/tags/:tag", async (req, res) => {
 
 app.get("/servers/tags/:tag", async (req, res) => {
   const tag = req.params.tag;
-
-  if (!global.config.tags.servers.includes(tag))
-    return res
-      .status(404)
-      .json({ message: "This tag was not found in our database." });
+  if (!global.config.tags.servers.includes(tag)) return res.status(404).json({ message: "This tag was not found in our database." });
 
   let data = await global.serverModel.find();
-  let servers = data.filter(
-    (a) => a.published === true && a.tags.includes(tag)
-  );
+  let servers = data.filter((a) => a.published === true && a.tags.includes(tag));
   if (servers.length <= 0) return res.redirect("/");
   for (let i = 0; i < servers.length; i++) {
     const ServerRaw = await global.sclient.guilds.fetch(servers[i].id);
@@ -758,6 +679,7 @@ app.get("/api/bots/:id", async (req, res) => {
         owner: rs.owner,
         ownerTag: OwnerRaw.tag,
         tags: rs.tags,
+        reviewer: rs.reviewer, 
         submittedOn: rs.submittedOn,
         approvedOn: rs.approvedOn,
         shortDescription: rs.shortDesc,
@@ -771,6 +693,7 @@ app.get("/api/bots/:id", async (req, res) => {
         views: rs.views,
 
         // Links
+        donate: rs.donate,
         banner: rs.banner,
         invite: rs.invite,
         website: rs.website,
