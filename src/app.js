@@ -442,8 +442,7 @@ app.post("/bots/:id/vote", checkAuth, async (req, res) => {
   if (x) {
     const left = x.time - (Date.now() - x.date),
           formatted = ms(left, { long: true });
-    // Unsure if we should do "|| !formatted.includes("-")" as well 🤷
-    if (left > 0) return res.redirect(`/bots/${req.params.id}/vote?error=true&body=Please wait ${formatted} before you can vote again.`)
+    if (left > 0 || !formatted.includes("-")) return res.redirect(`/bots/${req.params.id}/vote?error=true&body=Please wait ${formatted} before you can vote again.`)
     await x.remove().catch(() => null);
   }
 
@@ -917,7 +916,7 @@ app.post("/servers/:id/vote", checkAuth, async (req, res) => {
   if (x) {
     const left = x.time - (Date.now() - x.date),
           formatted = ms(left, { long: true });
-    if (left > 0) return res.status(400).json({ message: `You can vote again in ${formatted}.` });
+    if (left > 0 || !formatted.includes("-")) return res.status(400).json({ message: `You can vote again in ${formatted}.` });
     await x.remove().catch(() => null);
   }
 
