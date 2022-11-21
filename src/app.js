@@ -755,8 +755,7 @@ app.get("/servers/:id", async (req, res) => {
 
   if (server.published === false) {
     if (!req.user) return res.redirect("/404?error=503");
-    if (!server.owner.includes(req.user.id))
-      return res.redirect("/404?error=503");
+    if (!server.owner.includes(req.user.id)) return res.redirect("/404?error=503");
   }
 
   server.views = parseInt(server.views) + 1;
@@ -785,17 +784,40 @@ app.get("/servers/:id", async (req, res) => {
   });
 });
 
+app.get("/api/servers/:id", async (req, res) => {
+  const server = await global.serverModel.findOne({ id: req.params.id });
+  if (!server) return res.status(404).json({ message: `That server is not in the list` });
+  if (!server.published) return res.status(404).json({ message: `That server isn't published yet, so you're not able to GET data for it!` });
+  const guild = await global.sclient.guilds.fetch(server.id).catch(() => null);
+  if (!guild?.available) return res.status(500).json({ message: `I was unable to fetch the information for the server, try again later.` });
+  return res.json({
+    name: guild.name,
+    id: server.id,
+    members: guild.memberCount,
+    icon: guild.iconURL({ dynamic: true }),
+
+    invite: server.invite,
+    submittedOn: server.date,
+    website: server.website,
+    owner: server.owner,
+    ownerTag: (await global.sclient.users.fetch(server.owner).catch(() => ({ tag: "Unknown User#0000" }))).tag,
+    tags: server.tags,
+
+    bump: server.bump,
+    bumps: server.bumps,
+    views: server.views,
+    votes: server.votes,
+    
+    shortDesc: server.shortDesc,
+    description: server.desc
+  })
+})
+
 app.get("/servers/:id/join", async (req, res) => {
-  const id = req.params.id;
-  const server = await global.serverModel.findOne({ id: id });
+  const server = await global.serverModel.findOne({ id: req.params.id });
   if (!server) return res.status(404).redirect("/404");
-
-  if (!server.invite) {
-    return res.send(
-      "This server does not have an invite set, please contact the owner or set one with the /invite command in this guild."
-    );
-  }
-
+  if (!server.published) return res.send("This server hasn't been published yet, so you cannot join it!");
+  if (!server.invite) return res.send("This server does not have an invite set, please contact the owner or set one with the /invite command in this guild.");
   return res.redirect(server.invite);
 });
 
