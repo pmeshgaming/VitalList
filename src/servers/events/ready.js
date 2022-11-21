@@ -21,6 +21,7 @@ module.exports = {
       };
     }, 300000);
 
+
     const find = await global.botModel.findOne({ id: "1004264023111507979" });
     if (find) {
       find.servers = `${sclient.guilds.cache.size}`,
