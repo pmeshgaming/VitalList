@@ -746,14 +746,7 @@ app.get("/servers", async (req, res) => {
   });
 });
 
-app.get(
-  "/servers/new",
-  checkAuth,
-  async (req, res) =>
-    await res.redirect(
-      "https://discord.com/api/oauth2/authorize?client_id=1004264023111507979&permissions=313409&scope=applications.commands%20bot"
-    )
-);
+app.get("/servers/new", checkAuth, async (req, res) => res.redirect("https://discord.com/api/oauth2/authorize?client_id=1004264023111507979&permissions=313409&scope=applications.commands%20bot"));
 
 app.get("/servers/:id", async (req, res) => {
   const id = req.params.id;
@@ -918,23 +911,14 @@ app.post("/servers/:id/edit", checkAuth, async (req, res) => {
 });
 
 app.post("/servers/:id/vote", checkAuth, async (req, res) => {
-  let server = await global.serverModel.findOne({
-    id: req.params.id,
-  });
-  if (!server)
-    return res
-      .status(404)
-      .json({ message: "This server was not found on our site." });
-
-  let x = await global.serverVoteModel.findOne({
-    user: req.user.id,
-    server: req.params.id,
-  });
+  let server = await global.serverModel.findOne({ id: req.params.id });
+  if (!server) return res.status(404).json({ message: "This server was not found on our site." });
+  let x = await global.serverVoteModel.findOne({ user: req.user.id, server: req.params.id });
   if (x) {
-    let timeObj = ms(x.time - (Date.now() - x.date), { long: true });
-    return res
-      .status(400)
-      .json({ message: `You can vote again in ${timeObj}.` });
+    const left = x.time - (Date.now() - x.date),
+          formatted = ms(left, { long: true });
+    if (left > 0) return res.status(400).json({ message: `You can vote again in ${formatted}.` });
+    await x.remove().catch(() => null);
   }
 
   await global.serverVoteModel.create({
@@ -943,58 +927,39 @@ app.post("/servers/:id/vote", checkAuth, async (req, res) => {
     date: Date.now(),
     time: 3600000,
   });
-
-  await global.serverModel.findOneAndUpdate(
-    {
-      id: req.params.id,
-    },
-    {
-      $inc: {
-        votes: 1,
-      },
-    }
-  );
+  await global.serverModel.findOneAndUpdate({ id: req.params.id }, { $inc: { votes: 1 } });
 
   const ServerRaw = (await global.sclient.guilds.fetch(server.id)) || null;
   server.name = ServerRaw.name;
   server.icon = ServerRaw.iconURL();
 
-  const logs = global.sclient.channels.cache.get(
-    global.config.channels.weblogs
-  );
+  const logs = global.sclient.channels.resolve(global.config.channels.weblogs);
   const date = new Date();
   const votedEmbed = new EmbedBuilder()
     .setTitle("Server Voted")
-    .setDescription(
-      "<:vote:1028862219313762304> " +
-      server.name +
-      " has been voted on VitalServers."
-    )
+    .setDescription(`<:vote:1028862219313762304> ${server.name} has been voted on VitalServers.`)
     .setColor("Purple")
-    .addFields({
-      name: "Server",
-      value: `[${server.name}](https://vitallist.xyz/servers/${server.id})`,
-      inline: true,
-    })
-    .addFields({
-      name: "Voter",
-      value: `[${req.user.username}#${req.user.discriminator}](https://vitallist.xyz/users/${req.user.id})`,
-      inline: true,
-    })
-    .addFields({
-      name: "Date",
-      value: `${date.toLocaleString()}`,
-      inline: true,
-    })
-    .setFooter({
-      text: "Vote Logs - VitalServers",
-      iconURL: `${global.sclient.user.displayAvatarURL()}`,
-    });
-  logs.send({ embeds: [votedEmbed] });
+    .addFields(
+      {
+        name: "Server",
+        value: `[${server.name}](https://vitallist.xyz/servers/${server.id})`,
+        inline: true,
+      },
+      {
+        name: "Voter",
+        value: `[${req.user.username}#${req.user.discriminator}](https://vitallist.xyz/users/${req.user.id})`,
+        inline: true,
+      },
+      {
+        name: "Date",
+        value: `${date.toLocaleString()}`,
+        inline: true,
+      }
+    )
+    .setFooter({ text: "Vote Logs - VitalServers", iconURL: global.sclient.user.displayAvatarURL() });
+  if (logs) logs.send({ embeds: [votedEmbed] }).catch(() => null);
 
-  return res.redirect(
-    `/servers/${req.params.id}?success=true&body=You voted successfully. You can vote again after 12 hours.`
-  );
+  return res.redirect(`/servers/${req.params.id}?success=true&body=You voted successfully. You can vote again after 12 hours.`);
 });
 
 app.get("/servers/:id/vote", checkAuth, async (req, res) => {
