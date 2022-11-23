@@ -3,6 +3,7 @@ const model = require("../../src/models/bot.js");
 
 module.exports = {
     name: "botinfo",
+    aliases: ["info", "bot", "bi"],
     description: "Find info on a specific bot on VitalList.",
     async run(client, message) {
         let bot = message.mentions.users.first();

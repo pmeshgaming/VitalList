@@ -16,7 +16,7 @@ module.exports = {
     if (!message.content.toLowerCase().startsWith(global.config.bot.prefix)) return;
     let args = message.content.split(" ");
     let command = args.shift().slice(global.config.bot.prefix.length).toLowerCase();
-    let cmd = client.commands.get(command);
+    let cmd = client.commands.get(command) || client.commands.get(client.aliases.get(command));
     if (!cmd) return;
     try {
       cmd.run(client, message, args);
