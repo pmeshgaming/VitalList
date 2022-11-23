@@ -317,7 +317,7 @@ app.post("/bots/new", checkAuth, async (req, res) => {
       text: "Add Logs - VitalList",
       iconURL: `${global.client.user.displayAvatarURL()}`,
     });
-  logs.send({ content: `<@${req.user.id}>`, embeds: [addEmbed] });
+  logs.send({ content: `<@${req.user.id}> | <@&1006507906352545792>`, embeds: [addEmbed] });
 
   return res.redirect(
     `/bots/${data.id}?success=true&body=Your bot was added successfully.`
